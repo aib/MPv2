@@ -21,6 +21,14 @@ def create_program(vertfile, fragfile):
 	with open(fragfile, 'r') as f:
 		fs = _compile_shader(f.read(), GL.GL_FRAGMENT_SHADER)
 
+	program = GL.glCreateProgram()
+	GL.glAttachShader(program, vs)
+	GL.glAttachShader(program, fs)
+	GL.glLinkProgram(program)
+	infoLog = GL.glGetProgramInfoLog(program)
+	if infoLog != '':
+		print(infoLog.decode('ascii'))
+
 	return GL.shaders.compileProgram(vs, fs)
 
 def get_perspective_projection(size, zrange):
