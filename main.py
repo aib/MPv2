@@ -1,0 +1,25 @@
+import pygame
+
+import mb2gfx
+
+SIZE = (int(1920*.8), int(1080*.8))
+
+def main():
+	pygame.init()
+	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
+	scene = mb2gfx.Scene(SIZE)
+
+	running = True
+	while running:
+		for ev in pygame.event.get():
+			if ev.type == pygame.QUIT:
+				running = False
+
+			elif ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE:
+				running = False
+
+		scene.render()
+		pygame.display.flip()
+
+if __name__ == '__main__':
+	main()
