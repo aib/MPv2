@@ -6,27 +6,37 @@ import numpy as np
 from OpenGL import GL
 
 import gfx
+import objreader
 
 class Scene(gfx.Scene):
 	def do_init(self, size):
-		self.vert = gfx.VBO.create(np.array([[0, 1, 0],    [-1,-1, 0],     [1,-1, 0]],      'f'))
-		self.cols = gfx.VBO.create(np.array([[1, 0, 0, 1], [0, 1, 0, 0.5], [0, 0, 1, 0.1]], 'f'))
+		GL.glEnable(GL.GL_DEPTH_TEST)
+
+		self.projection = gfx.get_perspective_projection(math.tau/8, size, (.1, 100.))
 
 		self.program = gfx.create_program('scene.vert', 'scene.frag')
 
-		self.view[3][2] = -5
-		self.projection = gfx.get_perspective_projection(math.tau/8, size, (.1, 100.))
+		with open('obj/dodecahedron.obj', 'r') as f:
+			v, t, n = objreader.read_obj_np(f)
+			vb = gfx.VBO.create(v)
+			vn = gfx.VBO.create(n)
 
 		self.vao = gfx.VAO()
 
 		with self.vao:
-			self.vao.set_vbo_as_attrib(0, self.vert)
-			self.vao.set_vbo_as_attrib(1, self.cols)
+			self.vao.set_vbo_as_attrib(0, vb)
+			self.vao.set_vbo_as_attrib(1, vn)
 
 	def do_render(self, elapsed, dt):
-		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
 		GL.glUseProgram(self.program)
+
+		self.model = np.eye(4, dtype=np.float32) @ gfx.scaling_matrix(3)
+		self.view = (np.eye(4, dtype=np.float32)
+			@ gfx.rotation_matrix([0, 1, 0], elapsed/2)
+			@ gfx.translation_matrix(0, 0, -20)
+		)
 		self.set_uniforms(elapsed)
 
 		draw_vao(self.vao)
