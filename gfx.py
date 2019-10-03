@@ -39,7 +39,7 @@ class VBO:
 		GL.glBufferData(self.type, self.data, GL.GL_STATIC_DRAW);
 
 	def set_attrib_pointer(self, index):
-		GL.glVertexAttribPointer(index, self.data.shape[1], GL.GL_FLOAT, False, self.data.shape[1]*self.data.itemsize, None)
+		GL.glVertexAttribPointer(index, self.data.shape[-1], GL.GL_FLOAT, False, self.data.shape[-1]*self.data.itemsize, None)
 
 	def __enter__(self):
 		self.prev_binding = GL.glGetInteger(self.query_type)
