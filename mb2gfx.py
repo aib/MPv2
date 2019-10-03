@@ -4,7 +4,6 @@ import time
 import numpy as np
 
 from OpenGL import GL
-from OpenGL.GL import shaders
 
 import gfx
 
@@ -27,7 +26,7 @@ class Scene(gfx.Scene):
 	def do_render(self, elapsed, dt):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-		shaders.glUseProgram(self.program)
+		GL.glUseProgram(self.program)
 		self.set_uniforms(elapsed)
 
 		with self.vao:
