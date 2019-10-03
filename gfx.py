@@ -7,11 +7,13 @@ from OpenGL import GL
 class VAO:
 	def __init__(self):
 		self.id = GL.glGenVertexArrays(1)
+		self.attribs = {}
 
 	def set_vbo_as_attrib(self, index, vbo):
 		GL.glEnableVertexAttribArray(index)
 		with vbo:
 			vbo.set_attrib_pointer(index)
+		self.attribs[index] = vbo
 
 	def __enter__(self):
 		GL.glBindVertexArray(self.id)
