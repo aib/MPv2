@@ -38,7 +38,7 @@ class VBO:
 
 	def set_data(self, data, hint=GL.GL_STATIC_DRAW):
 		self.data = data
-		GL.glBufferData(self.type, self.data, GL.GL_STATIC_DRAW);
+		GL.glBufferData(self.type, self.data, hint);
 
 	def set_attrib_pointer(self, index):
 		GL.glVertexAttribPointer(index, self.data.shape[-1], GL.GL_FLOAT, False, self.data.shape[-1]*self.data.itemsize, None)
