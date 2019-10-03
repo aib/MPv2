@@ -3,7 +3,6 @@ import time
 
 import numpy as np
 from OpenGL import GL
-from OpenGL.GL import shaders
 
 class VAO:
 	def __init__(self):
@@ -74,7 +73,7 @@ def create_program(vertfile, fragfile):
 	if infoLog != '':
 		print(infoLog.decode('ascii'))
 
-	return GL.shaders.compileProgram(vs, fs)
+	return program
 
 def get_perspective_projection(size, zrange):
 	fovy = math.tau / 4
