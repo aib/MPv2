@@ -34,16 +34,15 @@ class Scene(gfx.Scene):
 	def do_render(self, elapsed, dt):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-		GL.glUseProgram(self.program)
-
 		self.model = np.eye(4, dtype=np.float32) @ gfx.scaling_matrix(3)
 		self.view = (np.eye(4, dtype=np.float32)
 			@ gfx.rotation_matrix([0, 1, 0], elapsed/2)
 			@ gfx.translation_matrix(0, 0, -20)
 		)
-		self.set_uniforms(elapsed)
 
-		draw_vao(self.vao)
+		with self.program:
+			self.set_uniforms(self.program, elapsed)
+			draw_vao(self.vao)
 
 def draw_vao(vao):
 	main_vbo = vao.attribs[0]

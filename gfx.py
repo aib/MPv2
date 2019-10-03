@@ -135,19 +135,19 @@ class Scene:
 		self.do_render(now - self.start_time, now - self.last_render_time)
 		self.last_render_time = now
 
-	def set_uniforms(self, elapsed):
-		ul = GL.glGetUniformLocation(self.program, 'u_model')
+	def set_uniforms(self, program, elapsed):
+		ul = GL.glGetUniformLocation(program.id, 'u_model')
 		if ul != -1:
 			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.model)
 
-		ul = GL.glGetUniformLocation(self.program, 'u_view')
+		ul = GL.glGetUniformLocation(program.id, 'u_view')
 		if ul != -1:
 			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.view)
 
-		ul = GL.glGetUniformLocation(self.program, 'u_projection')
+		ul = GL.glGetUniformLocation(program.id, 'u_projection')
 		if ul != -1:
 			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.projection)
 
-		ul = GL.glGetUniformLocation(self.program, 'u_time')
+		ul = GL.glGetUniformLocation(program.id, 'u_time')
 		if ul != -1:
 			GL.glUniform1f(ul, elapsed)
