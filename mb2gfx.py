@@ -14,7 +14,11 @@ class Scene(gfx.Scene):
 
 		self.projection = gfx.perspective_projection_matrix(math.tau/8, size, (.1, 100.))
 
-		self.program = gfx.create_program('scene.vert', 'scene.frag')
+		with open("scene.vert", 'r') as f:
+			vs = f.read()
+		with open("scene.frag", 'r') as f:
+			fs = f.read()
+		self.program = gfx.Program(vs, fs)
 
 		with open('obj/dodecahedron.obj', 'r') as f:
 			v, t, n = objreader.read_obj_np(f)

@@ -4,6 +4,38 @@ import time
 import numpy as np
 from OpenGL import GL
 
+class Program:
+	def __init__(self, vert_shader, frag_shader):
+		self.id = GL.glCreateProgram()
+		self.prev_program = None
+
+		vs = self._compile_shader(vert_shader, GL.GL_VERTEX_SHADER)
+		fs = self._compile_shader(frag_shader, GL.GL_FRAGMENT_SHADER)
+
+		GL.glAttachShader(self.id, vs)
+		GL.glAttachShader(self.id, fs)
+		GL.glLinkProgram(self.id)
+		infoLog = GL.glGetProgramInfoLog(self.id)
+		if infoLog != '':
+			raise RuntimeError("Error in program: %s" % (infoLog.decode('ascii'),))
+
+	def _compile_shader(self, shaderSource, shaderType):
+		shader = GL.glCreateShader(shaderType)
+		GL.glShaderSource(shader, shaderSource)
+		GL.glCompileShader(shader)
+		infoLog = GL.glGetShaderInfoLog(shader)
+		if infoLog != '':
+			raise RuntimeError("Error in shader: %s" % (infoLog.decode('ascii'),))
+		return shader
+
+	def __enter__(self):
+		self.prev_program = GL.glGetInteger(GL.GL_CURRENT_PROGRAM)
+		GL.glUseProgram(self.id)
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		GL.glUseProgram(self.prev_program)
+		self.prev_program = None
+
 class VAO:
 	def __init__(self):
 		self.id = GL.glGenVertexArrays(1)
@@ -50,32 +82,6 @@ class VBO:
 	def __exit__(self, exc_type, exc_value, traceback):
 		GL.glBindBuffer(self.type, self.prev_binding)
 		self.prev_binding = None
-
-def create_program(vertfile, fragfile):
-	def _compile_shader(shaderSource, shaderType):
-		shader = GL.glCreateShader(shaderType)
-		GL.glShaderSource(shader, shaderSource)
-		GL.glCompileShader(shader)
-		infoLog = GL.glGetShaderInfoLog(shader)
-		if infoLog != '':
-			print(infoLog.decode('ascii'))
-		return shader
-
-	with open(vertfile, 'r') as f:
-		vs = _compile_shader(f.read(), GL.GL_VERTEX_SHADER)
-
-	with open(fragfile, 'r') as f:
-		fs = _compile_shader(f.read(), GL.GL_FRAGMENT_SHADER)
-
-	program = GL.glCreateProgram()
-	GL.glAttachShader(program, vs)
-	GL.glAttachShader(program, fs)
-	GL.glLinkProgram(program)
-	infoLog = GL.glGetProgramInfoLog(program)
-	if infoLog != '':
-		print(infoLog.decode('ascii'))
-
-	return program
 
 def perspective_projection_matrix(fovy, size, zrange):
 	aspect = size[0] / size[1]
