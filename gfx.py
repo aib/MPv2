@@ -11,6 +11,14 @@ class Program:
 
 		self._compile_program(vert_shader, frag_shader)
 
+	def set_uniform(self, name, utype, *params, silent=False):
+		location = GL.glGetUniformLocation(self.id, name)
+		if location == -1:
+			if not silent:
+				raise RuntimeError("Invalid uniform \"%s\"" % (name,))
+		else:
+			utype(location, *params)
+
 	def _compile_program(self, vert_shader, frag_shader):
 		vs = self._compile_shader(vert_shader, GL.GL_VERTEX_SHADER)
 		fs = self._compile_shader(frag_shader, GL.GL_FRAGMENT_SHADER)
@@ -139,18 +147,7 @@ class Scene:
 		self.last_render_time = now
 
 	def set_uniforms(self, program, elapsed):
-		ul = GL.glGetUniformLocation(program.id, 'u_model')
-		if ul != -1:
-			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.model)
-
-		ul = GL.glGetUniformLocation(program.id, 'u_view')
-		if ul != -1:
-			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.view)
-
-		ul = GL.glGetUniformLocation(program.id, 'u_projection')
-		if ul != -1:
-			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.projection)
-
-		ul = GL.glGetUniformLocation(program.id, 'u_time')
-		if ul != -1:
-			GL.glUniform1f(ul, elapsed)
+		program.set_uniform('u_model',      GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.model,      silent=True)
+		program.set_uniform('u_view',       GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.view,       silent=True)
+		program.set_uniform('u_projection', GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.projection, silent=True)
+		program.set_uniform('u_time', GL.glUniform1f, elapsed, silent=True)
