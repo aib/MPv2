@@ -9,6 +9,9 @@ class Program:
 		self.id = GL.glCreateProgram()
 		self.prev_program = None
 
+		self._compile_program(vert_shader, frag_shader)
+
+	def _compile_program(self, vert_shader, frag_shader):
 		vs = self._compile_shader(vert_shader, GL.GL_VERTEX_SHADER)
 		fs = self._compile_shader(frag_shader, GL.GL_FRAGMENT_SHADER)
 
