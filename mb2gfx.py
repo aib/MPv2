@@ -12,7 +12,7 @@ class Scene(gfx.Scene):
 	def do_init(self, size):
 		GL.glEnable(GL.GL_DEPTH_TEST)
 
-		self.projection = gfx.get_perspective_projection(math.tau/8, size, (.1, 100.))
+		self.projection = gfx.perspective_projection_matrix(math.tau/8, size, (.1, 100.))
 
 		self.program = gfx.create_program('scene.vert', 'scene.frag')
 
