@@ -75,8 +75,7 @@ def create_program(vertfile, fragfile):
 
 	return program
 
-def get_perspective_projection(size, zrange):
-	fovy = math.tau / 4
+def get_perspective_projection(fovy, size, zrange):
 	aspect = size[0] / size[1]
 	zNear, zFar = zrange
 	f = 1 / math.tan(fovy / 2)

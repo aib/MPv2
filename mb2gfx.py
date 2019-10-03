@@ -15,7 +15,7 @@ class Scene(gfx.Scene):
 		self.program = gfx.create_program('scene.vert', 'scene.frag')
 
 		self.view[3][2] = -5
-		self.projection = gfx.get_perspective_projection(size, (.1, 100.))
+		self.projection = gfx.get_perspective_projection(math.tau/8, size, (.1, 100.))
 
 		self.vao = gfx.VAO()
 
