@@ -5,6 +5,46 @@ import numpy as np
 from OpenGL import GL
 from OpenGL.GL import shaders
 
+class VAO:
+	def __init__(self):
+		self.id = GL.glGenVertexArrays(1)
+
+	def __enter__(self):
+		GL.glBindVertexArray(self.id)
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		GL.glBindVertexArray(0)
+
+class VBO:
+	@classmethod
+	def create(cls, data, hint=GL.GL_STATIC_DRAW):
+		vbo = cls()
+		with vbo:
+			vbo.set_data(data, hint)
+		return vbo
+
+	def __init__(self):
+		self.id = GL.glGenBuffers(1)
+		self.type = GL.GL_ARRAY_BUFFER
+		self.query_type = GL.GL_ARRAY_BUFFER_BINDING
+		self.data = None
+		self.prev_binding = None
+
+	def set_data(self, data, hint=GL.GL_STATIC_DRAW):
+		self.data = data
+		GL.glBufferData(self.type, self.data, GL.GL_STATIC_DRAW);
+
+	def set_attrib_pointer(self, index):
+		GL.glVertexAttribPointer(index, self.data.shape[1], GL.GL_FLOAT, False, self.data.shape[1]*self.data.itemsize, None)
+
+	def __enter__(self):
+		self.prev_binding = GL.glGetInteger(self.query_type)
+		GL.glBindBuffer(self.type, self.id)
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		GL.glBindBuffer(self.type, self.prev_binding)
+		self.prev_binding = None
+
 def create_program(vertfile, fragfile):
 	def _compile_shader(shaderSource, shaderType):
 		shader = GL.glCreateShader(shaderType)
