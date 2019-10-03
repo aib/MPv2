@@ -29,5 +29,9 @@ class Scene(gfx.Scene):
 		GL.glUseProgram(self.program)
 		self.set_uniforms(elapsed)
 
-		with self.vao:
-			GL.glDrawArrays(GL.GL_TRIANGLES, 0, 9)
+		draw_vao(self.vao)
+
+def draw_vao(vao):
+	main_vbo = vao.attribs[0]
+	with vao:
+		GL.glDrawArrays(GL.GL_TRIANGLES, 0, np.prod(main_vbo.data.shape[:-1]))
