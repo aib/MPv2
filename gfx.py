@@ -96,6 +96,19 @@ class Scene:
 		self.view = np.eye(4)
 		self.projection = np.eye(4)
 		self.start_time = time.monotonic()
+		self.last_render_time = self.start_time
+		self.do_init(size)
+
+	def do_init(self):
+		raise NotImplementedError()
+
+	def do_render(self, elapsed, dt):
+		raise NotImplementedError()
+
+	def render(self):
+		now = time.monotonic()
+		self.do_render(now - self.start_time, now - self.last_render_time)
+		self.last_render_time = now
 
 	def set_uniforms(self, elapsed):
 		ul = GL.glGetUniformLocation(self.program, 'u_model')

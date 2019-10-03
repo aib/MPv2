@@ -9,9 +9,7 @@ from OpenGL.GL import shaders
 import gfx
 
 class Scene(gfx.Scene):
-	def __init__(self, size):
-		super().__init__(size)
-
+	def do_init(self, size):
 		self.vert = gfx.VBO.create(np.array([[0, 1, 0],    [-1,-1, 0],     [1,-1, 0]],      'f'))
 		self.cols = gfx.VBO.create(np.array([[1, 0, 0, 1], [0, 1, 0, 0.5], [0, 0, 1, 0.1]], 'f'))
 
@@ -26,10 +24,7 @@ class Scene(gfx.Scene):
 			self.vao.set_vbo_as_attrib(0, self.vert)
 			self.vao.set_vbo_as_attrib(1, self.cols)
 
-
-	def render(self):
-		elapsed = time.monotonic() - self.start_time
-
+	def do_render(self, elapsed, dt):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
 		shaders.glUseProgram(self.program)
