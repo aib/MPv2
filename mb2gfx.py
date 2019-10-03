@@ -28,12 +28,12 @@ class Scene(gfx.Scene):
 
 
 	def render(self):
-		now = time.monotonic() - self.start_time
+		elapsed = time.monotonic() - self.start_time
 
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
 		shaders.glUseProgram(self.program)
-		self.set_uniforms(now)
+		self.set_uniforms(elapsed)
 
 		with self.vao:
 			GL.glDrawArrays(GL.GL_TRIANGLES, 0, 9)

@@ -97,7 +97,7 @@ class Scene:
 		self.projection = np.eye(4)
 		self.start_time = time.monotonic()
 
-	def set_uniforms(self, now):
+	def set_uniforms(self, elapsed):
 		ul = GL.glGetUniformLocation(self.program, 'u_model')
 		if ul != -1:
 			GL.glUniformMatrix4fv(ul, 1, GL.GL_FALSE, self.model)
@@ -112,4 +112,4 @@ class Scene:
 
 		ul = GL.glGetUniformLocation(self.program, 'u_time')
 		if ul != -1:
-			GL.glUniform1f(ul, now)
+			GL.glUniform1f(ul, elapsed)
