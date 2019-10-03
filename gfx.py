@@ -19,6 +19,9 @@ class Program:
 		else:
 			utype(location, *params)
 
+	def set_texture(self, name, texture):
+		self.set_uniform(name, GL.glUniform1i, texture.number)
+
 	def _compile_program(self, vert_shader, frag_shader):
 		vs = self._compile_shader(vert_shader, GL.GL_VERTEX_SHADER)
 		fs = self._compile_shader(frag_shader, GL.GL_FRAGMENT_SHADER)
