@@ -9,6 +9,11 @@ class VAO:
 	def __init__(self):
 		self.id = GL.glGenVertexArrays(1)
 
+	def set_vbo_as_attrib(self, index, vbo):
+		GL.glEnableVertexAttribArray(index)
+		with vbo:
+			vbo.set_attrib_pointer(index)
+
 	def __enter__(self):
 		GL.glBindVertexArray(self.id)
 
