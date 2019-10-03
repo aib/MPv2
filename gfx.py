@@ -89,6 +89,12 @@ def get_perspective_projection(fovy, size, zrange):
 
 	return mat
 
+def scaling_matrix(s):
+	return np.array([[s, 0, 0, 0], [0, s, 0, 0], [0, 0, s, 0], [0, 0, 0, 1]])
+
+def translation_matrix(tx, ty, tz):
+	return np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [tx, ty, tz, 1]])
+
 # https://en.wikipedia.org/wiki/Euler%E2%80%93Rodrigues_formula
 def rotation_matrix(axis, theta):
 	axis = np.asarray(axis)
