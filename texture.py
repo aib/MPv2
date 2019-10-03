@@ -10,10 +10,13 @@ class Texture2D:
 		self.id = GL.glGenTextures(1)
 		self.number = _nextTextureUnit
 		_nextTextureUnit += 1
-		self.prev_active_texture = None
-		self.prev_binding = None
+		self._load()
 
-	def load(self, image_file):
+	def _load(self):
+		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
+		GL.glBindTexture(GL.GL_TEXTURE_2D, self.id)
+
+	def load_image(self, image_file):
 		with Image.open(image_file) as img:
 			arr = np.asarray(img)
 
@@ -29,13 +32,7 @@ class Texture2D:
 			GL.glGenerateMipmap(GL.GL_TEXTURE_2D);
 
 	def __enter__(self):
-		self.prev_active_texture = GL.glGetInteger(GL.GL_ACTIVE_TEXTURE)
-		self.prev_binding = GL.glGetInteger(GL.GL_TEXTURE_BINDING_2D)
-		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
-		GL.glBindTexture(GL.GL_TEXTURE_2D, self.id)
+		self._load()
 
 	def __exit__(self, exc_type, exc_value, traceback):
-		GL.glActiveTexture(self.prev_active_texture)
-		GL.glBindTexture(GL.GL_TEXTURE_2D, self.prev_binding)
-		self.prev_number = None
-		self.prev_binding = None
+		pass
