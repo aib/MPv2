@@ -14,6 +14,9 @@ def get_triangle_normal(p0, p1, p2):
 def project(target, source):
 	return np.dot(source, normalized(target))
 
+def reflect(normal, incident):
+	return incident - (2 * np.dot(incident, normal) * normal)
+
 def normalized(v):
 	norm = np.linalg.norm(v)
 	if norm == 0: return v
