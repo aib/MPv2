@@ -11,13 +11,17 @@ class Program:
 
 		self._compile_program(vert_shader, frag_shader)
 
-	def set_uniform(self, name, utype, *params, silent=False):
-		location = GL.glGetUniformLocation(self.id, name)
+	@staticmethod
+	def set_program_uniform(program_id, name, utype, *params, silent=False):
+		location = GL.glGetUniformLocation(program_id, name)
 		if location == -1:
 			if not silent:
 				raise RuntimeError("Invalid uniform \"%s\"" % (name,))
 		else:
 			utype(location, *params)
+
+	def set_uniform(self, name, utype, *params, silent=False):
+		self.set_program_uniform(self.id, name, utype, *params, silent=silent)
 
 	def set_texture(self, name, texture):
 		self.set_uniform(name, GL.glUniform1i, texture.number)
