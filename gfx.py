@@ -102,6 +102,13 @@ class VBO:
 	def __exit__(self, exc_type, exc_value, traceback):
 		GL.glBindBuffer(self.type, 0)
 
+def get_barycentric_coordinates(vertices):
+	if len(vertices.shape) != 3 or vertices.shape[1] != 3 or vertices.shape[2] != 3:
+		raise ValueError("Invalid shape %s" % (vertices.shape,))
+
+	bary_tri = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+	return np.tile(bary_tri, (vertices.shape[0], 1, 1))
+
 def perspective_projection_matrix(fovy, size, zrange):
 	aspect = size[0] / size[1]
 	zNear, zFar = zrange
