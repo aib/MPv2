@@ -21,6 +21,7 @@ def main():
 			elif ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE:
 				running = False
 
+		scene.update()
 		scene.render()
 		pygame.display.flip()
 		pygame.display.set_caption("MusicBalls v2 - %.2f FPS" % (clock.get_fps(),))

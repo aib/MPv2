@@ -140,19 +140,28 @@ class Scene:
 		self.view = np.eye(4)
 		self.projection = np.eye(4)
 		self.start_time = time.monotonic()
-		self.last_render_time = self.start_time
+		self.elapsed = 0
+		self.last_update_time = self.start_time
 		self.do_init(size)
 
 	def do_init(self):
 		raise NotImplementedError()
 
-	def do_render(self, elapsed, dt):
+	def do_update(self, dt):
 		raise NotImplementedError()
 
-	def render(self):
+	def do_render(self):
+		raise NotImplementedError()
+
+	def update(self):
 		now = time.monotonic()
-		self.do_render(now - self.start_time, now - self.last_render_time)
-		self.last_render_time = now
+		self.elapsed = now - self.start_time
+		dt = now - self.last_update_time
+		self.do_update(dt)
+		self.last_update_time = now
+
+	def render(self):
+		self.do_render()
 
 	def set_uniforms(self, elapsed):
 		program_id = GL.glGetInteger(GL.GL_CURRENT_PROGRAM)

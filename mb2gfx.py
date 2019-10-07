@@ -31,14 +31,15 @@ class Scene(gfx.Scene):
 			self.vao.set_vbo_as_attrib(0, vb)
 			self.vao.set_vbo_as_attrib(1, vn)
 
-	def do_render(self, elapsed, dt):
-		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
-
+	def do_update(self, dt):
 		self.model = np.eye(4, dtype=np.float32) @ gfx.scaling_matrix(3)
 		self.view = (np.eye(4, dtype=np.float32)
-			@ gfx.rotation_matrix([0, 1, 0], elapsed/2)
+			@ gfx.rotation_matrix([0, 1, 0], self.elapsed/2)
 			@ gfx.translation_matrix(0, 0, -20)
 		)
+
+	def do_render(self):
+		GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
 		with self.program:
 			self.set_uniforms(elapsed)
