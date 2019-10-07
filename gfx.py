@@ -163,7 +163,7 @@ class Scene:
 	def render(self):
 		self.do_render()
 
-	def set_uniforms(self, elapsed):
+	def update_uniforms(self):
 		program_id = GL.glGetInteger(GL.GL_CURRENT_PROGRAM)
 		if program_id == 0:
 			raise RuntimeError("No active program")
@@ -171,4 +171,4 @@ class Scene:
 		Program.set_program_uniform(program_id, 'u_model',      GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.model,      silent=True)
 		Program.set_program_uniform(program_id, 'u_view',       GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.view,       silent=True)
 		Program.set_program_uniform(program_id, 'u_projection', GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.projection, silent=True)
-		Program.set_program_uniform(program_id, 'u_time', GL.glUniform1f, elapsed, silent=True)
+		Program.set_program_uniform(program_id, 'u_time', GL.glUniform1f, self.elapsed, silent=True)
