@@ -41,5 +41,5 @@ class Scene(gfx.Scene):
 		)
 
 		with self.program:
-			self.set_uniforms(self.program, elapsed)
+			self.set_uniforms(elapsed)
 			self.vao.draw_triangles()

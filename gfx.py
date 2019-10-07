@@ -154,8 +154,12 @@ class Scene:
 		self.do_render(now - self.start_time, now - self.last_render_time)
 		self.last_render_time = now
 
-	def set_uniforms(self, program, elapsed):
-		program.set_uniform('u_model',      GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.model,      silent=True)
-		program.set_uniform('u_view',       GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.view,       silent=True)
-		program.set_uniform('u_projection', GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.projection, silent=True)
-		program.set_uniform('u_time', GL.glUniform1f, elapsed, silent=True)
+	def set_uniforms(self, elapsed):
+		program_id = GL.glGetInteger(GL.GL_CURRENT_PROGRAM)
+		if program_id == 0:
+			raise RuntimeError("No active program")
+
+		Program.set_program_uniform(program_id, 'u_model',      GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.model,      silent=True)
+		Program.set_program_uniform(program_id, 'u_view',       GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.view,       silent=True)
+		Program.set_program_uniform(program_id, 'u_projection', GL.glUniformMatrix4fv, 1, GL.GL_FALSE, self.projection, silent=True)
+		Program.set_program_uniform(program_id, 'u_time', GL.glUniform1f, elapsed, silent=True)
