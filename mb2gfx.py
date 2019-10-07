@@ -42,9 +42,4 @@ class Scene(gfx.Scene):
 
 		with self.program:
 			self.set_uniforms(self.program, elapsed)
-			draw_vao(self.vao)
-
-def draw_vao(vao):
-	main_vbo = vao.attribs[0]
-	with vao:
-		GL.glDrawArrays(GL.GL_TRIANGLES, 0, np.prod(main_vbo.data.shape[:-1]))
+			self.vao.draw_triangles()

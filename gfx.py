@@ -61,6 +61,10 @@ class VAO:
 			vbo.set_attrib_pointer(index)
 		self.attribs[index] = vbo
 
+	def draw_triangles(self, vbo_index=0):
+		with self:
+			GL.glDrawArrays(GL.GL_TRIANGLES, 0, np.prod(self.attribs[vbo_index].data.shape[:-1]))
+
 	def __enter__(self):
 		GL.glBindVertexArray(self.id)
 
