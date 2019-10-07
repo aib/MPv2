@@ -11,6 +11,9 @@ def get_intersection_time(p0, p1, p2, bpos, bvel, brad=0):
 def get_triangle_normal(p0, p1, p2):
 	return normalized(np.cross(p2 - p0, p1 - p0))
 
+def angle_between(v0, v1):
+	return np.arccos(np.dot(v0, v1) / (np.linalg.norm(v0) * np.linalg.norm(v1)))
+
 def project(target, source):
 	return np.dot(source, normalized(target))
 
