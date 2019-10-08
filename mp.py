@@ -11,6 +11,9 @@ def asarray(v):
 def normalize(v):
 	return v / np.linalg.norm(v)
 
+def angle_between(v0, v1):
+	return np.arccos(np.dot(v0, v1) / (np.linalg.norm(v0) * np.linalg.norm(v1)))
+
 def identityM():
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 
