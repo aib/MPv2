@@ -11,6 +11,9 @@ def asarray(v):
 def normalize(v):
 	return v / np.linalg.norm(v)
 
+def identityM():
+	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+
 def translateM(v):
 	v = asarray(v)
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [v[0], v[1], v[2], 1]])
