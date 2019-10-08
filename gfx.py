@@ -25,6 +25,13 @@ def set_uniform_generic(program_id, name, utype, *uparams):
 		raise UniformNotFound(name)
 	utype(location, *uparams)
 
+def set_uniform(program_id, name, value):
+	value = mp.asarray(value)
+	if value.shape == (4, 4):
+		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_FALSE, value)
+	else:
+		raise NotImplementedError("I don't know how to process the shape %s" % (value.shape,))
+
 class Program:
 	def __init__(self, vert_shader, frag_shader):
 		self.id = GL.glCreateProgram()
@@ -32,6 +39,9 @@ class Program:
 
 	def set_uniform_generic(self, name, utype, *uparams):
 		set_uniform_generic(self.id, name, utype, *uparams)
+
+	def set_uniform(self, name, value):
+		set_uniform(self.id, name, value)
 
 	def activate(self):
 		GL.glUseProgram(self.id)
