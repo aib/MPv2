@@ -47,7 +47,7 @@ void main() {
 class Triangle:
 	def __init__(self, vertices, texcoords=None, wires=None):
 		if texcoords is None: texcoords = [[0, 0], [0, 1], [1, 0]]
-		if wires is None: wires = [[1, 1, 1]] * 3
+		if wires is None: wires = [1, 1, 1]
 
 		self.vertices = vertices
 		self.texcoords = texcoords
@@ -57,7 +57,7 @@ class Triangle:
 		self.vertices_vbo = gfx.VBO.create_with_data(self.vertices)
 		self.tex_vbo = gfx.VBO.create_with_data(self.texcoords)
 		self.bary_vbo = gfx.VBO.create_with_data([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-		self.wires_vbo = gfx.VBO.create_with_data(self.wires)
+		self.wires_vbo = gfx.VBO.create_with_data([self.wires, self.wires, self.wires])
 
 		with self.vao:
 			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
