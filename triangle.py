@@ -27,6 +27,8 @@ void main() {
 TRIANGLE_FS = """
 #version 130
 
+uniform sampler2D t_face;
+
 in vec3 vf_bary;
 in vec3 vf_wires;
 in vec2 vf_texUV;
@@ -38,8 +40,8 @@ void main() {
 	float edge_distance = min(wire_bary.x, min(wire_bary.y, wire_bary.z));
 	float edge = 1 - step(.05, edge_distance);
 
-	vec4 faceColor = vec4(0, 1, 0, .2);
-	vec4 wireColor = vec4(0, 1, 0, .8);
+	vec4 faceColor = vec4(texture2D(t_face, vf_texUV).rgb, .4);
+	vec4 wireColor = vec4(1, 0, 0, .8);
 	fragColor = mix(faceColor, wireColor, edge);
 }
 """
