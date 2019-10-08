@@ -35,8 +35,8 @@ def perspectiveM(fovy, aspect, zNear, zFar):
 def lookatM(eye, center, up):
 	eye, center, up = asarray(eye), asarray(center), asarray(up)
 	f = normalize(center - eye)
-	s = np.cross(f, normalize(up))
-	u = np.cross(normalize(s), f)
+	s = normalize(np.cross(f, up))
+	u = np.cross(s, f)
 	M = array([
 		[s[0], u[0], -f[0], 0],
 		[s[1], u[1], -f[1], 0],
