@@ -61,6 +61,12 @@ class Program:
 
 		return shader
 
+	def __enter__(self):
+		self.activate()
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		pass
+
 class VAO:
 	def __init__(self):
 		self.id = GL.glGenVertexArrays(1)
