@@ -15,6 +15,9 @@ def translateM(v):
 	v = asarray(v)
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [v[0], v[1], v[2], 1]])
 
+def scaleM(s):
+	return array([[s, 0, 0, 0], [0, s, 0, 0], [0, 0, s, 0], [0, 0, 0, 1]])
+
 def perspectiveM(fovy, aspect, zNear, zFar):
 	f = 1 / np.tan(fovy / 2)
 	M = array([[f/aspect, 0,                    0,                 0],
