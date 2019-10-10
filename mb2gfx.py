@@ -10,6 +10,7 @@ class Scene:
 	def __init__(self, size):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
+		self.cam_pos = { 'theta': math.radians(41), 'phi': math.radians(90 - 15), 'r': 10 }
 
 		GL.glClearColor(.1, 0, .1, 1)
 
@@ -21,8 +22,21 @@ class Scene:
 		dt = now - self.last_update_time
 		self.last_update_time = now
 
+		if self.keys['w']: self.cam_pos['phi']   -= math.tau/2 * dt
+		if self.keys['a']: self.cam_pos['theta'] += math.tau/2 * dt
+		if self.keys['s']: self.cam_pos['phi']   += math.tau/2 * dt
+		if self.keys['d']: self.cam_pos['theta'] -= math.tau/2 * dt
+		if self.keys['q']: self.cam_pos['r']     += 2 * dt
+		if self.keys['e']: self.cam_pos['r']     -= 2 * dt
+
+		cam_pos_cartesian = [
+			self.cam_pos['r'] * math.sin(self.cam_pos['phi']) * math.cos(self.cam_pos['theta']),
+			self.cam_pos['r'] * math.cos(self.cam_pos['phi']),
+			self.cam_pos['r'] * math.sin(self.cam_pos['phi']) * math.sin(self.cam_pos['theta']),
+		]
+
 		self.model = mp.identityM()
-		self.view = mp.lookatM([-5, 2, 10], [0, 0, 0], [0, 1, 0])
+		self.view = mp.lookatM(cam_pos_cartesian, [0, 0, 0], [0, 1, 0])
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
 	def render(self):
