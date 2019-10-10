@@ -46,8 +46,10 @@ void main() {
 """
 
 class Shape:
-	def __init__(self):
+	def __init__(self, scene):
+		self.scene = scene
 		self.triangles = []
+		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
 	def load_file(self, filename):
 		with open(filename, 'r') as f:
@@ -68,6 +70,12 @@ class Shape:
 
 	def get_wire(self, i, v, t, n):
 		return None
+
+	def update(self, dt):
+		with self.program:
+			self.program.set_uniform('u_model', self.scene.model)
+			self.program.set_uniform('u_view', self.scene.view)
+			self.program.set_uniform('u_projection', self.scene.projection)
 
 class Triangle:
 	def __init__(self, vertices, texcoords=None, wires=None):
