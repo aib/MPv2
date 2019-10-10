@@ -21,6 +21,12 @@ def main():
 			elif ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE:
 				running = False
 
+			elif ev.type == pygame.KEYDOWN:
+				scene.key_down(pygame.key.name(ev.key))
+
+			elif ev.type == pygame.KEYUP:
+				scene.key_up(pygame.key.name(ev.key))
+
 		scene.update()
 		scene.render()
 		pygame.display.flip()

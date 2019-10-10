@@ -1,9 +1,12 @@
+import collections
 import time
 
 from OpenGL import GL
 
 class Scene:
 	def __init__(self, size):
+		self.keys = collections.defaultdict(lambda: False)
+
 		GL.glClearColor(.1, 0, .1, 1)
 
 		now = time.monotonic()
@@ -16,3 +19,9 @@ class Scene:
 
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+	def key_down(self, key):
+		self.keys[key] = True
+
+	def key_up(self, key):
+		self.keys[key] = False
