@@ -5,6 +5,7 @@ import time
 from OpenGL import GL
 
 import mp
+import shapes
 
 class Scene:
 	def __init__(self, size):
@@ -13,6 +14,10 @@ class Scene:
 		self.cam_pos = { 'theta': math.radians(41), 'phi': math.radians(90 - 15), 'r': 10 }
 
 		GL.glClearColor(.1, 0, .1, 1)
+		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+		GL.glEnable(GL.GL_BLEND)
+
+		self.test_shape = shapes.Hexahedron(self)
 
 		now = time.monotonic()
 		self.last_update_time = now
@@ -39,8 +44,13 @@ class Scene:
 		self.view = mp.lookatM(cam_pos_cartesian, [0, 0, 0], [0, 1, 0])
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
+		self.test_shape.update(dt)
+
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+		for f in self.test_shape.faces:
+			f.render()
 
 	def key_down(self, key):
 		self.keys[key] = True
