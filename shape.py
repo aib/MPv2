@@ -80,7 +80,7 @@ class Shape:
 class Triangle:
 	def __init__(self, vertices, texcoords=None, wires=None):
 		if texcoords is None: texcoords = [[0, 0], [0, 1], [1, 0]]
-		if wires is None: wires = [1, 1, 1]
+		if wires is None: wires = [True, True, True]
 
 		self.vertices = vertices
 		self.texcoords = texcoords
