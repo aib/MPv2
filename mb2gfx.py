@@ -11,7 +11,7 @@ class Scene:
 	def __init__(self, size):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
-		self.cam_pos = { 'theta': math.radians(41), 'phi': math.radians(90 - 15), 'r': 10 }
+		self.camera = Camera([math.radians(41), math.radians(90 - 15), 10], [math.tau/2, math.tau/2, 2])
 
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
@@ -27,21 +27,15 @@ class Scene:
 		dt = now - self.last_update_time
 		self.last_update_time = now
 
-		if self.keys['w']: self.cam_pos['phi']   -= math.tau/2 * dt
-		if self.keys['a']: self.cam_pos['theta'] += math.tau/2 * dt
-		if self.keys['s']: self.cam_pos['phi']   += math.tau/2 * dt
-		if self.keys['d']: self.cam_pos['theta'] -= math.tau/2 * dt
-		if self.keys['q']: self.cam_pos['r']     += 2 * dt
-		if self.keys['e']: self.cam_pos['r']     -= 2 * dt
-
-		cam_pos_cartesian = [
-			self.cam_pos['r'] * math.sin(self.cam_pos['phi']) * math.cos(self.cam_pos['theta']),
-			self.cam_pos['r'] * math.cos(self.cam_pos['phi']),
-			self.cam_pos['r'] * math.sin(self.cam_pos['phi']) * math.sin(self.cam_pos['theta']),
-		]
+		if self.keys['w']: self.camera.move([ 0, -dt, 0 ])
+		if self.keys['a']: self.camera.move([+dt, 0,  0 ])
+		if self.keys['s']: self.camera.move([ 0, +dt, 0 ])
+		if self.keys['d']: self.camera.move([-dt, 0,  0 ])
+		if self.keys['q']: self.camera.move([ 0,  0, +dt])
+		if self.keys['e']: self.camera.move([ 0,  0, -dt])
 
 		self.model = mp.identityM()
-		self.view = mp.lookatM(cam_pos_cartesian, [0, 0, 0], [0, 1, 0])
+		self.view = mp.lookatM(mp.spherical_to_cartesian(self.camera.pos), [0, 0, 0], [0, 1, 0])
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
 		self.test_shape.update(dt)
@@ -57,3 +51,11 @@ class Scene:
 
 	def key_up(self, key):
 		self.keys[key] = False
+
+class Camera:
+	def __init__(self, pos, speed):
+		self.pos = mp.array(pos)
+		self.speed = mp.array(speed)
+
+	def move(self, movedir):
+		self.pos += self.speed * mp.asarray(movedir)
