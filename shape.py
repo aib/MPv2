@@ -48,34 +48,41 @@ void main() {
 class Shape:
 	def __init__(self, scene):
 		self.scene = scene
-		self.triangles = []
+		self.faces = []
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
 	def load_file(self, filename):
 		with open(filename, 'r') as f:
 			vertices, texcoords, normals = objreader.read_obj_np(f)
 
-		wires = self.get_wires(vertices, texcoords, normals)
-
-		for i, vt in enumerate(vertices):
-			tt, nt, wt = texcoords[i], normals[i], wires[i]
-			tri = Triangle(vt, tt, wt)
-			self.triangles.append(tri)
-
-	def get_wires(self, vertices, texcoords, normals):
-		wires = []
-		for i, v in enumerate(vertices):
-			wires.append(self.get_wire(i, v, texcoords[i], normals[i]))
-		return wires
-
-	def get_wire(self, i, v, t, n):
-		return None
+		for i, vf in enumerate(vertices):
+			tf, nf = texcoords[i], normals[i]
+			face = Face(self, i, vf, tf, nf)
+			self.faces.append(face)
 
 	def update(self, dt):
 		with self.program:
 			self.program.set_uniform('u_model', self.scene.model)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
+
+class Face:
+	def __init__(self, shape, index, vertices, texcoords, normals):
+		self.shape = shape
+		self.triangles = []
+
+		for i in range(1, len(vertices)-1):
+			i0, i1, i2 = 0, i, i+1
+			triangle = Triangle(vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
+			self.triangles.append(triangle)
+
+	def update(self, dt):
+		pass
+
+	def render(self):
+		with self.shape.program:
+			for t in self.triangles:
+				t.render()
 
 class Triangle:
 	def __init__(self, vertices, texcoords=None, wires=None):
@@ -97,9 +104,6 @@ class Triangle:
 			self.vao.set_vbo_as_attrib(1, self.bary_vbo)
 			self.vao.set_vbo_as_attrib(2, self.wires_vbo)
 			self.vao.set_vbo_as_attrib(3, self.tex_vbo)
-
-	def update(self, dt):
-		pass
 
 	def render(self):
 		self.vao.draw_triangles()
