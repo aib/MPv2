@@ -44,3 +44,10 @@ def lookatM(eye, center, up):
 		[  0,    0,     0,  1]
 	])
 	return translateM(-eye) @ M
+
+def spherical_to_cartesian(p):
+	return array([
+		p[2] * np.sin(p[1]) * np.cos(p[0]),
+		p[2] * np.cos(p[1]),
+		p[2] * np.sin(p[1]) * np.sin(p[0]),
+	])
