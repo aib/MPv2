@@ -9,6 +9,7 @@ import ball
 import camera
 import mp
 import shapes
+import texture
 
 class Scene:
 	def __init__(self, size):
@@ -20,6 +21,7 @@ class Scene:
 			target=[0, 0, 0],
 			up=[0, 1, 0]
 		)
+		self.next_free_texture = 1
 
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
@@ -63,3 +65,8 @@ class Scene:
 
 	def key_up(self, key):
 		self.keys[key] = False
+
+	def create_texture(self, image_file):
+		number = self.next_free_texture
+		self.next_free_texture += 1
+		return texture.Texture2D.create_with_image(number, image_file)
