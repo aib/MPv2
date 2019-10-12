@@ -17,6 +17,14 @@ def angle_between(v0, v1):
 def identityM():
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 
+def from3vecM(vx, vy, vz):
+	return array([
+		np.append(vx, 0),
+		np.append(vy, 0),
+		np.append(vz, 0),
+		[0, 0, 0, 1]
+	])
+
 def translateM(v):
 	v = asarray(v)
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [v[0], v[1], v[2], 1]])
