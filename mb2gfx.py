@@ -2,6 +2,7 @@ import collections
 import math
 import time
 
+import numpy as np
 from OpenGL import GL
 
 import mp
@@ -11,7 +12,12 @@ class Scene:
 	def __init__(self, size):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
-		self.camera = Camera([math.radians(41), math.radians(90 - 15), 10], [math.tau/2, math.tau/2, 2])
+		self.camera = SphericalCamera(
+			pos=[math.radians(41), math.radians(90 - 15), 10],
+			speed=[math.tau/2, math.tau/2, 2],
+			target=[0, 0, 0],
+			up=[0, 1, 0]
+		)
 
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
@@ -35,7 +41,7 @@ class Scene:
 		if self.keys['e']: self.camera.move([ 0,  0, -dt])
 
 		self.model = mp.identityM()
-		self.view = mp.lookatM(mp.spherical_to_cartesian(self.camera.pos), [0, 0, 0], [0, 1, 0])
+		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
 		self.test_shape.update(dt)
@@ -52,10 +58,27 @@ class Scene:
 	def key_up(self, key):
 		self.keys[key] = False
 
-class Camera:
-	def __init__(self, pos, speed):
+class SphericalCamera:
+	def __init__(self, pos, speed, target, up):
 		self.pos = mp.array(pos)
 		self.speed = mp.array(speed)
+		self.target = mp.array(target)
+		self.up = mp.array(up)
 
 	def move(self, movedir):
 		self.pos += self.speed * mp.asarray(movedir)
+
+	def get_pos(self):
+		return mp.spherical_to_cartesian(self.pos)
+
+	def get_forward(self):
+		return mp.normalize(self.target - self.get_pos())
+
+	def get_right(self):
+		return mp.normalize(np.cross(self.get_forward(), self.up))
+
+	def get_up(self):
+		return mp.normalize(np.cross(self.get_right(), self.get_forward()))
+
+	def get_view_matrix(self):
+		return mp.lookatM(self.get_pos(), self.target, self.get_up())
