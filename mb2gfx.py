@@ -2,9 +2,9 @@ import collections
 import math
 import time
 
-import numpy as np
 from OpenGL import GL
 
+import camera
 import mp
 import shapes
 
@@ -12,7 +12,7 @@ class Scene:
 	def __init__(self, size):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
-		self.camera = SphericalCamera(
+		self.camera = camera.SphericalCamera(
 			pos=[math.radians(41), math.radians(90 - 15), 10],
 			speed=[math.tau/2, math.tau/2, 2],
 			target=[0, 0, 0],
@@ -57,28 +57,3 @@ class Scene:
 
 	def key_up(self, key):
 		self.keys[key] = False
-
-class SphericalCamera:
-	def __init__(self, pos, speed, target, up):
-		self.pos = mp.array(pos)
-		self.speed = mp.array(speed)
-		self.target = mp.array(target)
-		self.up = mp.array(up)
-
-	def move(self, movedir):
-		self.pos += self.speed * mp.asarray(movedir)
-
-	def get_pos(self):
-		return mp.spherical_to_cartesian(self.pos)
-
-	def get_forward(self):
-		return mp.normalize(self.target - self.get_pos())
-
-	def get_right(self):
-		return mp.normalize(np.cross(self.get_forward(), self.up))
-
-	def get_up(self):
-		return mp.normalize(np.cross(self.get_right(), self.get_forward()))
-
-	def get_view_matrix(self):
-		return mp.lookatM(self.get_pos(), self.target, self.get_up())
