@@ -1,4 +1,5 @@
 import collections
+import itertools as it
 import math
 import time
 
@@ -52,10 +53,10 @@ class Scene:
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-		for f in self.test_shape.faces:
-			f.render()
+		drawables = it.chain(self.test_shape.faces, [self.test_ball])
 
-		self.test_ball.render()
+		for drawable in sorted(drawables, key=lambda d: d.get_distance_to(self.camera.get_pos()), reverse=True):
+			drawable.render()
 
 	def key_down(self, key):
 		self.keys[key] = True
