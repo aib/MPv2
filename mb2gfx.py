@@ -4,6 +4,7 @@ import time
 
 from OpenGL import GL
 
+import ball
 import camera
 import mp
 import shapes
@@ -24,6 +25,7 @@ class Scene:
 		GL.glEnable(GL.GL_BLEND)
 
 		self.test_shape = shapes.Hexahedron(self)
+		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0])
 
 		now = time.monotonic()
 		self.last_update_time = now
@@ -44,6 +46,7 @@ class Scene:
 		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
+		self.test_ball.update(dt)
 		self.test_shape.update(dt)
 
 	def render(self):
@@ -51,6 +54,8 @@ class Scene:
 
 		for f in self.test_shape.faces:
 			f.render()
+
+		self.test_ball.render()
 
 	def key_down(self, key):
 		self.keys[key] = True
