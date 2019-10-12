@@ -4,16 +4,18 @@ from PIL import Image
 
 class Texture2D:
 	@classmethod
-	def create_with_image(cls, image_file):
-		tex = cls()
+	def create_with_image(cls, number, image_file):
+		tex = cls(number)
 		with tex:
 			tex.load_image(image_file)
 		return tex
 
-	def __init__(self):
+	def __init__(self, number):
+		self.number = number
 		self.id = GL.glGenTextures(1)
 
 	def activate(self):
+		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
 		GL.glBindTexture(GL.GL_TEXTURE_2D, self.id)
 
 	def load_image(self, image_file):
