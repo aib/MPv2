@@ -14,6 +14,30 @@ def normalize(v):
 def angle_between(v0, v1):
 	return np.arccos(np.dot(v0, v1) / (np.linalg.norm(v0) * np.linalg.norm(v1)))
 
+def project(target, source):
+	return np.dot(source, normalize(target))
+
+def triangle_normal(tri):
+	return normalize(np.cross(tri[2] - tri[0], tri[1] - tri[0]))
+
+def intersect_plane_sphere(tri, spos, svel, srad=0):
+	tn = triangle_normal(tri)
+	sclosest = spos - tn * srad
+	distproj = project(tn, sclosest - tri[0])
+
+	if distproj == 0: # on plane
+		return (0, sclosest)
+
+	velproj = project(tn, svel)
+
+	if velproj == 0: # moving parallel
+		return (np.inf * distproj, None)
+
+	intersection_time = distproj / -velproj
+	intersection_point = sclosest + svel * intersection_time
+
+	return (intersection_time, intersection_point)
+
 def identityM():
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
 
