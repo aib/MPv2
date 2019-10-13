@@ -34,3 +34,15 @@ class TestIntersectPlaneSphere(unittest.TestCase):
 		assert_close(t, 2)
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, .4, 0]), mp.array([0, -.1, 0]), .5)
 		assert_close(t, -1)
+
+class TestTriangleContains(unittest.TestCase):
+	def test_triangle_contains(self):
+		tri = mp.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]])
+		self.assertTrue(mp.triangle_contains_point(tri, mp.array([.1, .1, 0])))
+
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([1.5, 1.5, 0])))
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([.4, -9, 0])))
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([-5, .2, 0])))
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([-1, -1, 0])))
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([-.1, 9, 0])))
+		self.assertFalse(mp.triangle_contains_point(tri, mp.array([5, -.8, 0])))
