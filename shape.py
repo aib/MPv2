@@ -68,6 +68,9 @@ class Shape:
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
 
+		for f in self.faces:
+			f.update(dt)
+
 class Face:
 	def __init__(self, shape, index, vertices, texcoords, normals):
 		self.shape = shape
