@@ -60,6 +60,9 @@ class Scene:
 		for drawable in sorted(drawables, key=lambda d: d.get_distance_to(self.camera.get_pos()), reverse=True):
 			drawable.render()
 
+	def get_all_faces(self):
+		return self.test_shape.faces
+
 	def key_down(self, key):
 		self.keys[key] = True
 
