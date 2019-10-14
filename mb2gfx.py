@@ -1,8 +1,10 @@
 import collections
+import glob
 import itertools as it
 import math
 import time
 
+import numpy as np
 from OpenGL import GL
 
 import ball
@@ -28,8 +30,10 @@ class Scene:
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
 		GL.glEnable(GL.GL_BLEND)
 
+		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
+
 		self.test_shape = shapes.Hexahedron(self)
-		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0], 1)
+		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0], 1, np.random.choice(self.ball_textures))
 
 		now = time.monotonic()
 		self.last_update_time = now

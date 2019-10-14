@@ -24,12 +24,14 @@ void main() {
 BALL_FS = """
 #version 130
 
+uniform sampler2D t_ball;
+
 in vec2 vf_texUV;
 
 out vec4 fragColor;
 
 void main() {
-	fragColor = vec4(1, 1, 1, 1);
+	fragColor = texture2D(t_ball, vf_texUV);
 }
 """
 
@@ -43,11 +45,12 @@ class Ball:
 		[[0, 1], [1, 0], [1, 1]]
 	]
 
-	def __init__(self, scene, pos, vel, radius):
+	def __init__(self, scene, pos, vel, radius, texture):
 		self.scene = scene
 		self.pos = mp.array(pos)
 		self.vel = mp.array(vel)
 		self.radius = radius
+		self.texture = texture
 
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
@@ -58,6 +61,9 @@ class Ball:
 		with self.vao:
 			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
 			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
+
+		with self.program:
+			self.program.set_uniform('t_ball', self.texture.number)
 
 	def get_distance_to(self, target):
 		return np.linalg.norm(self.pos - target)
