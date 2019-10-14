@@ -49,7 +49,7 @@ def triangle_contains_point(tri, p):
 	edgeside0 = np.dot(p - tri[0], edgeperp0)
 	edgeside1 = np.dot(p - tri[1], edgeperp1)
 	edgeside2 = np.dot(p - tri[2], edgeperp2)
-	return all([edgeside0 > 0, edgeside1 > 0, edgeside2 > 0])
+	return all([edgeside0 >= 0, edgeside1 >= 0, edgeside2 >= 0])
 
 def identityM():
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
