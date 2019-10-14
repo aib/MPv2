@@ -71,12 +71,13 @@ class Shape:
 class Face:
 	def __init__(self, shape, index, vertices, texcoords, normals):
 		self.shape = shape
+		self.index = index
 		self.triangles = []
 		self.midpoint = sum(vertices) / len(vertices)
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
-			triangle = Triangle(vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
+			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
 	def get_distance_to(self, target):
@@ -91,10 +92,11 @@ class Face:
 				t.render()
 
 class Triangle:
-	def __init__(self, vertices, texcoords=None, wires=None):
+	def __init__(self, face, vertices, texcoords=None, wires=None):
 		if texcoords is None: texcoords = [[0, 0], [0, 1], [1, 0]]
 		if wires is None: wires = [True, True, True]
 
+		self.face = face
 		self.vertices = vertices
 		self.texcoords = texcoords
 		self.wires = wires
