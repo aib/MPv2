@@ -15,6 +15,7 @@ class Scene:
 	def __init__(self, size):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
+		self.midi = None
 		self.camera = camera.SphericalCamera(
 			pos=[math.radians(41), math.radians(90 - 15), 10],
 			speed=[math.tau/2, math.tau/2, 2],
@@ -68,6 +69,18 @@ class Scene:
 
 	def key_up(self, key):
 		self.keys[key] = False
+
+	def midi_connected(self, midi):
+		self.midi = midi
+
+	def note_down(self, channel, note, velocity):
+		pass
+
+	def note_up(self, channel, note, velocity):
+		pass
+
+	def note_play(self, channel, note, duration, svel, evel):
+		pass
 
 	def create_texture(self, image_file):
 		number = self.next_free_texture

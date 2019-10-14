@@ -1,6 +1,7 @@
 import pygame
 
 import mb2gfx
+import midi
 
 SIZE = (int(1920*.8), int(1080*.8))
 
@@ -9,6 +10,7 @@ def main():
 	pygame.display.set_caption("MusicBalls v2")
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
 	scene = mb2gfx.Scene(SIZE)
+	midi_handler = midi.MidiHandler(scene)
 
 	clock = pygame.time.Clock()
 
