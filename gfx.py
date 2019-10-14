@@ -27,7 +27,12 @@ def set_uniform_generic(program_id, name, utype, *uparams):
 
 def set_uniform(program_id, name, value):
 	value = mp.asarray(value)
-	if value.shape == (4, 4):
+	if value.shape == ():
+		if value.dtype.kind == 'f':
+			set_uniform_generic(program_id, name, GL.glUniform1f, value)
+		else:
+			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
+	elif value.shape == (4, 4):
 		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_FALSE, value)
 	else:
 		raise NotImplementedError("I don't know how to process the shape %s" % (value.shape,))
