@@ -1,0 +1,5 @@
+numpy
+Pillow
+pygame
+PyOpenGL
+python-rtmidi
