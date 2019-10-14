@@ -19,19 +19,20 @@ class UniformNotFound(Exception):
 	def __init__(self, uniform_name):
 		super().__init__("Uniform \"%s\" not found" % (uniform_name,))
 
-def set_uniform_generic(program_id, name, utype, *uparams):
+def set_uniform_generic(program_id, name, utype, *uparams, silent=False):
 	location = GL.glGetUniformLocation(program_id, name)
 	if location == -1:
-		raise UniformNotFound(name)
+		if not silent:
+			raise UniformNotFound(name)
 	utype(location, *uparams)
 
-def set_uniform(program_id, name, value):
+def set_uniform(program_id, name, value, silent=False):
 	value = np.asarray(value)
 	if value.shape == ():
 		if value.dtype.kind == 'f':
-			set_uniform_generic(program_id, name, GL.glUniform1f, value)
+			set_uniform_generic(program_id, name, GL.glUniform1f, value, silent=silent)
 		elif value.dtype.kind == 'i':
-			set_uniform_generic(program_id, name, GL.glUniform1i, value)
+			set_uniform_generic(program_id, name, GL.glUniform1i, value, silent=silent)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (3,):
@@ -40,7 +41,7 @@ def set_uniform(program_id, name, value):
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (4, 4):
-		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_FALSE, value)
+		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_FALSE, value, silent=silent)
 	else:
 		raise NotImplementedError("I don't know how to process the shape %s" % (value.shape,))
 
@@ -49,11 +50,11 @@ class Program:
 		self.id = GL.glCreateProgram()
 		self._compile_program(vert_shader, frag_shader)
 
-	def set_uniform_generic(self, name, utype, *uparams):
-		set_uniform_generic(self.id, name, utype, *uparams)
+	def set_uniform_generic(self, name, utype, *uparams, silent=False):
+		set_uniform_generic(self.id, name, utype, *uparams, silent=silent)
 
-	def set_uniform(self, name, value):
-		set_uniform(self.id, name, value)
+	def set_uniform(self, name, value, silent=False):
+		set_uniform(self.id, name, value, silent=silent)
 
 	def activate(self):
 		GL.glUseProgram(self.id)
