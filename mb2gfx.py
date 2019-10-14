@@ -28,7 +28,7 @@ class Scene:
 		GL.glEnable(GL.GL_BLEND)
 
 		self.test_shape = shapes.Hexahedron(self)
-		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0])
+		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0], 1)
 
 		now = time.monotonic()
 		self.last_update_time = now

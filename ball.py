@@ -43,10 +43,11 @@ class Ball:
 		[[0, 1], [1, 0], [1, 1]]
 	]
 
-	def __init__(self, scene, pos, vel):
+	def __init__(self, scene, pos, vel, radius):
 		self.scene = scene
 		self.pos = mp.array(pos)
 		self.vel = mp.array(vel)
+		self.radius = radius
 
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
@@ -73,7 +74,7 @@ class Ball:
 
 		while dt > 0:
 			triangles = filter(lambda t: t not in collision_blacklist, all_triangles)
-			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.vel, 0)), triangles)
+			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.vel, self.radius)), triangles)
 			intersections_now = filter(lambda c: np.isfinite(c.time) and c.time > 0 and c.time <= dt, intersections)
 			collisions = filter(lambda c: mp.triangle_contains_point(c.triangle.vertices, c.position), intersections_now)
 			collisions = list(collisions)
@@ -100,7 +101,7 @@ class Ball:
 			self.scene.camera.get_forward()
 		)
 
-		model = billboard_rot @ mp.translateM(self.pos)
+		model = mp.scaleM(self.radius) @ billboard_rot @ mp.translateM(self.pos)
 		with self.program:
 			self.program.set_uniform('u_model', model)
 			self.program.set_uniform('u_view', self.scene.view)
