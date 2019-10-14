@@ -20,6 +20,9 @@ def project(target, source):
 def triangle_normal(tri):
 	return normalize(np.cross(tri[2] - tri[0], tri[1] - tri[0]))
 
+def reflect(normal, incident):
+	return incident - (2 * np.dot(incident, normal) * normal)
+
 def intersect_plane_sphere(tri, spos, svel, srad=0):
 	tn = triangle_normal(tri)
 	sclosest = spos - tn * srad
