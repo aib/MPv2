@@ -61,8 +61,37 @@ class Ball:
 	def get_distance_to(self, target):
 		return np.linalg.norm(self.pos - target)
 
-	def update(self, dt):
+	def _update_physics(self, dt):
+		class Collision:
+			def __init__(self, triangle, time_position):
+				self.triangle = triangle
+				self.time = time_position[0]
+				self.position = time_position[1]
+
+		all_triangles = [t for face in self.scene.get_all_faces() for t in face.triangles]
+		collision_blacklist = []
+
+		while dt > 0:
+			triangles = filter(lambda t: t not in collision_blacklist, all_triangles)
+			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.vel, 0)), triangles)
+			intersections_now = filter(lambda c: np.isfinite(c.time) and c.time > 0 and c.time <= dt, intersections)
+			collisions = filter(lambda c: mp.triangle_contains_point(c.triangle.vertices, c.position), intersections_now)
+			collisions = list(collisions)
+
+			if len(collisions) == 0:
+				break
+
+			first_collision = sorted(collisions, key=lambda c: c.time)[0]
+			collision_blacklist.append(first_collision.triangle)
+
+			self.vel = mp.reflect(mp.triangle_normal(first_collision.triangle.vertices), self.vel)
+			self.pos += self.vel * first_collision.time
+			dt -= first_collision.time
+
 		self.pos += self.vel * dt
+
+	def update(self, dt):
+		self._update_physics(dt)
 
 		# Rotate so basis matches that of the eye
 		billboard_rot = mp.from3vecM(
