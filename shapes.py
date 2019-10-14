@@ -8,3 +8,4 @@ def _autoloading_shape(filename):
 	return _shape_constructor
 
 Hexahedron = _autoloading_shape('obj/hexahedron.obj')
+Icosahedron = _autoloading_shape('obj/icosahedron.obj')
