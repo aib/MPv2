@@ -49,8 +49,10 @@ void main() {
 """
 
 class Shape:
-	def __init__(self, scene):
+	def __init__(self, scene, radius):
 		self.scene = scene
+		self.radius = radius
+
 		self.faces = []
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
@@ -60,7 +62,7 @@ class Shape:
 
 		for i, vf in enumerate(vertices):
 			tf, nf = texcoords[i], normals[i]
-			face = Face(self, i, vf, tf, nf)
+			face = Face(self, i, vf * self.radius, tf, nf)
 			self.faces.append(face)
 
 	def update(self, dt):
