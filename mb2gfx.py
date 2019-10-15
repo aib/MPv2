@@ -2,6 +2,7 @@ import collections
 import glob
 import itertools as it
 import math
+import queue
 import time
 
 import numpy as np
@@ -18,6 +19,9 @@ class Scene:
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = None
+
+		self._deferred_calls = queue.Queue()
+
 		self.camera = camera.SphericalCamera(
 			self,
 			pos=[math.radians(41), math.radians(90 - 15), 10],
@@ -43,6 +47,13 @@ class Scene:
 		now = time.monotonic()
 		dt = now - self.last_update_time
 		self.last_update_time = now
+
+		while True:
+			try:
+				item = self._deferred_calls.get_nowait()
+				item[0](*item[1], **item[2])
+			except queue.Empty:
+				break
 
 		self.camera.update(dt)
 
@@ -89,3 +100,6 @@ class Scene:
 		number = self.next_free_texture
 		self.next_free_texture += 1
 		return texture.Texture2D.create_with_image(number, image_file)
+
+	def _defer(self, func, *args, **kwargs):
+		self._deferred_calls.put_nowait((func, args, kwargs))
