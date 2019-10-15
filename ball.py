@@ -45,13 +45,9 @@ class Ball:
 		[[0, 1], [1, 0], [1, 1]]
 	]
 
-	def __init__(self, scene, index, pos, vel, radius, texture):
+	def __init__(self, scene, index):
 		self.scene = scene
 		self.index = index
-		self.pos = mp.array(pos)
-		self.vel = mp.array(vel)
-		self.radius = radius
-		self.texture = texture
 
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
@@ -63,6 +59,11 @@ class Ball:
 			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
 			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
 
+	def init(self, pos, vel, radius, texture):
+		self.pos = mp.asarray(pos)
+		self.vel = mp.asarray(vel)
+		self.radius = radius
+		self.texture = texture
 		with self.program:
 			self.program.set_uniform('t_ball', self.texture.number)
 
