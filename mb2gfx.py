@@ -109,6 +109,9 @@ class Scene:
 	def note_play(self, channel, note, duration, svel, evel):
 		pass
 
+	def control_change(self, channel, control, value):
+		pass
+
 	def ball_face_collision(self, ball, face, pos):
 		pass
 

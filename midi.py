@@ -64,3 +64,7 @@ class MidiHandler:
 			if (channel, note) in self.notes:
 				stime, svel = self.notes[(channel, note)]
 				self.scene.note_play(channel, note, now - stime, svel, velocity)
+
+		elif event == 0xb0:
+			control, value = midimsg[1], midimsg[2]
+			self.scene.control_change(channel, control, value)
