@@ -2,7 +2,26 @@ import numpy as np
 
 import mp
 
-class SphericalCamera:
+class Camera:
+	def get_pos(self):
+		raise NotImplementedError()
+
+	def get_forward(self):
+		raise NotImplementedError()
+
+	def _get_temp_up(self):
+		raise NotImplementedError()
+
+	def get_right(self):
+		return mp.normalize(np.cross(self.get_forward(), self._get_temp_up()))
+
+	def get_up(self):
+		return mp.normalize(np.cross(self.get_right(), self.get_forward()))
+
+	def get_view_matrix(self):
+		return mp.lookatM(self.get_pos(), self.get_pos() + self.get_forward(), self.get_up())
+
+class SphericalCamera(Camera):
 	def __init__(self, scene, pos, speed, target, up):
 		self.scene = scene
 		self.pos = mp.array(pos)
@@ -27,12 +46,5 @@ class SphericalCamera:
 	def get_forward(self):
 		return mp.normalize(self.target - self.get_pos())
 
-	def get_right(self):
-		return mp.normalize(np.cross(self.get_forward(), self.up))
-
-	def get_up(self):
-		return mp.normalize(np.cross(self.get_right(), self.get_forward()))
-
-	def get_view_matrix(self):
-		return mp.lookatM(self.get_pos(), self.target, self.get_up())
-
+	def _get_temp_up(self):
+		return self.up
