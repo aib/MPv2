@@ -3,7 +3,8 @@ import numpy as np
 import mp
 
 class SphericalCamera:
-	def __init__(self, pos, speed, target, up):
+	def __init__(self, scene, pos, speed, target, up):
+		self.scene = scene
 		self.pos = mp.array(pos)
 		self.speed = mp.array(speed)
 		self.target = mp.array(target)

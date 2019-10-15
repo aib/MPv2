@@ -19,6 +19,7 @@ class Scene:
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = None
 		self.camera = camera.SphericalCamera(
+			self,
 			pos=[math.radians(41), math.radians(90 - 15), 10],
 			speed=[math.tau/2, math.tau/2, 2],
 			target=[0, 0, 0],
