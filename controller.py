@@ -1,6 +1,11 @@
 import logging
 import queue
 
+def get_cc_mapping():
+	return {
+		7: 'volume',
+	}
+
 class Controller:
 	def __init__(self, scene, midi):
 		self.scene = scene
@@ -8,6 +13,15 @@ class Controller:
 
 		self._logger = logging.getLogger(__name__)
 		self._deferred_calls = queue.Queue()
+
+	def handle_event(self, event, arg):
+		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
+
+		if event == 'volume':
+			self.midi.change_control(0, 7, arg)
+
+		else:
+			self._logger.warn("Unrecognized event \"%s\" (arg: %s)", event, arg)
 
 	def update(self, dt):
 		while True:
@@ -28,6 +42,10 @@ class Controller:
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
+
+		mapping = get_cc_mapping().get(control, None)
+		if mapping is not None:
+			self.handle_event(mapping, value)
 
 	def _defer(self, func, *args, **kwargs):
 		self._deferred_calls.put_nowait((func, args, kwargs))
