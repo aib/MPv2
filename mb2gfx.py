@@ -15,6 +15,7 @@ import shapes
 import texture
 
 MAX_BALLS = 16
+ZRANGE = (.1, 100.)
 
 class Scene:
 	def __init__(self, size):
@@ -71,7 +72,7 @@ class Scene:
 
 		self.model = mp.identityM()
 		self.view = self.camera.get_view_matrix()
-		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
+		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], ZRANGE[0], ZRANGE[1])
 
 		for b in filter(lambda b: b.enabled, self.balls):
 			b.update(dt)
