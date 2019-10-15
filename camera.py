@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 import mp
@@ -42,6 +44,33 @@ class SphericalCamera(Camera):
 
 	def get_pos(self):
 		return mp.spherical_to_cartesian(self.pos)
+
+	def get_forward(self):
+		return mp.normalize(self.target - self.get_pos())
+
+	def _get_temp_up(self):
+		return self.up
+
+class WonderingSphericalCamera(Camera):
+	def __init__(self, target, up, theta_eq, phi_eq, r_eq):
+		self.target = mp.array(target)
+		self.up = mp.array(up)
+		self.theta_eq = theta_eq
+		self.phi_eq = phi_eq
+		self.r_eq = r_eq
+
+		self.pos = mp.array([0, 0, 0])
+		self.start_time = time.monotonic()
+
+	def update(self, dt):
+		elapsed = time.monotonic() - self.start_time
+		theta = self.theta_eq(elapsed)
+		phi = self.phi_eq(elapsed)
+		r = self.r_eq(elapsed)
+		self.pos = mp.spherical_to_cartesian([theta, phi, r])
+
+	def get_pos(self):
+		return self.pos
 
 	def get_forward(self):
 		return mp.normalize(self.target - self.get_pos())
