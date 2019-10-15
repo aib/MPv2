@@ -6,9 +6,8 @@ import rtmidi
 import scheduler
 
 class MidiHandler:
-	def __init__(self, scene, inport=None, outport=None):
-		self.scene = scene
-
+	def __init__(self, inport=None, outport=None):
+		self.controller = None
 		self.notes = {}
 		self.scheduled_notes = {}
 		self.note_scheduler = scheduler.Scheduler()
@@ -34,7 +33,10 @@ class MidiHandler:
 
 		threading.Thread(target=self.note_scheduler.run, name="MidiHandler note scheduler", daemon=True).start()
 		self.midi_in.set_callback(self._midi_in_cb)
-		self.scene.midi_connected(self)
+
+	def set_controller(self, controller):
+		self.controller = controller
+		self.controller.midi_connected(self)
 
 	def play_note(self, channel, note, duration, svel, evel):
 		if (channel, note) in self.scheduled_notes:
@@ -55,16 +57,20 @@ class MidiHandler:
 
 		if event == 0x90:
 			note, velocity = midimsg[1], midimsg[2]
-			self.scene.note_down(channel, note, velocity)
+			if self.controller is not None:
+				self.controller.note_down(channel, note, velocity)
 			self.notes[(channel, note)] = (now, velocity)
 
 		elif event == 0x80:
 			note, velocity = midimsg[1], midimsg[2]
-			self.scene.note_up(channel, note, velocity)
+			if self.controller is not None:
+				self.controller.note_up(channel, note, velocity)
 			if (channel, note) in self.notes:
 				stime, svel = self.notes[(channel, note)]
-				self.scene.note_play(channel, note, now - stime, svel, velocity)
+				if self.controller is not None:
+					self.controller.note_play(channel, note, now - stime, svel, velocity)
 
 		elif event == 0xb0:
 			control, value = midimsg[1], midimsg[2]
-			self.scene.control_change(channel, control, value)
+			if self.controller is not None:
+				self.controller.control_change(channel, control, value)
