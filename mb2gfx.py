@@ -44,12 +44,7 @@ class Scene:
 		dt = now - self.last_update_time
 		self.last_update_time = now
 
-		if self.keys['w']: self.camera.move([ 0, -dt, 0 ])
-		if self.keys['a']: self.camera.move([+dt, 0,  0 ])
-		if self.keys['s']: self.camera.move([ 0, +dt, 0 ])
-		if self.keys['d']: self.camera.move([-dt, 0,  0 ])
-		if self.keys['q']: self.camera.move([ 0,  0, +dt])
-		if self.keys['e']: self.camera.move([ 0,  0, -dt])
+		self.camera.update(dt)
 
 		self.model = mp.identityM()
 		self.view = self.camera.get_view_matrix()

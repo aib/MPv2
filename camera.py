@@ -10,6 +10,14 @@ class SphericalCamera:
 		self.target = mp.array(target)
 		self.up = mp.array(up)
 
+	def update(self, dt):
+		if self.scene.keys['w']: self.move([ 0, -dt, 0 ])
+		if self.scene.keys['a']: self.move([+dt, 0,  0 ])
+		if self.scene.keys['s']: self.move([ 0, +dt, 0 ])
+		if self.scene.keys['d']: self.move([-dt, 0,  0 ])
+		if self.scene.keys['q']: self.move([ 0,  0, +dt])
+		if self.scene.keys['e']: self.move([ 0,  0, -dt])
+
 	def move(self, movedir):
 		self.pos += self.speed * mp.asarray(movedir)
 
