@@ -49,6 +49,9 @@ class MidiHandler:
 		ev = self.note_scheduler.enter(duration, _note_off, (channel, note, evel))
 		self.scheduled_notes[(channel, note)] = ev
 
+	def change_control(self, channel, control, value):
+		self.midi_out.send_message([0xb0 + channel, control, value])
+
 	def _midi_in_cb(self, message, user_data):
 		now = time.monotonic()
 		midimsg, timestamp = message
