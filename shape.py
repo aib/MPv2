@@ -39,7 +39,8 @@ out vec4 fragColor;
 void main() {
 	vec3 wire_bary = (1 - vf_wires) + vf_bary;
 	float edge_distance = min(wire_bary.x, min(wire_bary.y, wire_bary.z));
-	float edge = 1 - step(.05, edge_distance);
+	float edge_distance_delta = fwidth(edge_distance);
+	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 2, edge_distance);
 
 	vec4 faceColor = vec4(0, 1, 0, .2);
 	vec4 wireColor = vec4(0, 1, 0, .8);
