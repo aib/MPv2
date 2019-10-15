@@ -69,6 +69,21 @@ def translateM(v):
 def scaleM(s):
 	return array([[s, 0, 0, 0], [0, s, 0, 0], [0, 0, s, 0], [0, 0, 0, 1]])
 
+# https://en.wikipedia.org/wiki/Euler%E2%80%93Rodrigues_formula
+def rotateM(axis, theta):
+	axis = asarray(axis)
+	axis = axis / np.sqrt(np.dot(axis, axis))
+	a = np.cos(theta / 2)
+	b, c, d = -axis * np.sin(theta / 2)
+	aa, bb, cc, dd = a * a, b * b, c * c, d * d
+	bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
+	return array([
+		[aa + bb - cc - dd, 2 * (bc - ad), 2 * (bd + ac), 0],
+		[2 * (bc + ad), aa + cc - bb - dd, 2 * (cd - ab), 0],
+		[2 * (bd - ac), 2 * (cd + ab), aa + dd - bb - cc, 0],
+		[0, 0, 0, 1]
+	])
+
 def perspectiveM(fovy, aspect, zNear, zFar):
 	f = 1 / np.tan(fovy / 2)
 	M = array([[f/aspect, 0,                    0,                 0],
