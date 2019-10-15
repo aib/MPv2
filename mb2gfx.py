@@ -38,7 +38,7 @@ class Scene:
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
 
 		self.test_shape = shapes.Hexahedron(self)
-		self.test_ball = ball.Ball(self, [0, 0, 0], [-.1, 0, 0], 1, np.random.choice(self.ball_textures))
+		self.test_ball = ball.Ball(self, 0, [0, 0, 0], [-.1, 0, 0], 1, np.random.choice(self.ball_textures))
 
 		now = time.monotonic()
 		self.last_update_time = now

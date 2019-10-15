@@ -45,8 +45,9 @@ class Ball:
 		[[0, 1], [1, 0], [1, 1]]
 	]
 
-	def __init__(self, scene, pos, vel, radius, texture):
+	def __init__(self, scene, index, pos, vel, radius, texture):
 		self.scene = scene
+		self.index = index
 		self.pos = mp.array(pos)
 		self.vel = mp.array(vel)
 		self.radius = radius
