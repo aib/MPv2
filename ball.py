@@ -60,13 +60,17 @@ class Ball:
 			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
 			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
 
+		self.init([0, 0, 0], [0, 0, 0], 0, None)
+
 	def init(self, pos, vel, radius, texture):
 		self.pos = mp.asarray(pos)
 		self.vel = mp.asarray(vel)
 		self.radius = radius
 		self.texture = texture
-		with self.program:
-			self.program.set_uniform('t_ball', self.texture.number)
+
+		if self.texture is not None:
+			with self.program:
+				self.program.set_uniform('t_ball', self.texture.number)
 
 	def get_distance_to(self, target):
 		return np.linalg.norm(self.pos - target)
