@@ -2,7 +2,6 @@ import collections
 import glob
 import itertools as it
 import math
-import queue
 import time
 
 import numpy as np
@@ -10,6 +9,7 @@ from OpenGL import GL
 
 import ball
 import camera
+import controller
 import mp
 import shape
 import shapes
@@ -23,8 +23,7 @@ class Scene:
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = None
-
-		self._deferred_calls = queue.Queue()
+		self.controller = controller.Controller(self)
 
 		self.camera = camera.SphericalCamera(
 			self,
@@ -62,12 +61,7 @@ class Scene:
 		dt = now - self.last_update_time
 		self.last_update_time = now
 
-		while True:
-			try:
-				item = self._deferred_calls.get_nowait()
-				item[0](*item[1], **item[2])
-			except queue.Empty:
-				break
+		self.controller.update(dt)
 
 		self.camera.update(dt)
 
@@ -101,16 +95,16 @@ class Scene:
 		self.midi = midi
 
 	def note_down(self, channel, note, velocity):
-		pass
+		self.controller.note_down(channel, note, velocity)
 
 	def note_up(self, channel, note, velocity):
-		pass
+		self.controller.note_up(channel, note, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
-		pass
+		self.controller.note_play(channel, note, duration, svel, evel)
 
 	def control_change(self, channel, control, value):
-		pass
+		self.controller.control_change(channel, control, value)
 
 	def ball_face_collision(self, ball, face, pos):
 		pass
@@ -119,9 +113,6 @@ class Scene:
 		number = self.next_free_texture
 		self.next_free_texture += 1
 		return texture.Texture2D.create_with_image(number, image_file)
-
-	def _defer(self, func, *args, **kwargs):
-		self._deferred_calls.put_nowait((func, args, kwargs))
 
 	def _drawable_sort_key(self, drawable):
 		if isinstance(drawable, shape.Face):
