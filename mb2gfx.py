@@ -24,7 +24,7 @@ class Scene:
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = midi
 
-		self.controller = controller.Controller(self)
+		self.controller = controller.Controller(self, midi)
 		self.midi.set_controller(self.controller)
 
 		self.camera = camera.SphericalCamera(

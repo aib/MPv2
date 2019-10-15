@@ -2,8 +2,9 @@ import logging
 import queue
 
 class Controller:
-	def __init__(self, scene):
+	def __init__(self, scene, midi):
 		self.scene = scene
+		self.midi = midi
 
 		self._logger = logging.getLogger(__name__)
 		self._deferred_calls = queue.Queue()
