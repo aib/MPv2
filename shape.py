@@ -88,9 +88,6 @@ class Face:
 			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
-	def get_distance_to(self, target):
-		return np.linalg.norm(self.midpoint - target)
-
 	def update(self, dt):
 		pass
 

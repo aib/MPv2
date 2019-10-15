@@ -11,6 +11,7 @@ from OpenGL import GL
 import ball
 import camera
 import mp
+import shape
 import shapes
 import texture
 
@@ -120,6 +121,12 @@ class Scene:
 		self._deferred_calls.put_nowait((func, args, kwargs))
 
 	def _drawable_sort_key(self, drawable):
+		if isinstance(drawable, shape.Face):
+			if np.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) >= 0:
+				return -2 * ZRANGE[1]
+			else:
+				return +2 * ZRANGE[1]
+
 		return drawable.get_distance_to(self.camera.get_pos())
 
 	def _init_ball(self, ball):
