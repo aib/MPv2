@@ -82,6 +82,9 @@ class Scene:
 	def note_play(self, channel, note, duration, svel, evel):
 		pass
 
+	def ball_face_collision(self, ball, face, pos):
+		pass
+
 	def create_texture(self, image_file):
 		number = self.next_free_texture
 		self.next_free_texture += 1

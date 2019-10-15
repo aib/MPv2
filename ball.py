@@ -89,6 +89,7 @@ class Ball:
 				break
 
 			first_collision = sorted(collisions, key=lambda c: c.time)[0]
+			self.scene.ball_face_collision(self, first_collision.triangle.face, first_collision.position)
 			collision_blacklist.append(first_collision.triangle)
 
 			self.vel = mp.reflect(mp.triangle_normal(first_collision.triangle.vertices), self.vel)
