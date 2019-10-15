@@ -49,6 +49,7 @@ class Ball:
 		self.scene = scene
 		self.index = index
 
+		self.enabled = False
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self.vao = gfx.VAO()

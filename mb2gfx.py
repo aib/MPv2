@@ -14,6 +14,8 @@ import mp
 import shapes
 import texture
 
+MAX_BALLS = 16
+
 class Scene:
 	def __init__(self, size):
 		self.size = size
@@ -36,14 +38,22 @@ class Scene:
 		GL.glEnable(GL.GL_BLEND)
 
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
+		self.balls = [ball.Ball(self, i) for i in range(MAX_BALLS)]
 
 		self.test_shape = shapes.Hexahedron(self)
-		self.test_ball = ball.Ball(self, 0)
-		self.test_ball.init([0, 0, 0], [-.1, 0, 0], 1, np.random.choice(self.ball_textures))
-		self.test_ball.enabled = True
+
+		self.set_ball_count(3)
 
 		now = time.monotonic()
 		self.last_update_time = now
+
+	def set_ball_count(self, count):
+		for i in range(MAX_BALLS):
+			if i >= count:
+				self.balls[i].enabled = False
+			elif not self.balls[i].enabled:
+				self._init_ball(self.balls[i])
+				self.balls[i].enabled = True
 
 	def update(self):
 		now = time.monotonic()
@@ -63,13 +73,15 @@ class Scene:
 		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], .1, 100.)
 
-		self.test_ball.update(dt)
+		for b in filter(lambda b: b.enabled, self.balls):
+			b.update(dt)
+
 		self.test_shape.update(dt)
 
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-		drawables = it.chain(self.test_shape.faces, [self.test_ball])
+		drawables = it.chain(self.test_shape.faces, filter(lambda b: b.enabled, self.balls))
 
 		for drawable in sorted(drawables, key=lambda d: d.get_distance_to(self.camera.get_pos()), reverse=True):
 			drawable.render()
@@ -105,3 +117,11 @@ class Scene:
 
 	def _defer(self, func, *args, **kwargs):
 		self._deferred_calls.put_nowait((func, args, kwargs))
+
+	def _init_ball(self, ball):
+		ball.init(
+			pos=[0, 0, 0],
+			vel=mp.normalize(np.random.standard_normal(3)),
+			radius=1.,
+			texture=np.random.choice(self.ball_textures)
+		)
