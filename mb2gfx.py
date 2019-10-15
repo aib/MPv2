@@ -84,7 +84,7 @@ class Scene:
 
 		drawables = it.chain(self.test_shape.faces, filter(lambda b: b.enabled, self.balls))
 
-		for drawable in sorted(drawables, key=lambda d: d.get_distance_to(self.camera.get_pos()), reverse=True):
+		for drawable in sorted(drawables, key=self._drawable_sort_key, reverse=True):
 			drawable.render()
 
 	def get_all_faces(self):
@@ -118,6 +118,9 @@ class Scene:
 
 	def _defer(self, func, *args, **kwargs):
 		self._deferred_calls.put_nowait((func, args, kwargs))
+
+	def _drawable_sort_key(self, drawable):
+		return drawable.get_distance_to(self.camera.get_pos())
 
 	def _init_ball(self, ball):
 		ball.init(
