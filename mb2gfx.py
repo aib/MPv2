@@ -111,7 +111,8 @@ class Scene:
 	def _init_ball(self, ball):
 		ball.init(
 			pos=[0, 0, 0],
-			vel=mp.normalize(np.random.standard_normal(3)),
+			dir=mp.normalize(np.random.standard_normal(3)),
+			speed=1.,
 			radius=1.,
 			texture=np.random.choice(self.ball_textures)
 		)

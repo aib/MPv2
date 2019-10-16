@@ -60,11 +60,12 @@ class Ball:
 			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
 			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
 
-		self.init([0, 0, 0], [0, 0, 0], 0, None)
+		self.init([0, 0, 0], [0, 0, 0], 0, 0, None)
 
-	def init(self, pos, vel, radius, texture):
+	def init(self, pos, dir, speed, radius, texture):
 		self.pos = mp.asarray(pos)
-		self.vel = mp.asarray(vel)
+		self.dir = mp.asarray(dir)
+		self.speed = speed
 		self.radius = radius
 		self.texture = texture
 
@@ -87,7 +88,7 @@ class Ball:
 
 		while dt > 0:
 			triangles = filter(lambda t: t not in collision_blacklist, all_triangles)
-			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.vel, self.radius)), triangles)
+			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.dir * self.speed, self.radius)), triangles)
 			intersections_now = filter(lambda c: np.isfinite(c.time) and c.time > 0 and c.time <= dt, intersections)
 			collisions = filter(lambda c: mp.triangle_contains_point(c.triangle.vertices, c.position), intersections_now)
 			collisions = list(collisions)
@@ -99,11 +100,11 @@ class Ball:
 			self.scene.ball_face_collision(self, first_collision.triangle.face, first_collision.position)
 			collision_blacklist.append(first_collision.triangle)
 
-			self.vel = mp.reflect(mp.triangle_normal(first_collision.triangle.vertices), self.vel)
-			self.pos += self.vel * first_collision.time
+			self.dir = mp.reflect(mp.triangle_normal(first_collision.triangle.vertices), self.dir)
+			self.pos += self.dir * self.speed * first_collision.time
 			dt -= first_collision.time
 
-		self.pos += self.vel * dt
+		self.pos += self.dir * self.speed * dt
 
 	def update(self, dt):
 		self._update_physics(dt)
