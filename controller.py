@@ -1,10 +1,16 @@
 import logging
 import queue
 
+import params
+
 def get_cc_mapping():
 	return {
 		7: 'volume',
+		21: ('ball_count', irange(params.BALLS)),
 	}
+
+def irange(r):
+	return lambda val: round(r.map01(val / 127.))
 
 class Controller:
 	def __init__(self, scene, midi):
@@ -19,6 +25,9 @@ class Controller:
 
 		if event == 'volume':
 			self.midi.change_control(0, 7, arg)
+
+		elif event == 'ball_count':
+			self._defer(self.scene.set_ball_count, arg)
 
 		else:
 			self._logger.warn("Unrecognized event \"%s\" (arg: %s)", event, arg)
