@@ -26,7 +26,10 @@ class Controller:
 	def _handle_mapping(self, mapping, value):
 		if mapping is None: return
 
-		self.handle_event(mapping, value)
+		if isinstance(mapping, tuple):
+			self.handle_event(mapping[0], mapping[1](value))
+		else:
+			self.handle_event(mapping, value)
 
 	def update(self, dt):
 		while True:
