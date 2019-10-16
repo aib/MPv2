@@ -11,12 +11,10 @@ import ball
 import camera
 import controller
 import mp
+import params
 import shape
 import shapes
 import texture
-
-MAX_BALLS = 16
-ZRANGE = (.1, 100.)
 
 class Scene:
 	def __init__(self, size, midi):
@@ -41,7 +39,7 @@ class Scene:
 		GL.glEnable(GL.GL_BLEND)
 
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
-		self.balls = [ball.Ball(self, i) for i in range(MAX_BALLS)]
+		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
 
 		self.test_shape = shapes.Hexahedron(self)
 
@@ -51,7 +49,7 @@ class Scene:
 		self.last_update_time = now
 
 	def set_ball_count(self, count):
-		for i in range(MAX_BALLS):
+		for i in range(params.BALLS.MAX):
 			if i >= count:
 				self.balls[i].enabled = False
 			elif not self.balls[i].enabled:
@@ -69,7 +67,7 @@ class Scene:
 
 		self.model = mp.identityM()
 		self.view = self.camera.get_view_matrix()
-		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], ZRANGE[0], ZRANGE[1])
+		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
 
 		for b in filter(lambda b: b.enabled, self.balls):
 			b.update(dt)
@@ -104,9 +102,9 @@ class Scene:
 	def _drawable_sort_key(self, drawable):
 		if isinstance(drawable, shape.Face):
 			if np.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) >= 0:
-				return -2 * ZRANGE[1]
+				return -2 * params.DEPTH.MAX
 			else:
-				return +2 * ZRANGE[1]
+				return +2 * params.DEPTH.MAX
 
 		return drawable.get_distance_to(self.camera.get_pos())
 
