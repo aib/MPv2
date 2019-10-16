@@ -23,6 +23,11 @@ class Controller:
 		else:
 			self._logger.warn("Unrecognized event \"%s\" (arg: %s)", event, arg)
 
+	def _handle_mapping(self, mapping, value):
+		if mapping is None: return
+
+		self.handle_event(mapping, value)
+
 	def update(self, dt):
 		while True:
 			try:
@@ -43,9 +48,7 @@ class Controller:
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
 
-		mapping = get_cc_mapping().get(control, None)
-		if mapping is not None:
-			self.handle_event(mapping, value)
+		self._handle_mapping(get_cc_mapping().get(control, None), value)
 
 	def _defer(self, func, *args, **kwargs):
 		self._deferred_calls.put_nowait((func, args, kwargs))
