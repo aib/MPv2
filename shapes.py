@@ -1,8 +1,9 @@
+import params
 import shape
 
 def _autoloading_shape(filename):
 	def _shape_constructor(scene):
-		s = shape.Shape(scene, 3)
+		s = shape.Shape(scene, params.SHAPE_SCALE)
 		s.load_file(filename)
 		return s
 	return _shape_constructor

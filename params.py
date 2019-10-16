@@ -5,4 +5,6 @@ class Range:
 
 DEPTH = Range(.1, 100.)
 
+SHAPE_SCALE = 3.
+
 BALLS = Range(0, 16)
