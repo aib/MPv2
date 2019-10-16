@@ -48,6 +48,9 @@ class Scene:
 		now = time.monotonic()
 		self.last_update_time = now
 
+	def enabled_balls(self):
+		return [b for b in self.balls if b.enabled]
+
 	def set_ball_count(self, count):
 		for i in range(params.BALLS.MAX):
 			if i >= count:
@@ -69,7 +72,7 @@ class Scene:
 		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
 
-		for b in filter(lambda b: b.enabled, self.balls):
+		for b in self.enabled_balls():
 			b.update(dt)
 
 		self.test_shape.update(dt)
@@ -77,7 +80,7 @@ class Scene:
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-		drawables = it.chain(self.test_shape.faces, filter(lambda b: b.enabled, self.balls))
+		drawables = it.chain(self.test_shape.faces, self.enabled_balls())
 
 		for drawable in sorted(drawables, key=self._drawable_sort_key, reverse=True):
 			drawable.render()
