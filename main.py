@@ -9,9 +9,8 @@ def main():
 	pygame.init()
 	pygame.display.set_caption("MusicBalls v2")
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
-	scene = mb2gfx.Scene(SIZE)
 	midi_handler = midi.MidiHandler()
-	midi_handler.set_controller(scene)
+	scene = mb2gfx.Scene(SIZE, midi_handler)
 
 	clock = pygame.time.Clock()
 

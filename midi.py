@@ -36,7 +36,6 @@ class MidiHandler:
 
 	def set_controller(self, controller):
 		self.controller = controller
-		self.controller.midi_connected(self)
 
 	def play_note(self, channel, note, duration, svel, evel):
 		if (channel, note) in self.scheduled_notes:

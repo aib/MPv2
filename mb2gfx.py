@@ -19,11 +19,13 @@ MAX_BALLS = 16
 ZRANGE = (.1, 100.)
 
 class Scene:
-	def __init__(self, size):
+	def __init__(self, size, midi):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
-		self.midi = None
+		self.midi = midi
+
 		self.controller = controller.Controller(self)
+		self.midi.set_controller(self.controller)
 
 		self.camera = camera.SphericalCamera(
 			self,
@@ -90,21 +92,6 @@ class Scene:
 
 	def key_up(self, key):
 		self.keys[key] = False
-
-	def midi_connected(self, midi):
-		self.midi = midi
-
-	def note_down(self, channel, note, velocity):
-		self.controller.note_down(channel, note, velocity)
-
-	def note_up(self, channel, note, velocity):
-		self.controller.note_up(channel, note, velocity)
-
-	def note_play(self, channel, note, duration, svel, evel):
-		self.controller.note_play(channel, note, duration, svel, evel)
-
-	def control_change(self, channel, control, value):
-		self.controller.control_change(channel, control, value)
 
 	def ball_face_collision(self, ball, face, pos):
 		pass
