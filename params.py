@@ -3,6 +3,9 @@ class Range:
 		self.MIN = min_
 		self.MAX = max_
 
+	def map01(self, v):
+		return self.MIN + ((self.MAX - self.MIN) * v)
+
 DEPTH = Range(.1, 100.)
 
 SHAPE_SCALE = 3.
