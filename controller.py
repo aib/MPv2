@@ -13,6 +13,7 @@ def get_cc_mapping():
 
 def get_note_mapping():
 	return {
+		(9, 36): 'reset_balls',
 	}
 
 def irange(r):
@@ -40,6 +41,9 @@ class Controller:
 
 		elif event == 'ball_speed':
 			self._defer(self.scene.set_ball_speed, arg)
+
+		elif event == 'reset_balls':
+			self._defer(self.scene.reset_balls)
 
 		else:
 			self._logger.warn("Unrecognized event \"%s\" (arg: %s)", event, arg)
