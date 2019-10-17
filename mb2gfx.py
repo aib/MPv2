@@ -41,7 +41,7 @@ class Scene:
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
 		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
 
-		self.test_shape = shapes.Hexahedron(self)
+		self.active_shape = shapes.Hexahedron(self)
 
 		self.set_ball_speed(1.)
 		self.set_ball_count(3)
@@ -85,18 +85,18 @@ class Scene:
 		for b in self.enabled_balls():
 			b.update(dt)
 
-		self.test_shape.update(dt)
+		self.active_shape.update(dt)
 
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-		drawables = it.chain(self.test_shape.faces, self.enabled_balls())
+		drawables = it.chain(self.active_shape.faces, self.enabled_balls())
 
 		for drawable in sorted(drawables, key=self._drawable_sort_key, reverse=True):
 			drawable.render()
 
 	def get_all_faces(self):
-		return self.test_shape.faces
+		return self.active_shape.faces
 
 	def key_down(self, key):
 		self.keys[key] = True
