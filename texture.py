@@ -33,7 +33,7 @@ class Texture2D:
 
 		with self:
 			GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
-			GL.glGenerateMipmap(GL.GL_TEXTURE_2D);
+			GL.glGenerateMipmap(GL.GL_TEXTURE_2D)
 			GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
 			GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
 
