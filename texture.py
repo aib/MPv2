@@ -29,6 +29,8 @@ class Texture2D:
 		else:
 			raise NotImplementedError("I don't know how to process an image of shape %s" % (arr.shape,))
 
+		arr = np.flip(arr, axis=0)
+
 		with self:
 			GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
 			GL.glGenerateMipmap(GL.GL_TEXTURE_2D);
