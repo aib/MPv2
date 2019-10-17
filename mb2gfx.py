@@ -56,8 +56,12 @@ class Scene:
 			if i >= count:
 				self.balls[i].enabled = False
 			elif not self.balls[i].enabled:
-				self._init_ball(self.balls[i])
+				self._reset_ball(self.balls[i])
 				self.balls[i].enabled = True
+
+	def reset_balls(self):
+		for b in self.enabled_balls():
+			self._reset_ball(b)
 
 	def update(self):
 		now = time.monotonic()
@@ -111,7 +115,7 @@ class Scene:
 
 		return drawable.get_distance_to(self.camera.get_pos())
 
-	def _init_ball(self, ball):
+	def _reset_ball(self, ball):
 		ball.init(
 			pos=[0, 0, 0],
 			dir=mp.normalize(np.random.standard_normal(3)),
