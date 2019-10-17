@@ -1,3 +1,5 @@
+import shapes
+
 class Range:
 	def __init__(self, min_, max_):
 		self.MIN = min_
@@ -12,3 +14,12 @@ SHAPE_SCALE = 3.
 
 BALLS = Range(0, 16)
 BALL_SPEED = Range(0., 20.)
+
+SHAPES = [
+	shapes.Tetrahedron,
+	shapes.Hexahedron,
+	shapes.Octohedron,
+	shapes.Dodecahedron,
+	shapes.Icosahedron,
+]
+SHAPE_INDEX = Range(0, len(SHAPES) - 1)
