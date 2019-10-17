@@ -43,6 +43,7 @@ class Scene:
 
 		self.test_shape = shapes.Hexahedron(self)
 
+		self.set_ball_speed(1.)
 		self.set_ball_count(3)
 
 		now = time.monotonic()
@@ -58,6 +59,11 @@ class Scene:
 			elif not self.balls[i].enabled:
 				self._reset_ball(self.balls[i])
 				self.balls[i].enabled = True
+
+	def set_ball_speed(self, speed):
+		self._ball_speed = speed
+		for b in self.enabled_balls():
+			self._update_ball_speed(b)
 
 	def reset_balls(self):
 		for b in self.enabled_balls():
@@ -123,3 +129,7 @@ class Scene:
 			radius=1.,
 			texture=np.random.choice(self.ball_textures)
 		)
+		self._update_ball_speed(ball)
+
+	def _update_ball_speed(self, ball):
+		ball.speed = self._ball_speed
