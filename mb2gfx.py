@@ -41,10 +41,12 @@ class Scene:
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
 		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
 
-		self.active_shape = shapes.Hexahedron(self)
+		self.shapes = [shape(self) for shape in params.SHAPES]
 
 		self.set_ball_speed(1.)
 		self.set_ball_count(3)
+
+		self.set_shape(4)
 
 		now = time.monotonic()
 		self.last_update_time = now
@@ -68,6 +70,9 @@ class Scene:
 	def reset_balls(self):
 		for b in self.enabled_balls():
 			self._reset_ball(b)
+
+	def set_shape(self, i):
+		self.active_shape = self.shapes[i]
 
 	def update(self):
 		now = time.monotonic()
