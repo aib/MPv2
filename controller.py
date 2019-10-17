@@ -11,6 +11,10 @@ def get_cc_mapping():
 		22: ('ball_speed', fexprange(params.BALL_SPEED)),
 	}
 
+def get_note_mapping():
+	return {
+	}
+
 def irange(r):
 	return lambda val: round(r.map01(val / 127.))
 
@@ -58,6 +62,7 @@ class Controller:
 
 	def note_down(self, channel, note, velocity):
 		self._logger.debug("Note %d DOWN on channel %d with velocity %d", note, channel, velocity)
+		self._handle_mapping(get_note_mapping().get((channel, note), None), velocity)
 
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d  UP  on channel %d with velocity %d", note, channel, velocity)
