@@ -61,9 +61,11 @@ class Shape:
 		with open(filename, 'r') as f:
 			vertices, texcoords, normals = objreader.read_obj_np(f)
 
+		bsrad = np.amax(np.linalg.norm(vertices, axis=2))
+
 		for i, vf in enumerate(vertices):
 			tf, nf = texcoords[i], normals[i]
-			face = Face(self, i, vf * self.radius, tf, nf)
+			face = Face(self, i, vf / bsrad * self.radius, tf, nf)
 			self.faces.append(face)
 
 	def update(self, dt):
