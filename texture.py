@@ -2,7 +2,7 @@ import numpy as np
 from OpenGL import GL
 from PIL import Image
 
-class Texture2D:
+class Texture:
 	@classmethod
 	def create_with_image(cls, number, image_file):
 		tex = cls(number)
@@ -10,15 +10,16 @@ class Texture2D:
 			tex.load_image(image_file)
 		return tex
 
-	def __init__(self, number):
+	def __init__(self, number, type):
 		self.number = number
+		self.type = type
 		self.id = GL.glGenTextures(1)
 
 	def activate(self):
 		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
-		GL.glBindTexture(GL.GL_TEXTURE_2D, self.id)
+		GL.glBindTexture(self.type, self.id)
 
-	def load_image(self, image_file):
+	def _read_image(self, image_file):
 		with Image.open(image_file) as img:
 			arr = np.asarray(img)
 
@@ -29,13 +30,12 @@ class Texture2D:
 		else:
 			raise NotImplementedError("I don't know how to process an image of shape %s" % (arr.shape,))
 
-		arr = np.flip(arr, axis=0)
+		return (informat, arr)
 
-		with self:
-			GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
-			GL.glGenerateMipmap(GL.GL_TEXTURE_2D)
-			GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
-			GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
+	def _set_params_and_generate_mipmap(self):
+		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
+		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
+		GL.glGenerateMipmap(self.type)
 
 	def __enter__(self):
 		self.activate()
@@ -43,32 +43,25 @@ class Texture2D:
 	def __exit__(self, exc_type, exc_value, traceback):
 		pass
 
-class CubeMap:
-	@classmethod
-	def create_with_image(cls, number, image_file):
-		tex = cls(number)
-		with tex:
-			tex.load_image(image_file)
-		return tex
-
+class Texture2D(Texture):
 	def __init__(self, number):
-		self.number = number
-		self.id = GL.glGenTextures(1)
-
-	def activate(self):
-		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
-		GL.glBindTexture(GL.GL_TEXTURE_CUBE_MAP, self.id)
+		super().__init__(number, GL.GL_TEXTURE_2D)
 
 	def load_image(self, image_file):
-		with Image.open(image_file) as img:
-			arr = np.asarray(img)
+		informat, arr = self._read_image(image_file)
 
-		if arr.shape[2] == 3:
-			informat = GL.GL_RGB
-		elif arr.shape[2] == 4:
-			informat = GL.GL_RGBA
-		else:
-			raise NotImplementedError("I don't know how to process an image of shape %s" % (arr.shape,))
+		arr = np.flip(arr, axis=0)
+
+		with self:
+			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
+			self._set_params_and_generate_mipmap()
+
+class CubeMap(Texture):
+	def __init__(self, number):
+		super().__init__(number, GL.GL_TEXTURE_CUBE_MAP)
+
+	def load_image(self, image_file):
+		informat, arr = self._read_image(image_file)
 
 		sidelen = arr.shape[1] // 4
 
@@ -93,12 +86,4 @@ class CubeMap:
 			_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, slicer(  sidelen,   sidelen))
 			_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, slicer(3*sidelen,   sidelen))
 
-			GL.glGenerateMipmap(GL.GL_TEXTURE_CUBE_MAP)
-			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
-			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-
-	def __enter__(self):
-		self.activate()
-
-	def __exit__(self, exc_type, exc_value, traceback):
-		pass
+			self._set_params_and_generate_mipmap()
