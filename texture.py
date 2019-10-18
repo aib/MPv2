@@ -105,4 +105,8 @@ class CubeMap(Texture):
 				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, front)
 				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, back)
 
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_R, GL.GL_CLAMP_TO_EDGE)
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
+
 			self._set_params_and_generate_mipmap()
