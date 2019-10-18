@@ -87,7 +87,7 @@ class Face:
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
-			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
+			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], normals[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
 	def update(self, dt):
@@ -99,13 +99,15 @@ class Face:
 				t.render()
 
 class Triangle:
-	def __init__(self, face, vertices, texcoords=None, wires=None):
+	def __init__(self, face, vertices, texcoords=None, normals=None, wires=None):
 		if texcoords is None: texcoords = [[0, 0], [0, 1], [1, 0]]
+		if normals is None: normals = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 		if wires is None: wires = [True, True, True]
 
 		self.face = face
 		self.vertices = vertices
 		self.texcoords = texcoords
+		self.normals = normals
 		self.wires = wires
 		self.normal = mp.triangle_normal(self.vertices)
 
