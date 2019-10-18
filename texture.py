@@ -57,8 +57,9 @@ class Texture2D(Texture):
 			self._set_params_and_generate_mipmap()
 
 class CubeMap(Texture):
-	def __init__(self, number):
+	def __init__(self, number, inverted=True):
 		super().__init__(number, GL.GL_TEXTURE_CUBE_MAP)
+		self.inverted = inverted
 
 	def load_image(self, image_file):
 		informat, arr = self._read_image(image_file)
@@ -76,14 +77,32 @@ class CubeMap(Texture):
 			raise NotImplementedError("I don't know how to use a cube map of shape %s" % (arr.shape,))
 
 		with self:
-			def _teximage(side, arr):
-				GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
+			def _teximage(side, arr, flipx=False):
+				if flipx:
+					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, np.flip(arr, axis=1))
+				else:
+					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
 
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, slicer(2*sidelen,   sidelen))
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, slicer(        0,   sidelen))
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, slicer(  sidelen,         0))
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, slicer(  sidelen, 2*sidelen))
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, slicer(  sidelen,   sidelen))
-			_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, slicer(3*sidelen,   sidelen))
+			right  = slicer(2*sidelen,   sidelen)
+			left   = slicer(        0,   sidelen)
+			top    = slicer(  sidelen,         0)
+			bottom = slicer(  sidelen, 2*sidelen)
+			front  = slicer(  sidelen,   sidelen)
+			back   = slicer(3*sidelen,   sidelen)
+
+			if self.inverted:
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, left,   flipx=True)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, right,  flipx=True)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top,    flipx=True)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom, flipx=True)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, front,  flipx=True)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, back,   flipx=True)
+			else:
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, right)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, front)
+				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, back)
 
 			self._set_params_and_generate_mipmap()
