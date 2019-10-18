@@ -90,6 +90,10 @@ class Scene:
 		for b in self.enabled_balls():
 			b.update(dt)
 
+		for b in self.enabled_balls():
+			if b.get_distance_to(mp.array([0, 0, 0])) > self.active_shape.radius:
+				self._reset_ball(b)
+
 		self.active_shape.update(dt)
 
 	def render(self):
