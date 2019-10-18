@@ -116,10 +116,10 @@ class Scene:
 	def ball_face_collision(self, ball, face, pos):
 		pass
 
-	def create_texture(self, image_file):
+	def create_texture(self, image_file, **kwargs):
 		number = self.next_free_texture
 		self.next_free_texture += 1
-		return texture.Texture2D.create_with_image(number, image_file)
+		return texture.Texture2D.create_with_image(number, image_file, **kwargs)
 
 	def _drawable_sort_key(self, drawable):
 		if isinstance(drawable, shape.Face):
