@@ -18,14 +18,14 @@ def project(target, source):
 	return np.dot(source, normalize(target))
 
 def triangle_normal(tri):
-	return normalize(np.cross(tri[2] - tri[0], tri[1] - tri[0]))
+	return normalize(np.cross(tri[1] - tri[0], tri[2] - tri[0]))
 
 def reflect(normal, incident):
 	return incident - (2 * np.dot(incident, normal) * normal)
 
 def intersect_plane_sphere(tri, spos, svel, srad=0):
 	tn = triangle_normal(tri)
-	sclosest = spos - tn * srad
+	sclosest = spos + tn * srad
 	distproj = project(tn, sclosest - tri[0])
 
 	if distproj == 0: # on plane
@@ -34,7 +34,7 @@ def intersect_plane_sphere(tri, spos, svel, srad=0):
 	velproj = project(tn, svel)
 
 	if velproj == 0: # moving parallel
-		return (np.inf * distproj, None)
+		return (np.inf * -distproj, None)
 
 	intersection_time = distproj / -velproj
 	intersection_point = sclosest + svel * intersection_time
@@ -49,7 +49,7 @@ def triangle_contains_point(tri, p):
 	edgeside0 = np.dot(p - tri[0], edgeperp0)
 	edgeside1 = np.dot(p - tri[1], edgeperp1)
 	edgeside2 = np.dot(p - tri[2], edgeperp2)
-	return all([edgeside0 >= 0, edgeside1 >= 0, edgeside2 >= 0])
+	return all([edgeside0 <= 0, edgeside1 <= 0, edgeside2 <= 0])
 
 def identityM():
 	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])

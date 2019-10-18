@@ -123,7 +123,7 @@ class Scene:
 
 	def _drawable_sort_key(self, drawable):
 		if isinstance(drawable, shape.Face):
-			if np.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) >= 0:
+			if np.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) <= 0:
 				return -2 * params.DEPTH.MAX
 			else:
 				return +2 * params.DEPTH.MAX

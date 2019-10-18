@@ -100,7 +100,7 @@ class Ball:
 			self.scene.ball_face_collision(self, first_collision.triangle.face, first_collision.position)
 			collision_blacklist.append(first_collision.triangle)
 
-			self.dir = mp.reflect(mp.triangle_normal(first_collision.triangle.vertices), self.dir)
+			self.dir = mp.reflect(-mp.triangle_normal(first_collision.triangle.vertices), self.dir)
 			self.pos += self.dir * self.speed * first_collision.time
 			dt -= first_collision.time
 
