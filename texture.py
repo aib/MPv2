@@ -4,8 +4,8 @@ from PIL import Image
 
 class Texture:
 	@classmethod
-	def create_with_image(cls, number, image_file):
-		tex = cls(number)
+	def create_with_image(cls, number, image_file, **kwargs):
+		tex = cls(number, **kwargs)
 		with tex:
 			tex.load_image(image_file)
 		return tex
