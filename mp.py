@@ -8,8 +8,11 @@ def array(v):
 def asarray(v):
 	return np.asarray(v, dtype=DTYPE)
 
+def norm(v):
+	return np.linalg.norm(v)
+
 def normalize(v):
-	return v / np.linalg.norm(v)
+	return v / norm(v)
 
 def dot(v0, v1):
 	return np.dot(v0, v1)
@@ -18,7 +21,7 @@ def cross(v0, v1):
 	return np.cross(v0, v1)
 
 def angle_between(v0, v1):
-	return np.arccos(dot(v0, v1) / (np.linalg.norm(v0) * np.linalg.norm(v1)))
+	return np.arccos(dot(v0, v1) / (norm(v0) * norm(v1)))
 
 def project(target, source):
 	return dot(source, normalize(target))

@@ -74,7 +74,7 @@ class Ball:
 				self.program.set_uniform('t_ball', self.texture.number)
 
 	def get_distance_to(self, target):
-		return np.linalg.norm(self.pos - target)
+		return mp.norm(self.pos - target)
 
 	def _update_physics(self, dt):
 		class Collision:
