@@ -15,10 +15,10 @@ class Camera:
 		raise NotImplementedError()
 
 	def get_right(self):
-		return mp.normalize(np.cross(self.get_forward(), self._get_temp_up()))
+		return mp.normalize(mp.cross(self.get_forward(), self._get_temp_up()))
 
 	def get_up(self):
-		return mp.normalize(np.cross(self.get_right(), self.get_forward()))
+		return mp.normalize(mp.cross(self.get_right(), self.get_forward()))
 
 	def get_view_matrix(self):
 		return mp.lookatM(self.get_pos(), self.get_pos() + self.get_forward(), self.get_up())
