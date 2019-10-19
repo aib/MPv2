@@ -70,7 +70,7 @@ class Scene:
 	def set_ball_speed(self, speed):
 		self._ball_speed = speed
 		for b in self.enabled_balls():
-			self._update_ball_speed(b)
+			b.speed = speed
 
 	def reset_balls(self):
 		for b in self.enabled_balls():
@@ -142,11 +142,7 @@ class Scene:
 		ball.init(
 			pos=[0, 0, 0],
 			dir=mp.normalize(np.random.standard_normal(3)),
-			speed=1.,
+			speed=self._ball_speed,
 			radius=1.,
 			texture=np.random.choice(self.ball_textures)
 		)
-		self._update_ball_speed(ball)
-
-	def _update_ball_speed(self, ball):
-		ball.speed = self._ball_speed
