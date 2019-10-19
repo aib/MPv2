@@ -57,7 +57,7 @@ class Controller:
 			self._defer(self.scene.reset_balls)
 
 		else:
-			self._logger.warn("Unrecognized event \"%s\" (arg: %s)", event, arg)
+			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
 
 	def _handle_mapping(self, mapping, value):
 		if mapping is None: return
