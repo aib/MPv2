@@ -9,6 +9,7 @@ def get_cc_mapping():
 		7: 'volume',
 		21: ('ball_count', irange(params.BALLS)),
 		22: ('ball_speed', fexprange(params.BALL_SPEED)),
+		23: ('ball_radius', frange(params.BALL_RADIUS)),
 	}
 
 def get_note_mapping():
@@ -18,6 +19,9 @@ def get_note_mapping():
 
 def irange(r):
 	return lambda val: round(r.map01(val / 127.))
+
+def frange(r):
+	return lambda val: r.map01(val / 127.)
 
 def fexprange(r, exp=1.):
 	return lambda val: r.map01((math.e ** (val * exp / 127.) - 1.) / (math.e ** exp - 1.))
@@ -41,6 +45,9 @@ class Controller:
 
 		elif event == 'ball_speed':
 			self._defer(self.scene.set_ball_speed, arg)
+
+		elif event == 'ball_radius':
+			self._defer(self.scene.set_ball_radius, arg)
 
 		elif event == 'reset_balls':
 			self._defer(self.scene.reset_balls)

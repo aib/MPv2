@@ -14,6 +14,7 @@ SHAPE_SCALE = 3.
 
 BALLS = Range(0, 16)
 BALL_SPEED = Range(0., 20.)
+BALL_RADIUS = Range(.05, 1.)
 
 SHAPES = [
 	shapes.Tetrahedron,
