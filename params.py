@@ -8,7 +8,7 @@ class Range:
 	def map01(self, v):
 		return self.MIN + ((self.MAX - self.MIN) * v)
 
-DEPTH = Range(.1, 100.)
+DEPTH = Range(.1, 1000.)
 
 SHAPE_SCALE = 3.
 
