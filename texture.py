@@ -15,6 +15,9 @@ class Texture:
 		self.type = type
 		self.id = GL.glGenTextures(1)
 
+	def load_image(self, image_file):
+		raise NotImplementedError()
+
 	def activate(self):
 		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
 		GL.glBindTexture(self.type, self.id)
