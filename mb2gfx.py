@@ -14,6 +14,7 @@ import mp
 import params
 import shape
 import shapes
+import skybox
 import texture
 
 class Scene:
@@ -38,6 +39,9 @@ class Scene:
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
 		GL.glEnable(GL.GL_BLEND)
 		GL.glEnable(GL.GL_TEXTURE_CUBE_MAP_SEAMLESS)
+
+		skybox_texture = None
+		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
 		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
@@ -88,6 +92,8 @@ class Scene:
 		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
 
+		self.skybox.update(dt)
+
 		for b in self.enabled_balls():
 			b.update(dt)
 
@@ -99,6 +105,8 @@ class Scene:
 
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+		self.skybox.render()
 
 		drawables = it.chain(self.active_shape.faces, self.enabled_balls())
 
