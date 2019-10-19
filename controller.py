@@ -10,6 +10,7 @@ def get_cc_mapping():
 		21: ('ball_count', irange(params.BALLS)),
 		22: ('ball_speed', fexprange(params.BALL_SPEED)),
 		23: ('ball_radius', frange(params.BALL_RADIUS)),
+		24: ('shape', irange(params.SHAPE_INDEX)),
 	}
 
 def get_note_mapping():
@@ -48,6 +49,9 @@ class Controller:
 
 		elif event == 'ball_radius':
 			self._defer(self.scene.set_ball_radius, arg)
+
+		elif event == 'shape':
+			self._defer(self.scene.set_shape, arg)
 
 		elif event == 'reset_balls':
 			self._defer(self.scene.reset_balls)
