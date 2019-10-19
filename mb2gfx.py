@@ -49,6 +49,7 @@ class Scene:
 		self.shapes = [shape(self) for shape in params.SHAPES]
 
 		self.set_ball_speed(1.)
+		self.set_ball_radius(.2)
 		self.set_ball_count(3)
 
 		self.set_shape(4)
@@ -71,6 +72,11 @@ class Scene:
 		self._ball_speed = speed
 		for b in self.enabled_balls():
 			b.speed = speed
+
+	def set_ball_radius(self, radius):
+		self._ball_radius = radius
+		for b in self.enabled_balls():
+			b.radius = radius
 
 	def reset_balls(self):
 		for b in self.enabled_balls():
@@ -143,6 +149,6 @@ class Scene:
 			pos=[0, 0, 0],
 			dir=mp.normalize(np.random.standard_normal(3)),
 			speed=self._ball_speed,
-			radius=1.,
+			radius=self._ball_radius,
 			texture=np.random.choice(self.ball_textures)
 		)
