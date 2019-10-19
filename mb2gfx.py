@@ -88,7 +88,6 @@ class Scene:
 
 		self.camera.update(dt)
 
-		self.model = mp.identityM()
 		self.view = self.camera.get_view_matrix()
 		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
 

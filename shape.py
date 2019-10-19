@@ -7,7 +7,6 @@ import objreader
 SHAPE_VS = """
 #version 130
 
-uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
@@ -24,7 +23,7 @@ out vec3 vf_normal;
 out vec3 vf_wires;
 
 void main() {
-	gl_Position = u_projection * u_view * u_model * vec4(position, 1);
+	gl_Position = u_projection * u_view * vec4(position, 1);
 	vf_position = position;
 	vf_bary = bary;
 	vf_texUV = texUV;
@@ -77,7 +76,6 @@ class Shape:
 
 	def update(self, dt):
 		with self.program:
-			self.program.set_uniform('u_model', self.scene.model)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
 
