@@ -37,6 +37,7 @@ class Scene:
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
 		GL.glEnable(GL.GL_BLEND)
+		GL.glEnable(GL.GL_TEXTURE_CUBE_MAP_SEAMLESS)
 
 		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
 		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
