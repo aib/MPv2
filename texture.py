@@ -10,9 +10,9 @@ class Texture:
 			tex.load_image(image_file)
 		return tex
 
-	def __init__(self, number, type):
+	def __init__(self, number, texture_type):
 		self.number = number
-		self.type = type
+		self.type = texture_type
 		self.id = GL.glGenTextures(1)
 
 	def load_image(self, image_file):
