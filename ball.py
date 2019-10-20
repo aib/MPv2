@@ -16,7 +16,8 @@ in vec2 texUV;
 out vec2 vf_texUV;
 
 void main() {
-	gl_Position = u_projection * u_view * u_model * vec4(position, 1);
+	mat4 billboard_view = transpose(mat4(u_view[0], u_view[1], u_view[2], vec4(0, 0, 0, 1)));
+	gl_Position = u_projection * u_view * u_model * billboard_view * vec4(position, 1);
 	vf_texUV = texUV;
 }
 """
@@ -109,14 +110,7 @@ class Ball:
 	def update(self, dt):
 		self._update_physics(dt)
 
-		# Rotate so basis matches that of the eye
-		billboard_rot = mp.from3vecM(
-			self.scene.camera.get_right(),
-			self.scene.camera.get_up(),
-			self.scene.camera.get_forward()
-		)
-
-		model = mp.translateM(self.pos) @ billboard_rot @ mp.scaleM(self.radius)
+		model = mp.translateM(self.pos) @ mp.scaleM(self.radius)
 		with self.program:
 			self.program.set_uniform('u_model', model)
 			self.program.set_uniform('u_view', self.scene.view)
