@@ -94,7 +94,10 @@ class Scene:
 		self.keys[key] = False
 
 	def mouse_down(self, button, pos):
-		pass
+		unp_n, unp_f = mp.unproject(pos, self.view, self.projection)
+		tri, time, pos = self.pick_triangle(unp_n, unp_f - unp_n)
+		if tri is not None:
+			self._logger.debug("Picked face %d with button %d", tri.face.index, button)
 
 	def mouse_up(self, button, pos):
 		pass
