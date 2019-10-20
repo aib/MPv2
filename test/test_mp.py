@@ -17,6 +17,8 @@ class TestIntersectPlaneSphere(unittest.TestCase):
 		assert_close(t, 4)
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, .4, 0]), mp.array([0, .1, 0]))
 		assert_close(t, -4)
+		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, -.4, 0]), mp.array([0, .1, 0]))
+		assert_close(t, 4)
 
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([-1, -1, -1]), mp.array([.1, .1, .1]))
 		assert_close(t, 10)
@@ -30,9 +32,17 @@ class TestIntersectPlaneSphere(unittest.TestCase):
 
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, .4, 0]), mp.array([0, -.1, 0]), .1)
 		assert_close(t, 3)
+		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, -.4, 0]), mp.array([0, .1, 0]), .1)
+		assert_close(t, 3)
+
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, .4, 0]), mp.array([0, -.1, 0]), .2)
 		assert_close(t, 2)
+		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, -.4, 0]), mp.array([0, .1, 0]), .2)
+		assert_close(t, 2)
+
 		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, .4, 0]), mp.array([0, -.1, 0]), .5)
+		assert_close(t, -1)
+		t, p = mp.intersect_plane_sphere([p0, p1, p2], mp.array([0, -.4, 0]), mp.array([0, .1, 0]), .5)
 		assert_close(t, -1)
 
 class TestTriangleContains(unittest.TestCase):
