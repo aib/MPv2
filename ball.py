@@ -78,32 +78,19 @@ class Ball:
 		return mp.norm(self.pos - target)
 
 	def _update_physics(self, dt):
-		class Collision:
-			def __init__(self, triangle, time_position):
-				self.triangle = triangle
-				self.time = time_position[0]
-				self.position = time_position[1]
-
-		all_triangles = [t for face in self.scene.get_all_faces() for t in face.triangles]
 		collision_blacklist = []
 
 		while dt > 0:
-			triangles = filter(lambda t: t not in collision_blacklist, all_triangles)
-			intersections = map(lambda t: Collision(t, mp.intersect_plane_sphere(t.vertices, self.pos, self.dir * self.speed, self.radius)), triangles)
-			intersections_now = filter(lambda c: np.isfinite(c.time) and c.time > 0 and c.time <= dt, intersections)
-			collisions = filter(lambda c: mp.triangle_contains_point(c.triangle.vertices, c.position), intersections_now)
-			collisions = list(collisions)
-
-			if len(collisions) == 0:
+			col_tri, col_time, col_pos = self.scene.pick_triangle(self.pos, self.dir*self.speed, self.radius, maxtime=dt, blacklist=collision_blacklist)
+			if col_tri is None:
 				break
 
-			first_collision = sorted(collisions, key=lambda c: c.time)[0]
-			self.scene.ball_face_collision(self, first_collision.triangle.face, first_collision.position)
-			collision_blacklist.append(first_collision.triangle)
+			self.scene.ball_face_collision(self, col_tri.face, col_pos)
+			collision_blacklist.append(col_tri)
 
-			self.dir = mp.reflect(-mp.triangle_normal(first_collision.triangle.vertices), self.dir)
-			self.pos += self.dir * self.speed * first_collision.time
-			dt -= first_collision.time
+			self.dir = mp.reflect(-col_tri.normal, self.dir)
+			self.pos += self.dir * self.speed * col_time
+			dt -= col_time
 
 		self.pos += self.dir * self.speed * dt
 
