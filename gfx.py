@@ -40,6 +40,11 @@ def set_uniform(program_id, name, value, silent=False):
 			set_uniform_generic(program_id, name, GL.glUniform3fv, 1, value, silent=silent)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
+	elif value.shape == (4,):
+		if value.dtype.kind == 'f':
+			set_uniform_generic(program_id, name, GL.glUniform4fv, 1, value, silent=silent)
+		else:
+			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (4, 4):
 		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_TRUE, value, silent=silent)
 	elif len(value.shape) == 2 and value.shape[1] == 4:
