@@ -61,22 +61,37 @@ def triangle_contains_point(tri, p):
 	return all([edgeside0 <= 0, edgeside1 <= 0, edgeside2 <= 0])
 
 def identityM():
-	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+	return array([
+		[1, 0, 0, 0],
+		[0, 1, 0, 0],
+		[0, 0, 1, 0],
+		[0, 0, 0, 1]
+	])
 
 def from3vecM(vx, vy, vz):
 	return array([
-		np.append(vx, 0),
-		np.append(vy, 0),
-		np.append(vz, 0),
-		[0, 0, 0, 1]
+		[vx[0], vy[0], vz[0], 0],
+		[vx[1], vy[1], vz[1], 0],
+		[vx[2], vy[2], vz[2], 0],
+		[  0,     0,     0,   1]
 	])
 
 def translateM(v):
 	v = asarray(v)
-	return array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [v[0], v[1], v[2], 1]])
+	return array([
+		[1, 0, 0, v[0]],
+		[0, 1, 0, v[1]],
+		[0, 0, 1, v[2]],
+		[0, 0, 0,   1 ]
+	])
 
 def scaleM(s):
-	return array([[s, 0, 0, 0], [0, s, 0, 0], [0, 0, s, 0], [0, 0, 0, 1]])
+	return array([
+		[s, 0, 0, 0],
+		[0, s, 0, 0],
+		[0, 0, s, 0],
+		[0, 0, 0, 1]
+	])
 
 # https://en.wikipedia.org/wiki/Euler%E2%80%93Rodrigues_formula
 def rotateM(axis, theta):
@@ -87,18 +102,19 @@ def rotateM(axis, theta):
 	aa, bb, cc, dd = a * a, b * b, c * c, d * d
 	bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
 	return array([
-		[aa + bb - cc - dd, 2 * (bc - ad), 2 * (bd + ac), 0],
-		[2 * (bc + ad), aa + cc - bb - dd, 2 * (cd - ab), 0],
-		[2 * (bd - ac), 2 * (cd + ab), aa + dd - bb - cc, 0],
-		[0, 0, 0, 1]
+		[aa + bb - cc - dd,   2 * (bc + ad),     2 * (bd - ac)  ],
+		[  2 * (bc - ad),   aa + cc - bb - dd,   2 * (cd + ab)  ],
+		[  2 * (bd + ac),     2 * (cd - ab),   aa + dd - bb - cc],
 	])
 
 def perspectiveM(fovy, aspect, zNear, zFar):
 	f = 1 / np.tan(fovy / 2)
-	M = array([[f/aspect, 0,                    0,                 0],
-	           [    0,    f,                    0,                 0],
-	           [    0,    0,   (zFar + zNear)   / (zNear - zFar), -1],
-	           [    0,    0, (2 * zFar * zNear) / (zNear - zFar),  0]])
+	M = array([
+		[f/aspect, 0,                0,                                   0               ],
+		[    0,    f,                0,                                   0               ],
+		[    0,    0, (zFar + zNear) / (zNear - zFar), (2 * zFar * zNear) / (zNear - zFar)],
+		[    0,    0,               -1,                                   0               ]
+	])
 	return M
 
 def lookatM(eye, center, up):
@@ -107,12 +123,12 @@ def lookatM(eye, center, up):
 	s = normalize(cross(f, up))
 	u = cross(s, f)
 	M = array([
-		[s[0], u[0], -f[0], 0],
-		[s[1], u[1], -f[1], 0],
-		[s[2], u[2], -f[2], 0],
-		[  0,    0,     0,  1]
+		[ s[0],  s[1],  s[2], 0],
+		[ u[0],  u[1],  u[2], 0],
+		[-f[0], -f[1], -f[2], 0],
+		[  0,     0,     0,   1]
 	])
-	return translateM(-eye) @ M
+	return M @ translateM(-eye)
 
 def spherical_to_cartesian(p):
 	return array([
