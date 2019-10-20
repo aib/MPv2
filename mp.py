@@ -68,14 +68,6 @@ def identityM():
 		[0, 0, 0, 1]
 	])
 
-def from3vecM(vx, vy, vz):
-	return array([
-		[vx[0], vy[0], vz[0], 0],
-		[vx[1], vy[1], vz[1], 0],
-		[vx[2], vy[2], vz[2], 0],
-		[  0,     0,     0,   1]
-	])
-
 def translateM(v):
 	v = asarray(v)
 	return array([
