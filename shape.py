@@ -88,7 +88,7 @@ class Face:
 		self.index = index
 		self.triangles = []
 		self.midpoint = sum(vertices) / len(vertices)
-		self.normal = mp.normalize(np.sum(normals, axis=0))
+		self.normal = mp.triangle_normal(vertices[0:3])
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
@@ -114,7 +114,7 @@ class Triangle:
 		self.texcoords = texcoords
 		self.normals = normals
 		self.wires = wires
-		self.normal = mp.normalize(np.sum(normals, axis=0))
+		self.normal = mp.triangle_normal(self.vertices)
 
 		self.vao = gfx.VAO()
 		self.vertices_vbo = gfx.VBO.create_with_data(self.vertices)
