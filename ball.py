@@ -116,7 +116,7 @@ class Ball:
 			self.scene.camera.get_forward()
 		)
 
-		model = mp.scaleM(self.radius) @ billboard_rot @ mp.translateM(self.pos)
+		model = mp.translateM(self.pos) @ billboard_rot @ mp.scaleM(self.radius)
 		with self.program:
 			self.program.set_uniform('u_model', model)
 			self.program.set_uniform('u_view', self.scene.view)
