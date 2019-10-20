@@ -1,6 +1,7 @@
 import collections
 import glob
 import itertools as it
+import logging
 import math
 import time
 
@@ -24,6 +25,7 @@ class Scene:
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = midi
 
+		self._logger = logging.getLogger(__name__)
 		self.controller = controller.Controller(self, midi)
 		self.midi.set_controller(self.controller)
 
