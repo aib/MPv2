@@ -34,7 +34,8 @@ def reflect(normal, incident):
 
 def intersect_plane_sphere(tri, spos, svel, srad=0):
 	tn = triangle_normal(tri)
-	sclosest = spos + tn * srad
+	behind = dot(tn, svel) > 0
+	sclosest = spos - (-tn if behind else tn) * srad
 	distproj = project(tn, sclosest - tri[0])
 
 	if distproj == 0: # on plane
