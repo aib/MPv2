@@ -113,3 +113,48 @@ class Scene:
 				return +2 * params.DEPTH.MAX
 
 		return drawable.get_distance_to(self.camera.get_pos())
+
+	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
+		intersections = []
+		for f in self.get_all_faces():
+			for t in f.triangles:
+				if blacklist is not None and t in blacklist:
+					continue
+
+				behind = mp.dot(t.normal, forward) > 0
+				closest = start - (-t.normal if behind else t.normal) * ray_radius
+
+				distproj = mp.project(t.normal, closest - t.vertices[0])
+				if distproj == 0:
+					continue
+
+				velproj = mp.project(t.normal, forward)
+				if velproj == 0:
+					continue
+
+				intersection_time = distproj / -velproj
+
+				if intersection_time < 0:
+					continue
+
+				if maxtime is not None and intersection_time > maxtime:
+					continue
+
+				intersection_point = closest + forward * intersection_time
+
+				if mp.dot(intersection_point - t.vertices[0], mp.cross(t.vertices[1] - t.vertices[0], t.normal)) > 0:
+					continue
+
+				if mp.dot(intersection_point - t.vertices[1], mp.cross(t.vertices[2] - t.vertices[1], t.normal)) > 0:
+					continue
+
+				if mp.dot(intersection_point - t.vertices[2], mp.cross(t.vertices[0] - t.vertices[2], t.normal)) > 0:
+					continue
+
+				intersections.append((t, intersection_time, intersection_point))
+
+		if len(intersections) == 0:
+			return (None, None, None)
+
+		first = sorted(intersections, key=lambda i: i[1])[0]
+		return (first[0], first[1], first[2])
