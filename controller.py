@@ -42,19 +42,19 @@ class Controller:
 			self.midi.change_control(0, 7, arg)
 
 		elif event == 'ball_count':
-			self._defer(self.scene.set_ball_count, arg)
+			self._defer(self.scene.balls.set_ball_count, arg)
 
 		elif event == 'ball_speed':
-			self._defer(self.scene.set_ball_speed, arg)
+			self._defer(self.scene.balls.set_ball_speed, arg)
 
 		elif event == 'ball_radius':
-			self._defer(self.scene.set_ball_radius, arg)
+			self._defer(self.scene.balls.set_ball_radius, arg)
 
 		elif event == 'shape':
 			self._defer(self.scene.set_shape, arg)
 
 		elif event == 'reset_balls':
-			self._defer(self.scene.reset_balls)
+			self._defer(self.scene.balls.reset_balls)
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)

@@ -8,6 +8,7 @@ import numpy as np
 from OpenGL import GL
 
 import ball
+import balls
 import camera
 import controller
 import mp
@@ -43,44 +44,13 @@ class Scene:
 		skybox_texture = None
 		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 
-		self.ball_textures = list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png')))
-		self.balls = [ball.Ball(self, i) for i in range(params.BALLS.MAX)]
-
 		self.shapes = [shape(self) for shape in params.SHAPES]
-
-		self.set_ball_speed(1.)
-		self.set_ball_radius(.2)
-		self.set_ball_count(3)
+		self.balls = balls.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
 
 		self.set_shape(4)
 
 		now = time.monotonic()
 		self.last_update_time = now
-
-	def enabled_balls(self):
-		return [b for b in self.balls if b.enabled]
-
-	def set_ball_count(self, count):
-		for i in range(params.BALLS.MAX):
-			if i >= count:
-				self.balls[i].enabled = False
-			elif not self.balls[i].enabled:
-				self._reset_ball(self.balls[i])
-				self.balls[i].enabled = True
-
-	def set_ball_speed(self, speed):
-		self._ball_speed = speed
-		for b in self.enabled_balls():
-			b.speed = speed
-
-	def set_ball_radius(self, radius):
-		self._ball_radius = radius
-		for b in self.enabled_balls():
-			b.radius = radius
-
-	def reset_balls(self):
-		for b in self.enabled_balls():
-			self._reset_ball(b)
 
 	def set_shape(self, i):
 		self.active_shape = self.shapes[i]
@@ -99,13 +69,7 @@ class Scene:
 
 		self.skybox.update(dt)
 
-		for b in self.enabled_balls():
-			b.update(dt)
-
-		for b in self.enabled_balls():
-			if b.get_distance_to(mp.array([0, 0, 0])) > self.active_shape.radius:
-				self._reset_ball(b)
-
+		self.balls.update(dt)
 		self.active_shape.update(dt)
 
 	def render(self):
@@ -113,7 +77,7 @@ class Scene:
 
 		self.skybox.render()
 
-		drawables = it.chain(self.active_shape.faces, self.enabled_balls())
+		drawables = it.chain(self.active_shape.faces, self.balls.enabled_balls())
 
 		for drawable in sorted(drawables, key=self._drawable_sort_key, reverse=True):
 			drawable.render()
@@ -143,12 +107,3 @@ class Scene:
 				return +2 * params.DEPTH.MAX
 
 		return drawable.get_distance_to(self.camera.get_pos())
-
-	def _reset_ball(self, ball):
-		ball.init(
-			pos=[0, 0, 0],
-			dir=mp.normalize(np.random.standard_normal(3)),
-			speed=self._ball_speed,
-			radius=self._ball_radius,
-			texture=np.random.choice(self.ball_textures)
-		)
