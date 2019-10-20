@@ -91,6 +91,12 @@ class Scene:
 	def key_up(self, key):
 		self.keys[key] = False
 
+	def mouse_down(self, button, pos):
+		pass
+
+	def mouse_up(self, button, pos):
+		pass
+
 	def ball_face_collision(self, ball, face, pos):
 		pass
 
