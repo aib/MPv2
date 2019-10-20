@@ -5,7 +5,7 @@ import numpy as np
 import mp
 
 def assert_close(v, t):
-	assert abs(t-v) < .000001, "%s is not close enough to %s (delta %s)" % (t, v, abs(t-v))
+	assert abs(t-v) < .000001, "%s is not close enough to %s (delta %s)" % (v, t, abs(t-v))
 
 class TestIntersectPlaneSphere(unittest.TestCase):
 	def test_intersect_plane_sphere(self):
