@@ -128,3 +128,16 @@ def spherical_to_cartesian(p):
 		p[2] * np.cos(p[1]),
 		p[2] * np.sin(p[1]) * np.sin(p[0]),
 	])
+
+def unproject(winpos, modelview, projection):
+	ndc_near = array([2 * winpos[0] - 1, 2 * (1 - winpos[1]) - 1, -1, 1])
+	ndc_far  = array([2 * winpos[0] - 1, 2 * (1 - winpos[1]) - 1, +1, 1])
+
+	vp_inv = np.linalg.inv(projection @ modelview)
+
+	unp_near = vp_inv @ ndc_near
+	unp_far  = vp_inv @ ndc_far
+	unp_near /= unp_near[3]
+	unp_far  /= unp_far[3]
+
+	return (unp_near[0:3], unp_far[0:3])
