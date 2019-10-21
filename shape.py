@@ -38,6 +38,7 @@ SHAPE_FS = """
 #define MAX_BALLS 16
 
 uniform vec4 u_balls[MAX_BALLS];
+uniform float u_faceHighlight;
 
 in vec3 vf_position;
 in vec3 vf_bary;
@@ -75,7 +76,9 @@ void main() {
 
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
 
-	vec4 faceColor = vec4(mix(vec3(0, 1, 0), ball_highlight.rgb, ball_highlight.a), max(.1, ball_highlight.a));
+	float faceAlpha = mix(.1, .8, u_faceHighlight);
+
+	vec4 faceColor = vec4(mix(vec3(0, 1, 0), ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
 	vec4 wireColor = vec4(0, 1, 0, .8);
 	fragColor = mix(faceColor, wireColor, edge);
 }
@@ -128,6 +131,7 @@ class Face:
 
 	def render(self):
 		with self.shape.program:
+			self.shape.program.set_uniform('u_faceHighlight', 0.)
 			for t in self.triangles:
 				t.render()
 
