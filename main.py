@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 
 import mb2gfx
@@ -11,7 +13,10 @@ def main():
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
 	window_size = SIZE
 
-	midi_handler = midi.MidiHandler()
+	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
+	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
+
+	midi_handler = midi.MidiHandler(inport_name, outport_name)
 	scene = mb2gfx.Scene(SIZE, midi_handler)
 	clock = pygame.time.Clock()
 
