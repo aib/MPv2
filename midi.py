@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 
@@ -12,6 +13,7 @@ def get_note_name(note):
 
 class MidiHandler:
 	def __init__(self, inport=None, outport=None):
+		self._logger = logging.getLogger(__name__)
 		self.controller = None
 		self.notes = {}
 		self.scheduled_notes = {}
@@ -28,6 +30,9 @@ class MidiHandler:
 					self.midi_in.open_port(i)
 					break
 
+		if not self.midi_in.is_port_open():
+			self._logger.warning("Could not open MIDI IN port \"%s\"", inport)
+
 		if outport is None:
 			self.midi_out.open_virtual_port()
 		else:
@@ -35,6 +40,9 @@ class MidiHandler:
 				if outport in pname:
 					self.midi_out.open_port(i)
 					break
+
+		if not self.midi_out.is_port_open():
+			self._logger.warning("Could not open MIDI OUT port \"%s\"", outport)
 
 		threading.Thread(target=self.note_scheduler.run, name="MidiHandler note scheduler", daemon=True).start()
 		self.midi_in.set_callback(self._midi_in_cb)
