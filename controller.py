@@ -85,3 +85,46 @@ class Controller:
 
 		self._handle_mapping(get_cc_mapping().get(control, None), value)
 
+class Control:
+	def __init__(self, name, range_, mapping):
+		self.name = name
+		self.range = range_
+		self.mapping = mapping
+
+		self._logger = logging.getLogger(__name__)
+		self.current_value = range_.DEFAULT
+		self._on_change = None
+
+	def set_with_mapping(self, val, force_onchange=False):
+		mapped = self.mapping(self.range, val)
+		self.set(mapped, force_onchange=force_onchange)
+
+	def set(self, val, force_onchange=False):
+		if val == self.current_value and not force_onchange:
+			return
+
+		self.current_value = val
+		self._fire_on_change()
+
+	def get(self):
+		return self.current_value
+
+	def on_change(self, f):
+		self._on_change = f
+
+	def _fire_on_change(self):
+		self._logger.debug("%s changed to %s", self.name, self.current_value)
+		if self._on_change is not None:
+			self._on_change(self, self.current_value)
+
+	@staticmethod
+	def irange():
+		return lambda range_, val: round(range_.map01(val))
+
+	@staticmethod
+	def frange():
+		return lambda range_, val: range_.map01(val)
+
+	@staticmethod
+	def fexprange(exp=1.):
+		return lambda range_, val: range_.map01((math.e ** (val * exp) - 1.) / (math.e ** exp - 1.))
