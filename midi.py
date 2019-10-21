@@ -5,6 +5,11 @@ import rtmidi
 
 import scheduler
 
+def get_note_name(note):
+	octave = note // 12 - 1
+	name = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"][note % 12]
+	return "%s%s" % (name, octave)
+
 class MidiHandler:
 	def __init__(self, inport=None, outport=None):
 		self.controller = None
