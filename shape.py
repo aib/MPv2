@@ -65,7 +65,7 @@ float ball_highlight_factor() {
 		maxHighlight = max(maxHighlight, hf);
 	}
 
-	return maxHighlight;
+	return clamp(maxHighlight, 0, 1);
 }
 
 void main() {
