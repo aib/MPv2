@@ -35,6 +35,10 @@ void main() {
 SHAPE_FS = """
 #version 130
 
+#define MAX_BALLS 16
+
+uniform vec4 u_balls[MAX_BALLS];
+
 in vec3 vf_position;
 in vec3 vf_bary;
 in vec2 vf_texUV;
@@ -43,13 +47,35 @@ in vec3 vf_wires;
 
 out vec4 fragColor;
 
+float ball_highlight_factor() {
+	float maxHighlight = -1. / 0.;
+
+	for (int i = 0; i < MAX_BALLS; i++) {
+		float radius = u_balls[i].w;
+		if (radius == 0.0) continue;
+
+		float dist = distance(vf_position, u_balls[i].xyz);
+		float light_radius = radius * 4;
+
+		// f(lr)=0, f(0)=1
+		float hf = (-1 / light_radius) * (dist - light_radius);
+		hf = pow(clamp(hf, 0, 1), 2);
+
+		maxHighlight = max(maxHighlight, hf);
+	}
+
+	return maxHighlight;
+}
+
 void main() {
 	vec3 wire_bary = (1 - vf_wires) + vf_bary;
 	float edge_distance = min(wire_bary.x, min(wire_bary.y, wire_bary.z));
 	float edge_distance_delta = fwidth(edge_distance);
 	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 2, edge_distance);
 
-	vec4 faceColor = vec4(0, 1, 0, .2);
+	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
+
+	vec4 faceColor = vec4(mix(vec3(0, 1, 0), ball_highlight.rgb, ball_highlight.a), max(.1, ball_highlight.a));
 	vec4 wireColor = vec4(0, 1, 0, .8);
 	fragColor = mix(faceColor, wireColor, edge);
 }
@@ -76,6 +102,8 @@ class Shape:
 
 	def update(self, dt):
 		with self.program:
+			balls = [[b.pos[0], b.pos[1], b.pos[2], b.radius if b.enabled else 0.] for b in self.scene.balls.balls]
+			self.program.set_uniform('u_balls', balls)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
 
