@@ -11,9 +11,9 @@ class Balls:
 		self.ball_textures = ball_textures
 		self.balls = [ball.Ball(self.scene, i) for i in range(params.BALLS.MAX)]
 
-		self.set_ball_speed(1.)
-		self.set_ball_radius(.2)
-		self.set_ball_count(1)
+		self.set_ball_speed(params.BALL_SPEED.DEFAULT)
+		self.set_ball_radius(params.BALL_RADIUS.DEFAULT)
+		self.set_ball_count(params.BALLS.DEFAULT)
 
 	def enabled_balls(self):
 		return [b for b in self.balls if b.enabled]

@@ -52,7 +52,7 @@ class Scene:
 		self.shapes = [shape(self) for shape in params.SHAPES]
 		self.balls = balls.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
 
-		self.set_shape(4)
+		self.set_shape(params.SHAPE_INDEX.DEFAULT)
 
 		now = time.monotonic()
 		self.last_update_time = now
