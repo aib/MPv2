@@ -2,6 +2,7 @@ import logging
 import math
 import queue
 
+import midi
 import params
 
 def get_cc_mapping():
@@ -70,14 +71,14 @@ class Controller:
 		pass
 
 	def note_down(self, channel, note, velocity):
-		self._logger.debug("Note %d DOWN on channel %d with velocity %d", note, channel, velocity)
+		self._logger.debug("Note %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 		self._handle_mapping(get_note_mapping().get((channel, note), None), velocity)
 
 	def note_up(self, channel, note, velocity):
-		self._logger.debug("Note %d  UP  on channel %d with velocity %d", note, channel, velocity)
+		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
-		self._logger.debug("Note %d PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, channel, duration, svel, evel)
+		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
