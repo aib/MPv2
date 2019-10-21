@@ -74,6 +74,10 @@ class Controller:
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
 
+		faces = self.scene.get_next_faces_and_rotate()
+		for f in faces:
+			self.scene.face_mapping[f.index] = (channel, note, duration, svel, evel)
+
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
 		self._handle_mapping(self.cc_mapping.get(control, None), value)
