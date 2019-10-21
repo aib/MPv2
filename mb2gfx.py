@@ -63,6 +63,7 @@ class Scene:
 		self.active_shape = self.shapes[i]
 		self.face_queue = [(face,) for face in self.active_shape.faces]
 		random.shuffle(self.face_queue)
+		self.face_mapping = [None for face in self.active_shape.faces]
 
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
@@ -130,7 +131,9 @@ class Scene:
 		pass
 
 	def ball_face_collision(self, ball, face, pos):
-		pass
+		mapping = self.face_mapping[face.index]
+		if mapping is not None:
+			self.midi.play_note(*mapping)
 
 	def create_texture(self, image_file, cls=texture.Texture2D, **kwargs):
 		number = self.next_free_texture
