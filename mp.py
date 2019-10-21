@@ -8,6 +8,9 @@ def array(v):
 def asarray(v):
 	return np.asarray(v, dtype=DTYPE)
 
+def clamp(x, a, b):
+	return max(a, min(b, x))
+
 def norm(v):
 	return np.linalg.norm(v)
 
