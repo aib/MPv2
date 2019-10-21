@@ -52,9 +52,9 @@ class Scene:
 		self.shapes = [shape(self) for shape in params.SHAPES]
 		self.balls = balls.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
 
-		self.set_shape(params.SHAPE_INDEX.DEFAULT)
-
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
+
+		self.controller.load_controls()
 
 		now = time.monotonic()
 		self.last_update_time = now

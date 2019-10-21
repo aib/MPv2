@@ -40,6 +40,10 @@ class Controller:
 
 		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
 
+	def load_controls(self):
+		for control in self.controls.values():
+			control.set(control.get(), True)
+
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
 
