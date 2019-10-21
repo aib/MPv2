@@ -3,6 +3,7 @@ import glob
 import itertools as it
 import logging
 import math
+import queue
 import time
 
 import numpy as np
@@ -26,6 +27,7 @@ class Scene:
 		self.midi = midi
 
 		self._logger = logging.getLogger(__name__)
+		self._deferred_calls = queue.Queue()
 		self.controller = controller.Controller(self, midi)
 		self.midi.set_controller(self.controller)
 
@@ -61,6 +63,13 @@ class Scene:
 		now = time.monotonic()
 		dt = now - self.last_update_time
 		self.last_update_time = now
+
+		while True:
+			try:
+				item = self._deferred_calls.get_nowait()
+				item[0](*item[1], **item[2])
+			except queue.Empty:
+				break
 
 		self.controller.update(dt)
 
@@ -162,3 +171,6 @@ class Scene:
 
 		first = sorted(intersections, key=lambda i: i[1])[0]
 		return (first[0], first[1], first[2])
+
+	def defer(self, func, *args, **kwargs):
+		self._deferred_calls.put_nowait((func, args, kwargs))

@@ -33,7 +33,6 @@ class Controller:
 		self.midi = midi
 
 		self._logger = logging.getLogger(__name__)
-		self._deferred_calls = queue.Queue()
 
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
@@ -42,19 +41,19 @@ class Controller:
 			self.midi.change_control(0, 7, arg)
 
 		elif event == 'ball_count':
-			self._defer(self.scene.balls.set_ball_count, arg)
+			self.scene.defer(self.scene.balls.set_ball_count, arg)
 
 		elif event == 'ball_speed':
-			self._defer(self.scene.balls.set_ball_speed, arg)
+			self.scene.defer(self.scene.balls.set_ball_speed, arg)
 
 		elif event == 'ball_radius':
-			self._defer(self.scene.balls.set_ball_radius, arg)
+			self.scene.defer(self.scene.balls.set_ball_radius, arg)
 
 		elif event == 'shape':
-			self._defer(self.scene.set_shape, arg)
+			self.scene.defer(self.scene.set_shape, arg)
 
 		elif event == 'reset_balls':
-			self._defer(self.scene.balls.reset_balls)
+			self.scene.defer(self.scene.balls.reset_balls)
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
@@ -68,12 +67,7 @@ class Controller:
 			self.handle_event(mapping, value)
 
 	def update(self, dt):
-		while True:
-			try:
-				item = self._deferred_calls.get_nowait()
-				item[0](*item[1], **item[2])
-			except queue.Empty:
-				break
+		pass
 
 	def note_down(self, channel, note, velocity):
 		self._logger.debug("Note %d DOWN on channel %d with velocity %d", note, channel, velocity)
@@ -90,5 +84,3 @@ class Controller:
 
 		self._handle_mapping(get_cc_mapping().get(control, None), value)
 
-	def _defer(self, func, *args, **kwargs):
-		self._deferred_calls.put_nowait((func, args, kwargs))
