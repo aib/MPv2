@@ -43,11 +43,17 @@ class MidiHandler:
 
 		def _note_off(channel, note, evel):
 			del self.scheduled_notes[(channel, note)]
-			self.midi_out.send_message([0x80 + channel, note, evel])
+			self.send_note_up(channel, note, evel)
 
-		self.midi_out.send_message([0x90 + channel, note, svel])
+		self.send_note_down(channel, note, svel)
 		ev = self.note_scheduler.enter(duration, _note_off, (channel, note, evel))
 		self.scheduled_notes[(channel, note)] = ev
+
+	def send_note_down(self, channel, note, svel):
+		self.midi_out.send_message([0x90 + channel, note, svel])
+
+	def send_note_up(self, channel, note, evel):
+		self.midi_out.send_message([0x80 + channel, note, evel])
 
 	def change_control(self, channel, control, value):
 		self.midi_out.send_message([0xb0 + channel, control, value])
