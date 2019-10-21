@@ -15,6 +15,10 @@ class Balls:
 		self.set_ball_radius(params.BALL_RADIUS.DEFAULT)
 		self.set_ball_count(params.BALLS.DEFAULT)
 
+		self.scene.controller.controls['ball_radius'].on_change(lambda _, radius: self.scene.defer(self.set_ball_radius, radius))
+		self.scene.controller.controls['ball_speed'].on_change(lambda _, speed: self.scene.defer(self.set_ball_speed, speed))
+		self.scene.controller.controls['ball_count'].on_change(lambda _, count: self.scene.defer(self.set_ball_count, count))
+
 	def enabled_balls(self):
 		return [b for b in self.balls if b.enabled]
 

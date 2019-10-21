@@ -54,6 +54,8 @@ class Scene:
 
 		self.set_shape(params.SHAPE_INDEX.DEFAULT)
 
+		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
+
 		now = time.monotonic()
 		self.last_update_time = now
 

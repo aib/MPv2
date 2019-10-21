@@ -5,13 +5,22 @@ import queue
 import midi
 import params
 
+def _get_controls():
+	return [
+		Control('volume',      params.VOLUME,      Control.irange()),
+		Control('ball_speed',  params.BALL_SPEED,  Control.fexprange()),
+		Control('ball_radius', params.BALL_RADIUS, Control.frange()),
+		Control('ball_count',  params.BALLS,       Control.irange()),
+		Control('shape',       params.SHAPE_INDEX, Control.irange()),
+	]
+
 def get_cc_mapping():
 	return {
 		7: 'volume',
-		21: ('ball_count', irange(params.BALLS)),
-		22: ('ball_speed', fexprange(params.BALL_SPEED)),
-		23: ('ball_radius', frange(params.BALL_RADIUS)),
-		24: ('shape', irange(params.SHAPE_INDEX)),
+		21: 'ball_count',
+		22: 'ball_speed',
+		23: 'ball_radius',
+		24: 'shape',
 	}
 
 def get_note_mapping():
@@ -19,41 +28,22 @@ def get_note_mapping():
 		(9, 36): 'reset_balls',
 	}
 
-def irange(r):
-	return lambda val: round(r.map01(val / 127.))
-
-def frange(r):
-	return lambda val: r.map01(val / 127.)
-
-def fexprange(r, exp=1.):
-	return lambda val: r.map01((math.e ** (val * exp / 127.) - 1.) / (math.e ** exp - 1.))
-
 class Controller:
 	def __init__(self, scene, midi):
 		self.scene = scene
 		self.midi = midi
 
 		self._logger = logging.getLogger(__name__)
+		self.controls = { c.name: c for c in _get_controls() }
+		self.cc_mapping = get_cc_mapping()
+		self.note_mapping = get_note_mapping()
+
+		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
 
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
 
-		if event == 'volume':
-			self.midi.change_control(0, 7, arg)
-
-		elif event == 'ball_count':
-			self.scene.defer(self.scene.balls.set_ball_count, arg)
-
-		elif event == 'ball_speed':
-			self.scene.defer(self.scene.balls.set_ball_speed, arg)
-
-		elif event == 'ball_radius':
-			self.scene.defer(self.scene.balls.set_ball_radius, arg)
-
-		elif event == 'shape':
-			self.scene.defer(self.scene.set_shape, arg)
-
-		elif event == 'reset_balls':
+		if event == 'reset_balls':
 			self.scene.defer(self.scene.balls.reset_balls)
 
 		else:
@@ -62,8 +52,8 @@ class Controller:
 	def _handle_mapping(self, mapping, value):
 		if mapping is None: return
 
-		if isinstance(mapping, tuple):
-			self.handle_event(mapping[0], mapping[1](value))
+		if mapping in self.controls:
+			self.controls[mapping].set_with_mapping(value / 127)
 		else:
 			self.handle_event(mapping, value)
 
@@ -72,7 +62,7 @@ class Controller:
 
 	def note_down(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
-		self._handle_mapping(get_note_mapping().get((channel, note), None), velocity)
+		self._handle_mapping(self.note_mapping.get((channel, note), None), velocity)
 
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
@@ -82,8 +72,7 @@ class Controller:
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
-
-		self._handle_mapping(get_cc_mapping().get(control, None), value)
+		self._handle_mapping(self.cc_mapping.get(control, None), value)
 
 class Control:
 	def __init__(self, name, range_, mapping):

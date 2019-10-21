@@ -25,3 +25,5 @@ SHAPES = [
 	shapes.Icosahedron,
 ]
 SHAPE_INDEX = Range(0, len(SHAPES) - 1, default=4)
+
+VOLUME = Range(0, 127, 64)
