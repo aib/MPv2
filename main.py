@@ -3,6 +3,9 @@ import pygame
 import mb2gfx
 import midi
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 SIZE = (int(1920*.8), int(1080*.8))
 
 def main():
@@ -11,7 +14,7 @@ def main():
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
 	window_size = SIZE
 
-	midi_handler = midi.MidiHandler()
+	midi_handler = midi.MidiHandler('Launchkey MK2 49 MIDI 1', 'FLUID Synth')
 	scene = mb2gfx.Scene(SIZE, midi_handler)
 	clock = pygame.time.Clock()
 
@@ -40,7 +43,7 @@ def main():
 		scene.render()
 		pygame.display.flip()
 		pygame.display.set_caption("MusicBalls v2 - %.2f FPS" % (clock.get_fps(),))
-		clock.tick(120)
+		clock.tick(0)
 
 if __name__ == '__main__':
 	main()

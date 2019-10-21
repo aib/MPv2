@@ -52,7 +52,7 @@ class Scene:
 		self.shapes = [shape(self) for shape in params.SHAPES]
 		self.balls = balls.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
 
-		self.set_shape(4)
+		self.set_shape(1)
 
 		now = time.monotonic()
 		self.last_update_time = now
@@ -61,11 +61,16 @@ class Scene:
 		self.active_shape = self.shapes[i]
 		self.face_queue = [[face] for face in self.active_shape.faces]
 		random.shuffle(self.face_queue)
+		self.face_mapping = [None for face in self.active_shape.faces]
 
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
 		self.face_queue.append(faces)
 		return faces
+
+	def reset_faces(self):
+		random.shuffle(self.face_queue)
+		random.shuffle(self.face_mapping)
 
 	def update(self):
 		now = time.monotonic()
@@ -123,12 +128,16 @@ class Scene:
 		tri, time, pos = self.pick_triangle(unp_n, unp_f - unp_n)
 		if tri is not None:
 			self._logger.debug("Picked face %d with button %d", tri.face.index, button)
+			tri.face.highlight(button)
 
 	def mouse_up(self, button, pos):
 		pass
 
 	def ball_face_collision(self, ball, face, pos):
-		pass
+		mapping = self.face_mapping[face.index]
+		if mapping is not None:
+			self.midi.play_note(*mapping)
+			face.highlight(mapping[2])
 
 	def create_texture(self, image_file, cls=texture.Texture2D, **kwargs):
 		number = self.next_free_texture

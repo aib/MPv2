@@ -16,6 +16,7 @@ def get_cc_mapping():
 def get_note_mapping():
 	return {
 		(9, 36): 'reset_balls',
+		(9, 37): 'reset_faces',
 	}
 
 def irange(r):
@@ -55,6 +56,9 @@ class Controller:
 		elif event == 'reset_balls':
 			self.scene.defer(self.scene.balls.reset_balls)
 
+		elif event == 'reset_faces':
+			self.scene.defer(self.scene.reset_faces)
+
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
 
@@ -78,6 +82,10 @@ class Controller:
 
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, channel, duration, svel, evel)
+#		self.midi.play_note(channel, note, duration, svel, evel)
+		faces = self.scene.get_next_faces_and_rotate()
+		for f in faces:
+			self.scene.face_mapping[f.index] = (channel, note, duration, svel, evel)
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)

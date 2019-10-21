@@ -1,3 +1,5 @@
+import colorsys
+
 import numpy as np
 
 import gfx
@@ -38,6 +40,7 @@ SHAPE_FS = """
 #define MAX_BALLS 16
 
 uniform vec4 u_balls[MAX_BALLS];
+uniform vec3 u_faceColor;
 uniform float u_faceHighlight;
 
 in vec3 vf_position;
@@ -65,21 +68,22 @@ float ball_highlight_factor() {
 		maxHighlight = max(maxHighlight, hf);
 	}
 
-	return maxHighlight;
+	return clamp(maxHighlight, 0, 1);
 }
 
 void main() {
 	vec3 wire_bary = (1 - vf_wires) + vf_bary;
 	float edge_distance = min(wire_bary.x, min(wire_bary.y, wire_bary.z));
 	float edge_distance_delta = fwidth(edge_distance);
-	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 2, edge_distance);
+//	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 20, edge_distance);
+	float edge = 1 - step(edge_distance_delta * 1.5, edge_distance);
 
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
 
-	float faceAlpha = mix(.1, .8, u_faceHighlight);
+	float faceAlpha = mix(.05, .8, u_faceHighlight);
 
-	vec4 faceColor = vec4(mix(vec3(0, 1, 0), ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
-	vec4 wireColor = vec4(0, 1, 0, .8);
+	vec4 faceColor = vec4(mix(u_faceColor, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
+	vec4 wireColor = vec4(.5, 0, 0, 1);
 	fragColor = mix(faceColor, wireColor, edge);
 }
 """
@@ -90,6 +94,7 @@ class Shape:
 		self.radius = radius
 
 		self.faces = []
+		self.symmetries = {}
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
 	def load_file(self, filename):
@@ -117,23 +122,44 @@ class Face:
 	def __init__(self, shape, index, vertices, texcoords, normals):
 		self.shape = shape
 		self.index = index
+
 		self.triangles = []
 		self.midpoint = sum(vertices) / len(vertices)
 		self.normal = mp.triangle_normal(vertices[0:3])
+		self.highlight_time = 0.
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
 			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], normals[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
+	def highlight(self, highlight_time, force=False):
+		highlight_time = float(highlight_time)
+		if force:
+			self.highlight_time = highlight_time
+		else:
+			self.highlight_time = max(self.highlight_time, highlight_time)
+
 	def update(self, dt):
-		pass
+		self.highlight_time -= dt
+		if self.highlight_time <= 0.:
+			self.highlight_time = 0.
 
 	def render(self):
 		with self.shape.program:
-			self.shape.program.set_uniform('u_faceHighlight', 0.)
+			mapping = self.shape.scene.face_mapping[self.index]
+			if mapping is None:
+				color = [1., 1., 1.]
+			else:
+				hue = (mapping[1] % 12) / 12
+				color = colorsys.hsv_to_rgb(hue, 1., 1.)
+			self.shape.program.set_uniform('u_faceColor', color)
+			self.shape.program.set_uniform('u_faceHighlight', self.highlight_time)
 			for t in self.triangles:
 				t.render()
+
+	def __repr__(self):
+		return "<Face %d>" % (self.index,)
 
 class Triangle:
 	def __init__(self, face, vertices, texcoords=None, normals=None, wires=None):
