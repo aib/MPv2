@@ -26,6 +26,7 @@ def get_cc_mapping():
 def get_note_mapping():
 	return {
 		(9, 36): 'reset_balls',
+		(9, 37): 'reset_faces',
 	}
 
 class Controller:
@@ -49,6 +50,9 @@ class Controller:
 
 		if event == 'reset_balls':
 			self.scene.defer(self.scene.balls.reset_balls)
+
+		elif event == 'reset_faces':
+			self.scene.defer(self.scene.reset_faces)
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)

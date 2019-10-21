@@ -62,13 +62,17 @@ class Scene:
 	def set_shape(self, i):
 		self.active_shape = self.shapes[i]
 		self.face_queue = [(face,) for face in self.active_shape.faces]
-		random.shuffle(self.face_queue)
 		self.face_mapping = [None for face in self.active_shape.faces]
+		self.reset_faces()
 
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
 		self.face_queue.append(faces)
 		return faces
+
+	def reset_faces(self):
+		random.shuffle(self.face_queue)
+		random.shuffle(self.face_mapping)
 
 	def update(self):
 		now = time.monotonic()
