@@ -14,7 +14,7 @@ def _get_controls():
 		Control('shape',       params.SHAPE_INDEX, Control.irange()),
 	]
 
-def get_cc_mapping():
+def _get_cc_mapping():
 	return {
 		7: 'volume',
 		21: 'ball_count',
@@ -23,7 +23,7 @@ def get_cc_mapping():
 		24: 'shape',
 	}
 
-def get_note_mapping():
+def _get_note_mapping():
 	return {
 		(9, 36): 'reset_balls',
 		(9, 37): 'reset_faces',
@@ -36,8 +36,8 @@ class Controller:
 
 		self._logger = logging.getLogger(__name__)
 		self.controls = { c.name: c for c in _get_controls() }
-		self.cc_mapping = get_cc_mapping()
-		self.note_mapping = get_note_mapping()
+		self.cc_mapping = _get_cc_mapping()
+		self.note_mapping = _get_note_mapping()
 
 		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
 
