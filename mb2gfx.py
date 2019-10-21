@@ -81,7 +81,15 @@ class Scene:
 
 		drawables = it.chain(self.active_shape.faces, self.balls.enabled_balls())
 
-		for drawable in sorted(drawables, key=self._drawable_sort_key, reverse=True):
+		def _drawable_sort_key(drawable):
+			if isinstance(drawable, shape.Face):
+				if mp.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) <= 0:
+					return -2 * params.DEPTH.MAX
+				else:
+					return +2 * params.DEPTH.MAX
+			return drawable.get_distance_to(self.camera.get_pos())
+
+		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
 			drawable.render()
 
 	def get_all_faces(self):
@@ -109,15 +117,6 @@ class Scene:
 		number = self.next_free_texture
 		self.next_free_texture += 1
 		return cls.create_with_image(number, image_file, **kwargs)
-
-	def _drawable_sort_key(self, drawable):
-		if isinstance(drawable, shape.Face):
-			if mp.dot(drawable.normal, drawable.midpoint - self.camera.get_pos()) <= 0:
-				return -2 * params.DEPTH.MAX
-			else:
-				return +2 * params.DEPTH.MAX
-
-		return drawable.get_distance_to(self.camera.get_pos())
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
 		intersections = []
