@@ -16,16 +16,19 @@ class Texture:
 		self.id = GL.glGenTextures(1)
 
 	def load_image(self, image_file):
+		with Image.open(image_file) as img:
+			arr = np.asarray(img)
+
+		return self.load_array(arr)
+
+	def load_array(self, arr):
 		raise NotImplementedError()
 
 	def activate(self):
 		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
 		GL.glBindTexture(self.type, self.id)
 
-	def _read_image(self, image_file):
-		with Image.open(image_file) as img:
-			arr = np.asarray(img)
-
+	def _get_format(self, arr):
 		if arr.shape[2] == 3:
 			informat = GL.GL_RGB
 		elif arr.shape[2] == 4:
@@ -33,7 +36,7 @@ class Texture:
 		else:
 			raise NotImplementedError("I don't know how to process an image of shape %s" % (arr.shape,))
 
-		return (informat, arr)
+		return informat
 
 	def _set_params_and_generate_mipmap(self):
 		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
@@ -50,8 +53,8 @@ class Texture2D(Texture):
 	def __init__(self, number):
 		super().__init__(number, GL.GL_TEXTURE_2D)
 
-	def load_image(self, image_file):
-		informat, arr = self._read_image(image_file)
+	def load_array(self, arr):
+		informat = self._get_format(arr)
 
 		arr = np.flip(arr, axis=0)
 
@@ -64,8 +67,8 @@ class CubeMap(Texture):
 		super().__init__(number, GL.GL_TEXTURE_CUBE_MAP)
 		self.inverted = inverted
 
-	def load_image(self, image_file):
-		informat, arr = self._read_image(image_file)
+	def load_array(self, arr):
+		informat = self._get_format(arr)
 
 		sidelen = arr.shape[1] // 4
 
