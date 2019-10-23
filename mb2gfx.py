@@ -28,6 +28,7 @@ class Scene:
 
 		self._logger = logging.getLogger(__name__)
 		self._deferred_calls = queue.Queue()
+		self._next_free_texture = 1
 		self.controller = controller.Controller(self, midi)
 		self.midi.set_controller(self.controller)
 
@@ -38,7 +39,6 @@ class Scene:
 			target=[0, 0, 0],
 			up=[0, 1, 0]
 		)
-		self.next_free_texture = 1
 
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
@@ -139,8 +139,8 @@ class Scene:
 			self.midi.play_note(*mapping)
 
 	def create_texture(self, image_file, cls=texture.Texture2D, **kwargs):
-		number = self.next_free_texture
-		self.next_free_texture += 1
+		number = self._next_free_texture
+		self._next_free_texture += 1
 		return cls.create_with_image(number, image_file, **kwargs)
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
