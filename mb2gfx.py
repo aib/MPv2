@@ -49,7 +49,7 @@ class Scene:
 		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 
 		self.shapes = [shape(self) for shape in params.SHAPES]
-		self.balls = ball.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
+		self.balls = ball.Balls(self, list(map(self.load_texture, glob.glob('texture/ball*.png'))))
 
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
 
@@ -138,10 +138,16 @@ class Scene:
 		if mapping is not None:
 			self.midi.play_note(*mapping)
 
-	def create_texture(self, image_file, cls=texture.Texture2D, **kwargs):
-		number = self._next_free_texture
+	def create_texture(self, cls=texture.Texture2D, **kwargs):
+		tex = cls(self._next_free_texture, **kwargs)
 		self._next_free_texture += 1
-		return cls.create_with_image(number, image_file, **kwargs)
+		return tex
+
+	def load_texture(self, filename, cls=texture.Texture2D, **kwargs):
+		tex = self.create_texture(cls, **kwargs)
+		with tex:
+			tex.load_image(filename)
+		return tex
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
 		intersections = []
