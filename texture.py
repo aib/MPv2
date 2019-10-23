@@ -41,6 +41,10 @@ class Texture:
 
 		if arr.dtype == np.uint8:
 			type_ = GL.GL_UNSIGNED_BYTE
+		elif arr.dtype == np.float32:
+			type_ = GL.GL_FLOAT
+		elif arr.dtype == np.float64:
+			type_ = GL.GL_FLOAT
 		else:
 			raise NotImplementedError("I don't know how to process an array with dtype %s" % (arr.dtype,))
 
