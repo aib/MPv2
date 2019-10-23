@@ -24,18 +24,18 @@ class Texture:
 
 		return self.load_array(arr)
 
-	def load_array(self, arr):
+	def load_array(self, arr, bgr=False):
 		raise NotImplementedError()
 
 	def activate(self):
 		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
 		GL.glBindTexture(self.type, self.id)
 
-	def _get_format_and_type(self, arr):
+	def _get_format_and_type(self, arr, bgr=False):
 		if arr.shape[2] == 3:
-			format_ = GL.GL_RGB
+			format_ = GL.GL_BGR if bgr else GL.GL_RGB
 		elif arr.shape[2] == 4:
-			format_ = GL.GL_RGBA
+			format_ = GL.GL_BGRA if bgr else GL.GL_RGBA
 		else:
 			raise NotImplementedError("I don't know how to process an array with depth %s" % (arr.shape[2],))
 
@@ -60,8 +60,8 @@ class Texture2D(Texture):
 	def __init__(self, number):
 		super().__init__(number, GL.GL_TEXTURE_2D)
 
-	def load_array(self, arr):
-		informat, intype = self._get_format_and_type(arr)
+	def load_array(self, arr, bgr=False):
+		informat, intype = self._get_format_and_type(arr, bgr=bgr)
 
 		arr = np.flip(arr, axis=0)
 
@@ -78,8 +78,8 @@ class CubeMap(Texture):
 			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
 			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
 
-	def load_array(self, arr):
-		informat, intype = self._get_format_and_type(arr)
+	def load_array(self, arr, bgr=False):
+		informat, intype = self._get_format_and_type(arr, bgr=bgr)
 
 		sidelen = arr.shape[1] // 4
 
