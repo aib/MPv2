@@ -110,6 +110,9 @@ class Control:
 	def get(self):
 		return self.current_value
 
+	def get_fraction(self):
+		return (self.current_value - self.range.MIN) / (self.range.MAX - self.range.MIN)
+
 	def on_change(self, f):
 		self._on_change = f
 
