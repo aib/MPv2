@@ -11,7 +11,6 @@ import numpy as np
 from OpenGL import GL
 
 import ball
-import balls
 import camera
 import controller
 import mp
@@ -50,7 +49,7 @@ class Scene:
 		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 
 		self.shapes = [shape(self) for shape in params.SHAPES]
-		self.balls = balls.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
+		self.balls = ball.Balls(self, list(map(lambda fn: self.create_texture(fn), glob.glob('texture/ball*.png'))))
 
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
 
