@@ -14,6 +14,9 @@ class Texture:
 		self.number = number
 		self.type = texture_type
 		self.id = GL.glGenTextures(1)
+		with self:
+			GL.glTexParameteri(self.type, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
+			GL.glTexParameteri(self.type, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
 
 	def load_image(self, image_file):
 		with Image.open(image_file) as img:
@@ -43,11 +46,6 @@ class Texture:
 
 		return (format_, type_)
 
-	def _set_params_and_generate_mipmap(self):
-		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
-		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-		GL.glGenerateMipmap(self.type)
-
 	def __enter__(self):
 		self.activate()
 
@@ -65,12 +63,16 @@ class Texture2D(Texture):
 
 		with self:
 			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, arr)
-			self._set_params_and_generate_mipmap()
+			GL.glGenerateMipmap(self.type)
 
 class CubeMap(Texture):
 	def __init__(self, number, inverted=True):
 		super().__init__(number, GL.GL_TEXTURE_CUBE_MAP)
 		self.inverted = inverted
+		with self:
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_R, GL.GL_CLAMP_TO_EDGE)
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
+			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
 
 	def load_array(self, arr):
 		informat, intype = self._get_format_and_type(arr)
@@ -116,8 +118,4 @@ class CubeMap(Texture):
 				_teximage(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, front)
 				_teximage(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, back)
 
-			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_R, GL.GL_CLAMP_TO_EDGE)
-			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
-			GL.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
-
-			self._set_params_and_generate_mipmap()
+			GL.glGenerateMipmap(self.type)
