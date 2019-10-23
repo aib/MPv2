@@ -28,15 +28,20 @@ class Texture:
 		GL.glActiveTexture(GL.GL_TEXTURE0 + self.number)
 		GL.glBindTexture(self.type, self.id)
 
-	def _get_format(self, arr):
+	def _get_format_and_type(self, arr):
 		if arr.shape[2] == 3:
-			informat = GL.GL_RGB
+			format_ = GL.GL_RGB
 		elif arr.shape[2] == 4:
-			informat = GL.GL_RGBA
+			format_ = GL.GL_RGBA
 		else:
-			raise NotImplementedError("I don't know how to process an image of shape %s" % (arr.shape,))
+			raise NotImplementedError("I don't know how to process an array with depth %s" % (arr.shape[2],))
 
-		return informat
+		if arr.dtype == np.uint8:
+			type_ = GL.GL_UNSIGNED_BYTE
+		else:
+			raise NotImplementedError("I don't know how to process an array with dtype %s" % (arr.dtype,))
+
+		return (format_, type_)
 
 	def _set_params_and_generate_mipmap(self):
 		GL.glTexParameteri(self.type, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR)
@@ -54,12 +59,12 @@ class Texture2D(Texture):
 		super().__init__(number, GL.GL_TEXTURE_2D)
 
 	def load_array(self, arr):
-		informat = self._get_format(arr)
+		informat, intype = self._get_format_and_type(arr)
 
 		arr = np.flip(arr, axis=0)
 
 		with self:
-			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
+			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, arr)
 			self._set_params_and_generate_mipmap()
 
 class CubeMap(Texture):
@@ -68,7 +73,7 @@ class CubeMap(Texture):
 		self.inverted = inverted
 
 	def load_array(self, arr):
-		informat = self._get_format(arr)
+		informat, intype = self._get_format_and_type(arr)
 
 		sidelen = arr.shape[1] // 4
 
@@ -85,9 +90,9 @@ class CubeMap(Texture):
 		with self:
 			def _teximage(side, arr, flipx=False):
 				if flipx:
-					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, np.flip(arr, axis=1))
+					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, np.flip(arr, axis=1))
 				else:
-					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, GL.GL_UNSIGNED_BYTE, arr)
+					GL.glTexImage2D(side, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, arr)
 
 			right  = slicer(2*sidelen,   sidelen)
 			left   = slicer(        0,   sidelen)
