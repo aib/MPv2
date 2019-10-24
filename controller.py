@@ -76,6 +76,11 @@ class Controller:
 	def update(self, dt):
 		pass
 
+	def _map_new_note(self, channel, note, duration, svel):
+		faces = self.scene.get_next_faces_and_rotate()
+		for f in faces:
+			self.scene.face_mapping[f.index] = (channel, note, duration, svel, 0)
+
 	def note_down(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 		self._handle_mapping(self.note_mapping.get((channel, note), None), velocity)
@@ -95,9 +100,7 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		faces = self.scene.get_next_faces_and_rotate()
-		for f in faces:
-			self.scene.face_mapping[f.index] = (channel, note, duration, svel, evel)
+		self._map_new_note(channel, note, duration, svel)
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
