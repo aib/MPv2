@@ -9,8 +9,9 @@ class Range:
 class Enum:
 	def __init__(self, values, default=None):
 		self.values = values
+		self.COUNT = len(values)
 		self.MIN = 0
-		self.MAX = len(values) - 1
+		self.MAX = self.COUNT - 1
 		self.DEFAULT = default
 
 	def __len__(self): return len(self.values)
