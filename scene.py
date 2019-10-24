@@ -115,7 +115,7 @@ class Scene:
 		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
 			drawable.render()
 
-	def exiting(self):
+	def shutdown(self):
 		self.controller.shutdown()
 
 	def get_all_faces(self):
