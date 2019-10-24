@@ -29,7 +29,7 @@ class Scene:
 		self._logger = logging.getLogger(__name__)
 		self._deferred_calls = queue.Queue()
 		self._next_free_texture = 1
-		self.controller = controller.Controller(self, midi)
+		self.controller = controller.Controller(self, midi, 'controls.json')
 		self.midi.set_controller(self.controller)
 
 		self.camera = camera.SphericalCamera(
