@@ -5,11 +5,12 @@ import pygame
 import scene
 import midi
 
+TITLE = "MPv2"
 SIZE = (int(1920*.8), int(1080*.8))
 
 def main():
 	pygame.init()
-	pygame.display.set_caption("MusicBalls v2")
+	pygame.display.set_caption(TITLE)
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
 	window_size = SIZE
 
@@ -44,7 +45,7 @@ def main():
 		main_scene.update()
 		main_scene.render()
 		pygame.display.flip()
-		pygame.display.set_caption("MusicBalls v2 - %.2f FPS" % (clock.get_fps(),))
+		pygame.display.set_caption("%s - %.2f FPS" % (TITLE, clock.get_fps()))
 		clock.tick(120)
 
 if __name__ == '__main__':
