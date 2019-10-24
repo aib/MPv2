@@ -51,7 +51,7 @@ class Controller:
 
 	def load_controls(self):
 		for control in self.controls.values():
-			control.set(control.get(), True)
+			control.set(control.get(), fire_onchange=True)
 
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
@@ -126,16 +126,19 @@ class Control:
 		self.current_value = range_.DEFAULT
 		self._on_change = None
 
-	def set_with_mapping(self, val, force_onchange=False):
+	def set_with_mapping(self, val, fire_onchange=None):
 		mapped = self.mapping(self.range, val)
-		self.set(mapped, force_onchange=force_onchange)
+		self.set(mapped, fire_onchange=fire_onchange)
 
-	def set(self, val, force_onchange=False):
-		if val == self.current_value and not force_onchange:
+	def set(self, val, fire_onchange=None):
+		if val == self.current_value:
+			if fire_onchange is True:
+				self._fire_on_change()
 			return
 
 		self.current_value = val
-		self._fire_on_change()
+		if fire_onchange is not False:
+			self._fire_on_change()
 
 	def get(self):
 		return self.current_value
