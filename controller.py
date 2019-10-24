@@ -5,6 +5,8 @@ import queue
 import midi
 import params
 
+IGNORE_PLAY_CHANNELS = [9]
+
 def _get_controls():
 	return [
 		Control('volume',      params.VOLUME,       Control.irange),
@@ -78,11 +80,20 @@ class Controller:
 		self._logger.debug("Note %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 		self._handle_mapping(self.note_mapping.get((channel, note), None), velocity)
 
+		if channel in IGNORE_PLAY_CHANNELS:
+			return
+
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
+		if channel in IGNORE_PLAY_CHANNELS:
+			return
+
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
+
+		if channel in IGNORE_PLAY_CHANNELS:
+			return
 
 		faces = self.scene.get_next_faces_and_rotate()
 		for f in faces:
