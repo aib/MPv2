@@ -71,6 +71,10 @@ class MidiHandler:
 	def change_control(self, channel, control, value):
 		self.midi_out.send_message([0xb0 + channel, control, value])
 
+	def all_notes_off(self):
+		for c in range(16):
+			self.midi_out.send_message([0xb0 + c, 0x7b, 00])
+
 	def _midi_in_cb(self, message, user_data):
 		now = time.monotonic()
 		midimsg, timestamp = message
