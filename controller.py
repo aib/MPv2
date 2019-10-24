@@ -88,11 +88,20 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
+		if self.note_length == params.CUSTOM_NOTE_LENGTH:
+			self.midi.send_note_down(channel, note, velocity)
+		else:
+			self.midi.play_note(channel, note, self.note_length, velocity, 0)
+			self._map_new_note(channel, note, self.note_length, velocity)
+
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
+
+		if self.note_length == params.CUSTOM_NOTE_LENGTH:
+			self.midi.send_note_up(channel, note, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
@@ -100,7 +109,8 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		self._map_new_note(channel, note, duration, svel)
+		if self.note_length == params.CUSTOM_NOTE_LENGTH:
+			self._map_new_note(channel, note, duration, svel)
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
