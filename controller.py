@@ -7,11 +7,12 @@ import params
 
 def _get_controls():
 	return [
-		Control('volume',      params.VOLUME,      Control.irange),
-		Control('ball_speed',  params.BALL_SPEED,  Control.fexprange()),
-		Control('ball_radius', params.BALL_RADIUS, Control.frange),
-		Control('ball_count',  params.BALLS,       Control.irange),
-		Control('shape',       params.SHAPES,      Control.enumindex),
+		Control('volume',      params.VOLUME,       Control.irange),
+		Control('ball_speed',  params.BALL_SPEED,   Control.fexprange()),
+		Control('ball_radius', params.BALL_RADIUS,  Control.frange),
+		Control('ball_count',  params.BALLS,        Control.irange),
+		Control('shape',       params.SHAPES,       Control.enumindex),
+		Control('note_length', params.NOTE_LENGTHS, Control.enumindex),
 	]
 
 def _get_cc_mapping():
@@ -21,6 +22,7 @@ def _get_cc_mapping():
 		22: 'ball_speed',
 		23: 'ball_radius',
 		24: 'shape',
+		25: 'note_length',
 	}
 
 def _get_note_mapping():
@@ -40,6 +42,10 @@ class Controller:
 		self.note_mapping = _get_note_mapping()
 
 		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
+		self.controls['note_length'].on_change(self._on_note_length_change)
+
+	def _on_note_length_change(self, control, nl):
+		self.note_length = params.NOTE_LENGTHS[nl]
 
 	def load_controls(self):
 		for control in self.controls.values():

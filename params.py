@@ -33,4 +33,15 @@ SHAPES = Enum([
 	shapes.Icosahedron,
 ], default=4)
 
+CUSTOM_NOTE_LENGTH = object()
+NOTE_LENGTHS = Enum([
+	.0625,
+	.125,
+	.25,
+	.5,
+	1.,
+	2.,
+	CUSTOM_NOTE_LENGTH
+], default=3)
+
 VOLUME = Range(0, 127, 64)
