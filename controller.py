@@ -11,7 +11,7 @@ def _get_controls():
 		Control('ball_speed',  params.BALL_SPEED,  Control.fexprange()),
 		Control('ball_radius', params.BALL_RADIUS, Control.frange()),
 		Control('ball_count',  params.BALLS,       Control.irange()),
-		Control('shape',       params.SHAPE_INDEX, Control.irange()),
+		Control('shape',       params.SHAPES,      Control.enumindex()),
 	]
 
 def _get_cc_mapping():
@@ -136,3 +136,7 @@ class Control:
 	@staticmethod
 	def fexprange(exp=1.):
 		return lambda range_, val: Control.map01(range_, (math.e ** (val * exp) - 1.) / (math.e ** exp - 1.))
+
+	@staticmethod
+	def enumindex():
+		return lambda enum_, val: round(Control.map01(enum_, val))
