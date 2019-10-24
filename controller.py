@@ -59,6 +59,7 @@ class Controller:
 
 	def shutdown(self):
 		self.save_controls()
+		self.midi.all_notes_off()
 
 	def load_controls(self):
 		if self.save_file is None: return
