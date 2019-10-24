@@ -1,3 +1,4 @@
+import json
 import logging
 import math
 import queue
@@ -34,9 +35,10 @@ def _get_note_mapping():
 	}
 
 class Controller:
-	def __init__(self, scene, midi):
+	def __init__(self, scene, midi, save_file=None):
 		self.scene = scene
 		self.midi = midi
+		self.save_file = save_file
 
 		self._logger = logging.getLogger(__name__)
 		self.controls = { c.name: c for c in _get_controls() }
@@ -56,10 +58,26 @@ class Controller:
 			control.set(control.get(), fire_onchange=True)
 
 	def load_controls(self):
-		pass # TODO
+		if self.save_file is None: return
+
+		try:
+			with open(self.save_file, 'r') as f:
+				valmap = json.load(f)
+		except FileNotFoundError:
+			return
+		except json.decoder.JSONDecodeError:
+			return
+
+		for cname, cval in valmap.items():
+			self.controls[cname].set(cval, fire_onchange=False)
 
 	def save_controls(self):
-		pass # TODO
+		if self.save_file is None: return
+
+		valmap = { c.name: c.get() for c in self.controls.values() }
+		with open(self.save_file, 'w') as f:
+			json.dump(valmap, f, indent='\t')
+			f.write('\n') # Bug in json
 
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)
