@@ -122,13 +122,17 @@ class Control:
 			self._on_change(self, self.current_value)
 
 	@staticmethod
+	def map01(range_, val):
+		return range_.MIN + ((range_.MAX - range_.MIN) * val)
+
+	@staticmethod
 	def irange():
-		return lambda range_, val: round(range_.map01(val))
+		return lambda range_, val: round(Control.map01(range_, val))
 
 	@staticmethod
 	def frange():
-		return lambda range_, val: range_.map01(val)
+		return lambda range_, val: Control.map01(range_, val)
 
 	@staticmethod
 	def fexprange(exp=1.):
-		return lambda range_, val: range_.map01((math.e ** (val * exp) - 1.) / (math.e ** exp - 1.))
+		return lambda range_, val: Control.map01(range_, (math.e ** (val * exp) - 1.) / (math.e ** exp - 1.))

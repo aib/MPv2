@@ -6,9 +6,6 @@ class Range:
 		self.MAX = max_
 		self.DEFAULT = default
 
-	def map01(self, v):
-		return self.MIN + ((self.MAX - self.MIN) * v)
-
 DEPTH = Range(.1, 1000.)
 
 SHAPE_SCALE = 3.
