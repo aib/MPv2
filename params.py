@@ -45,4 +45,15 @@ NOTE_LENGTHS = Enum([
 	CUSTOM_NOTE_LENGTH
 ], default=3)
 
+CHANNELS = Enum([
+	{ 'name': "Channel 1", 'number': 1 },
+	{ 'name': "Channel 2", 'number': 2 },
+	{ 'name': "Channel 3", 'number': 3 },
+	{ 'name': "Channel 4", 'number': 4 },
+	{ 'name': "Channel 5", 'number': 5 },
+	{ 'name': "Channel 6", 'number': 6 },
+	{ 'name': "Channel 7", 'number': 7 },
+	{ 'name': "Channel 8", 'number': 8 },
+], default=0)
+
 VOLUME = Range(0, 127, 64)

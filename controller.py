@@ -16,6 +16,7 @@ def _get_controls():
 		Control('ball_count',  params.BALLS,        Control.irange),
 		Control('shape',       params.SHAPES,       Control.enumindex),
 		Control('note_length', params.NOTE_LENGTHS, Control.enumindex),
+		Control('channel',     params.CHANNELS,     Control.enumindex)
 	]
 
 def _get_cc_mapping():
@@ -26,6 +27,8 @@ def _get_cc_mapping():
 		23: 'ball_radius',
 		24: 'shape',
 		25: 'note_length',
+		102: 'chan_next',
+		103: 'chan_prev',
 	}
 
 def _get_note_mapping():
@@ -47,9 +50,13 @@ class Controller:
 
 		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
 		self.controls['note_length'].on_change(self._on_note_length_change)
+		self.controls['channel'].on_change(self._on_channel_change)
 
 	def _on_note_length_change(self, control, nl):
 		self.note_length = params.NOTE_LENGTHS[nl]
+
+	def _on_channel_change(self, control, cn):
+		self.current_channel = params.CHANNELS[cn]
 
 	def initialize_controls(self):
 		self.load_controls()
@@ -92,6 +99,14 @@ class Controller:
 		elif event == 'reset_faces':
 			self.scene.defer(self.scene.reset_faces)
 
+		elif event == 'chan_prev':
+			if arg > 0:
+				self.controls['channel'].set((self.controls['channel'].get() - 1) % params.CHANNELS.COUNT)
+
+		elif event == 'chan_next':
+			if arg > 0:
+				self.controls['channel'].set((self.controls['channel'].get() + 1) % params.CHANNELS.COUNT)
+
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
 
@@ -119,10 +134,10 @@ class Controller:
 			return
 
 		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self.midi.send_note_down(channel, note, velocity)
+			self.midi.send_note_down(self.current_channel['number'], note, velocity)
 		else:
-			self.midi.play_note(channel, note, self.note_length, velocity, 0)
-			self._map_new_note(channel, note, self.note_length, velocity)
+			self.midi.play_note(self.current_channel['number'], note, self.note_length, velocity, 0)
+			self._map_new_note(self.current_channel['number'], note, self.note_length, velocity)
 
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
@@ -131,7 +146,7 @@ class Controller:
 			return
 
 		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self.midi.send_note_up(channel, note, velocity)
+			self.midi.send_note_up(self.current_channel['number'], note, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
@@ -140,7 +155,7 @@ class Controller:
 			return
 
 		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self._map_new_note(channel, note, duration, svel)
+			self._map_new_note(self.current_channel['number'], note, duration, svel)
 
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
