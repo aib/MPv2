@@ -116,7 +116,7 @@ class Scene:
 			drawable.render()
 
 	def exiting(self):
-		self.controller.save_controls()
+		self.controller.shutdown()
 
 	def get_all_faces(self):
 		return self.active_shape.faces

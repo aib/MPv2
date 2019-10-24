@@ -57,6 +57,9 @@ class Controller:
 		for control in self.controls.values():
 			control.set(control.get(), fire_onchange=True)
 
+	def shutdown(self):
+		self.save_controls()
+
 	def load_controls(self):
 		if self.save_file is None: return
 
