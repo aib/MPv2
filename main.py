@@ -48,5 +48,7 @@ def main():
 		pygame.display.set_caption("%s - %.2f FPS" % (TITLE, clock.get_fps()))
 		clock.tick(120)
 
+	main_scene.exiting()
+
 if __name__ == '__main__':
 	main()

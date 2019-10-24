@@ -49,9 +49,17 @@ class Controller:
 	def _on_note_length_change(self, control, nl):
 		self.note_length = params.NOTE_LENGTHS[nl]
 
-	def load_controls(self):
+	def initialize_controls(self):
+		self.load_controls()
+
 		for control in self.controls.values():
 			control.set(control.get(), fire_onchange=True)
+
+	def load_controls(self):
+		pass # TODO
+
+	def save_controls(self):
+		pass # TODO
 
 	def handle_event(self, event, arg):
 		self._logger.debug("Event \"%s\" (arg: %s)", event, arg)

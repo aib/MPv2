@@ -53,7 +53,7 @@ class Scene:
 
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
 
-		self.controller.load_controls()
+		self.controller.initialize_controls()
 
 		now = time.monotonic()
 		self.last_update_time = now
@@ -114,6 +114,9 @@ class Scene:
 
 		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
 			drawable.render()
+
+	def exiting(self):
+		self.controller.save_controls()
 
 	def get_all_faces(self):
 		return self.active_shape.faces
