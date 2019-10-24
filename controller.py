@@ -150,7 +150,7 @@ class Control:
 
 		self._logger = logging.getLogger(__name__)
 		self.current_value = range_.DEFAULT
-		self._on_change = None
+		self._on_change_handlers = []
 
 	def set_with_mapping(self, val, fire_onchange=None):
 		mapped = self.mapping(self.range, val)
@@ -173,12 +173,12 @@ class Control:
 		return (self.current_value - self.range.MIN) / (self.range.MAX - self.range.MIN)
 
 	def on_change(self, f):
-		self._on_change = f
+		self._on_change_handlers.append(f)
 
 	def _fire_on_change(self):
 		self._logger.debug("%s changed to %s", self.name, self.current_value)
-		if self._on_change is not None:
-			self._on_change(self, self.current_value)
+		for handler in self._on_change_handlers:
+			handler(self, self.current_value)
 
 	@staticmethod
 	def map01(range_, val):
