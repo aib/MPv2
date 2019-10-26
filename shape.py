@@ -4,6 +4,8 @@ import gfx
 import mp
 import objreader
 
+HIGHLIGHT_FALLOFF_TIME = .5
+
 SHAPE_VS = """
 #version 130
 
@@ -131,7 +133,7 @@ class Face:
 			self.triangles.append(triangle)
 
 	def highlight(self, highlight_time, force=False):
-		highlight_time = float(highlight_time)
+		highlight_time = float(highlight_time) + HIGHLIGHT_FALLOFF_TIME
 		if force:
 			self.highlight_time = highlight_time
 		else:
@@ -142,7 +144,7 @@ class Face:
 
 	def render(self):
 		with self.shape.program:
-			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time, 0., 1.))
+			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time + HIGHLIGHT_FALLOFF_TIME, 0., 1.))
 			for t in self.triangles:
 				t.render()
 
