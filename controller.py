@@ -177,9 +177,15 @@ class NotePlayer:
 
 	def _note_play_down(self, channel, note, velocity):
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
+		self.controller.midi.send_note_down(self.controller.current_channel['number'], note, velocity)
+		faces = self.controller.scene.get_next_faces_and_rotate()
+		return { 'faces': faces, 'svel': velocity }
 
 	def _note_play_up(self, channel, note, velocity, duration, down_data):
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
+		self.controller.midi.send_note_up(self.controller.current_channel['number'], note, velocity)
+		for f in down_data['faces']:
+			self.controller.scene.face_mapping[f.index] = (self.controller.current_channel['number'], note, duration, down_data['svel'], 0)
 
 class Control:
 	def __init__(self, name, range_, mapping):
