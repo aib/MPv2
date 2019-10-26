@@ -119,21 +119,30 @@ class Face:
 	def __init__(self, shape, index, vertices, texcoords, normals):
 		self.shape = shape
 		self.index = index
+
 		self.triangles = []
 		self.midpoint = sum(vertices) / len(vertices)
 		self.normal = mp.triangle_normal(vertices[0:3])
+		self.highlight_time = 0.
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
 			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], normals[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
+	def highlight(self, highlight_time, force=False):
+		highlight_time = float(highlight_time)
+		if force:
+			self.highlight_time = highlight_time
+		else:
+			self.highlight_time = max(self.highlight_time, highlight_time)
+
 	def update(self, dt):
-		pass
+		self.highlight_time -= dt
 
 	def render(self):
 		with self.shape.program:
-			self.shape.program.set_uniform('u_faceHighlight', 0.)
+			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time, 0., 1.))
 			for t in self.triangles:
 				t.render()
 
