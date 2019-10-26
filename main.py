@@ -1,3 +1,4 @@
+import logging
 import sys
 
 import pygame
@@ -9,13 +10,21 @@ TITLE = "MPv2"
 SIZE = (int(1920*.8), int(1080*.8))
 
 def main():
+	if '-v' in sys.argv:
+		sys.argv.remove('-v')
+		loglevel = logging.DEBUG
+	else:
+		loglevel = logging.INFO
+
+	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
+	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
+
+	logging.basicConfig(level=loglevel)
+
 	pygame.init()
 	pygame.display.set_caption(TITLE)
 	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
 	window_size = SIZE
-
-	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
-	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
 
 	midi_handler = midi.MidiHandler(inport_name, outport_name)
 	main_scene = scene.Scene(SIZE, midi_handler)
