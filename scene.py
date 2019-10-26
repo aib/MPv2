@@ -140,6 +140,7 @@ class Scene:
 		mapping = self.face_mapping[face.index]
 		if mapping is not None:
 			self.midi.play_note(*mapping)
+			face.highlight(mapping[2])
 
 	def create_texture(self, cls=texture.Texture2D, **kwargs):
 		tex = cls(self._next_free_texture, **kwargs)
