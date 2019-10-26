@@ -2,6 +2,7 @@ import json
 import logging
 import math
 import threading
+import time
 import queue
 
 import midi
@@ -161,22 +162,24 @@ class NotePlayer:
 		threading.Thread(target=self._note_up_scheduler.run, name="NotePlayer scheduler", daemon=True).start()
 
 	def note_down(self, channel, note, velocity):
+		now = time.monotonic()
 		down_data = self._note_play_down(channel, note, velocity)
-		self._notes_down[(channel, note)] = down_data
+		self._notes_down[(channel, note)] = (now, down_data)
 		if self.controller.note_length != params.CUSTOM_NOTE_LENGTH:
 			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0))
 
 	def note_up(self, channel, note, velocity):
+		now = time.monotonic()
 		if (channel, note) in self._notes_down:
-			down_data = self._notes_down[(channel, note)]
+			(down_time, down_data) = self._notes_down[(channel, note)]
 			del self._notes_down[(channel, note)]
-			self._note_play_up(channel, note, velocity, down_data)
+			self._note_play_up(channel, note, velocity, now - down_time, down_data)
 
 	def _note_play_down(self, channel, note, velocity):
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
-	def _note_play_up(self, channel, note, velocity, down_data):
-		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, velocity, down_data)
+	def _note_play_up(self, channel, note, velocity, duration, down_data):
+		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 
 class Control:
 	def __init__(self, name, range_, mapping):
