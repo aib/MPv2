@@ -164,16 +164,22 @@ class NotePlayer:
 	def note_down(self, channel, note, velocity):
 		now = time.monotonic()
 		down_data = self._note_play_down(channel, note, velocity)
-		self._notes_down[(channel, note)] = (now, down_data)
-		if self.controller.note_length != params.CUSTOM_NOTE_LENGTH:
-			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0))
+		custom_length = (self.controller.note_length != params.CUSTOM_NOTE_LENGTH)
+		self._notes_down[(channel, note)] = (now, down_data, custom_length)
+		if custom_length:
+			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0), { 'scheduled': True })
 
-	def note_up(self, channel, note, velocity):
+	def note_up(self, channel, note, velocity, scheduled=False):
 		now = time.monotonic()
-		if (channel, note) in self._notes_down:
-			(down_time, down_data) = self._notes_down[(channel, note)]
-			del self._notes_down[(channel, note)]
-			self._note_play_up(channel, note, velocity, now - down_time, down_data)
+		if (channel, note) not in self._notes_down:
+			return
+
+		(down_time, down_data, custom_length) = self._notes_down[(channel, note)]
+		if custom_length and not scheduled:
+			return
+
+		del self._notes_down[(channel, note)]
+		self._note_play_up(channel, note, velocity, now - down_time, down_data)
 
 	def _note_play_down(self, channel, note, velocity):
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
