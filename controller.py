@@ -1,10 +1,12 @@
 import json
 import logging
 import math
+import threading
 import queue
 
 import midi
 import params
+import scheduler
 
 IGNORE_PLAY_CHANNELS = [9]
 
@@ -44,6 +46,7 @@ class Controller:
 		self.save_file = save_file
 
 		self._logger = logging.getLogger(__name__)
+		self.note_player = NotePlayer(self)
 		self.controls = { c.name: c for c in _get_controls() }
 		self.cc_mapping = _get_cc_mapping()
 		self.note_mapping = _get_note_mapping()
@@ -121,11 +124,6 @@ class Controller:
 	def update(self, dt):
 		pass
 
-	def _map_new_note(self, channel, note, duration, svel):
-		faces = self.scene.get_next_faces_and_rotate()
-		for f in faces:
-			self.scene.face_mapping[f.index] = (channel, note, duration, svel, 0)
-
 	def note_down(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 		self._handle_mapping(self.note_mapping.get((channel, note), None), velocity)
@@ -133,11 +131,7 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self.midi.send_note_down(self.current_channel['number'], note, velocity)
-		else:
-			self.midi.play_note(self.current_channel['number'], note, self.note_length, velocity, 0)
-			self._map_new_note(self.current_channel['number'], note, self.note_length, velocity)
+		self.note_player.note_down(channel, note, velocity)
 
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
@@ -145,8 +139,7 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self.midi.send_note_up(self.current_channel['number'], note, velocity)
+		self.note_player.note_up(channel, note, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
@@ -154,12 +147,36 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		if self.note_length == params.CUSTOM_NOTE_LENGTH:
-			self._map_new_note(self.current_channel['number'], note, duration, svel)
-
 	def control_change(self, channel, control, value):
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
 		self._handle_mapping(self.cc_mapping.get(control, None), value)
+
+class NotePlayer:
+	def __init__(self, controller):
+		self.controller = controller
+
+		self._logger = logging.getLogger(__name__)
+		self._notes_down = {}
+		self._note_up_scheduler = scheduler.Scheduler()
+		threading.Thread(target=self._note_up_scheduler.run, name="NotePlayer scheduler", daemon=True).start()
+
+	def note_down(self, channel, note, velocity):
+		down_data = self._note_play_down(channel, note, velocity)
+		self._notes_down[(channel, note)] = down_data
+		if self.controller.note_length != params.CUSTOM_NOTE_LENGTH:
+			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0))
+
+	def note_up(self, channel, note, velocity):
+		if (channel, note) in self._notes_down:
+			down_data = self._notes_down[(channel, note)]
+			del self._notes_down[(channel, note)]
+			self._note_play_up(channel, note, velocity, down_data)
+
+	def _note_play_down(self, channel, note, velocity):
+		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
+
+	def _note_play_up(self, channel, note, velocity, down_data):
+		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, velocity, down_data)
 
 class Control:
 	def __init__(self, name, range_, mapping):
