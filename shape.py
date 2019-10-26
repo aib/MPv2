@@ -93,6 +93,7 @@ class Shape:
 		self.radius = radius
 
 		self.faces = []
+		self.symmetries = {}
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
 	def load_file(self, filename):
@@ -105,6 +106,8 @@ class Shape:
 			tf, nf = texcoords[i], normals[i]
 			face = Face(self, i, vf / bsrad * self.radius, tf, nf)
 			self.faces.append(face)
+
+		self.symmetries[len(self.faces)] = [(f.index,) for f in self.faces]
 
 	def update(self, dt):
 		with self.program:
