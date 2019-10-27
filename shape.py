@@ -151,6 +151,9 @@ class Face:
 			for t in self.triangles:
 				t.render()
 
+	def __repr__(self):
+		return "<Face %d>" % (self.index,)
+
 class Triangle:
 	def __init__(self, face, vertices, texcoords=None, normals=None, wires=None):
 		if texcoords is None: texcoords = [[0, 0], [0, 1], [1, 0]]
