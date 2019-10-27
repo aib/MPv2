@@ -56,6 +56,7 @@ class Hud:
 			self.program.set_uniform('t_hud', self.hudtex.number)
 
 		self.font = pygame.freetype.Font(None)
+		self.music_font = pygame.freetype.Font("font/NotoMusic-Regular.ttf")
 		self.bright_color = pygame.Color(0, 192, 192)
 		self.dim_color = pygame.Color(0, 128, 128)
 		self.bg_color = pygame.Color(0, 64, 64)
@@ -146,3 +147,16 @@ class Slider(HudElement):
 class Channel(HudElement):
 	def render(self):
 		self.draw_text(self.hud.scene.controller.current_channel['name'])
+
+class NoteLength(HudElement):
+	SYMBOLS = ['𝅘𝅥𝅰', '𝅘𝅥𝅯', '𝅘𝅥𝅮', '𝅘𝅥', '𝅗𝅥', '𝅝', '𝅄']
+
+	def update(self, dt):
+		self.length_index = self.hud.scene.controller.controls['note_length'].get()
+
+	def render(self):
+		xoff = 0
+		for i, symbol in enumerate(self.SYMBOLS):
+			color = self.hud.bright_color if i == self.length_index else self.hud.bg_color
+			self.draw_text(symbol, color=color, font=self.hud.music_font, x=xoff, valign='bottom')
+			xoff += self.rect[2] / len(self.SYMBOLS)
