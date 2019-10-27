@@ -1,7 +1,8 @@
-import gfx
-
 import numpy as np
 import pygame
+import pygame.freetype
+
+import gfx
 
 HUD_VS = """
 #version 130
@@ -54,6 +55,11 @@ class Hud:
 		with self.program:
 			self.program.set_uniform('t_hud', self.hudtex.number)
 
+		self.font = pygame.freetype.Font(None)
+		self.bright_color = pygame.Color(0, 192, 192)
+		self.dim_color = pygame.Color(0, 128, 128)
+		self.bg_color = pygame.Color(0, 64, 64)
+		self.font_color = self.bright_color
 		self.elements = []
 
 	def _get_shape(self, scene_size, rect):
@@ -87,12 +93,28 @@ class Hud:
 		with self.program:
 			self.vao.draw_triangles()
 
-class Slider:
-	def __init__(self, surface, bg_color, outline_color, slider_color, rect, value_getter, line_width=2, slider_width=4):
-		self.surface = surface
-		self.bg_color = bg_color
-		self.outline_color = outline_color
-		self.slider_color = slider_color
+class HudElement:
+	def __init__(self, hud, rect):
+		self.hud = hud
+		self.rect = rect
+
+	def update(self, dt):
+		pass
+
+	def render(self):
+		self.hud.surface.fill(pygame.Color(255, 0, 255), self.rect)
+
+	def draw_rect(self, x, y, w, h, color=None):
+		if color is None: color = self.hud.bg_color
+		self.hud.surface.fill(color, (self.rect[0] + x, self.rect[1] + y, w, h))
+
+	def draw_text(self, text, color=None):
+		if color is None: color = self.hud.font_color
+		self.hud.font.render_to(self.hud.surface, (self.rect[0], self.rect[1]), text, size=self.rect[3], fgcolor=color)
+
+class Slider(HudElement):
+	def __init__(self, hud, rect, value_getter, line_width=2, slider_width=4):
+		super().__init__(hud, rect)
 		self.x, self.y, self.width, self.height = rect
 		self.value_getter = value_getter
 		self.line_width = line_width
@@ -109,25 +131,12 @@ class Slider:
 
 	def render(self):
 		w, h, lw = self.width, self.height, self.line_width
-		self._rect(0, 0, w, h, self.outline_color)
-		self._rect(lw, lw, w - 2*lw, h - 2*lw, self.bg_color)
+		self.draw_rect(0, 0, w, h, self.hud.dim_color)
+		self.draw_rect(lw, lw, w - 2*lw, h - 2*lw, self.hud.bg_color)
 		if self.slider_pos is not None:
 			sx = lw + (w - 2*lw - self.slider_width) * self.slider_pos
-			self._rect(sx, lw, self.slider_width, h - 2*lw, self.slider_color)
+			self.draw_rect(sx, lw, self.slider_width, h - 2*lw, self.hud.bright_color)
 
-	def _rect(self, x, y, w, h, color):
-		self.surface.fill(color, (self.x + x, self.y + y, w, h))
-
-class Channel:
-	def __init__(self, font, font_color, rect, surface, scene):
-		self.font = font
-		self.font_color = font_color
-		self.rect = rect
-		self.surface = surface
-		self.scene = scene
-
-	def update(self, dt):
-		pass
-
+class Channel(HudElement):
 	def render(self):
-		self.font.render_to(self.surface, (self.rect[0], self.rect[1]), self.scene.controller.current_channel['name'], size=self.rect[3], fgcolor=self.font_color)
+		self.draw_text(self.hud.scene.controller.current_channel['name'])
