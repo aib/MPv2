@@ -108,9 +108,15 @@ class HudElement:
 		if color is None: color = self.hud.bg_color
 		self.hud.surface.fill(color, (self.rect[0] + x, self.rect[1] + y, w, h))
 
-	def draw_text(self, text, color=None):
+	def draw_text(self, text, x=0, y=0, font=None, color=None, valign='top'):
+		if font is None: font = self.hud.font
 		if color is None: color = self.hud.font_color
-		self.hud.font.render_to(self.hud.surface, (self.rect[0], self.rect[1]), text, size=self.rect[3], fgcolor=color)
+		surf, rect = font.render(text, size=self.rect[3], fgcolor=color)
+		if valign == 'bottom':
+			posy = self.rect[1] + self.rect[3] - rect[3]
+		else:
+			posy = self.rect[1]
+		self.hud.surface.blit(surf, (self.rect[0] + x, posy + y))
 
 class Slider(HudElement):
 	def __init__(self, hud, rect, value_getter, line_width=2, slider_width=4):
