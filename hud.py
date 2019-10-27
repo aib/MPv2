@@ -144,6 +144,14 @@ class Slider(HudElement):
 			sx = lw + (w - 2*lw - self.slider_width) * self.slider_pos
 			self.draw_rect(sx, lw, self.slider_width, h - 2*lw, self.hud.bright_color)
 
+class Text(HudElement):
+	def __init__(self, hud, rect, text):
+		super().__init__(hud, rect)
+		self.text = text
+
+	def render(self):
+		self.draw_text(self.text)
+
 class Channel(HudElement):
 	def render(self):
 		self.draw_text(self.hud.scene.controller.current_channel['name'])
