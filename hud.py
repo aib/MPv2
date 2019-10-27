@@ -117,3 +117,17 @@ class Slider:
 
 	def _rect(self, x, y, w, h, color):
 		self.surface.fill(color, (self.x + x, self.y + y, w, h))
+
+class Channel:
+	def __init__(self, font, font_color, rect, surface, scene):
+		self.font = font
+		self.font_color = font_color
+		self.rect = rect
+		self.surface = surface
+		self.scene = scene
+
+	def update(self, dt):
+		pass
+
+	def render(self):
+		self.font.render_to(self.surface, (self.rect[0], self.rect[1]), self.scene.controller.current_channel['name'], size=self.rect[3], fgcolor=self.font_color)
