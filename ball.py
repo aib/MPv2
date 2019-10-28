@@ -108,7 +108,7 @@ class Ball:
 		self.index = index
 
 		self.enabled = False
-		self.opacity = 1.
+		self.fade_rate_after_collision = 0
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self.vao = gfx.VAO()
@@ -132,6 +132,9 @@ class Ball:
 			with self.program:
 				self.program.set_uniform('t_ball', self.texture.number)
 
+		self.opacity = 1.
+		self.fading = False
+
 	def get_distance_to(self, target):
 		return mp.norm(self.pos - target)
 
@@ -143,8 +146,13 @@ class Ball:
 			if col_tri is None:
 				break
 
-			self.scene.ball_face_collision(self, col_tri.face, col_pos)
+			if not self.fading:
+				self.scene.ball_face_collision(self, col_tri.face, col_pos)
+
 			collision_blacklist.append(col_tri)
+
+			if self.fade_rate_after_collision:
+				self.fading = True
 
 			self.dir = mp.reflect(-col_tri.normal, self.dir)
 			self.pos += self.dir * self.speed * col_time
@@ -154,6 +162,11 @@ class Ball:
 
 	def update(self, dt):
 		self._update_physics(dt)
+
+		if self.fading:
+			self.opacity -= dt * self.fade_rate_after_collision
+			if self.opacity < 0:
+				self.enabled = False
 
 		model = mp.translateM(self.pos) @ mp.scaleM(self.radius)
 		with self.program:
