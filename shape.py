@@ -58,8 +58,8 @@ float ball_highlight_factor() {
 		float radius = u_balls[i].w;
 		if (radius == 0.0) continue;
 
-		float dist = distance(vf_position, u_balls[i].xyz);
-		float light_radius = radius * 4;
+		float dist = max(distance(vf_position, u_balls[i].xyz) - radius, 0.);
+		float light_radius = radius * 3;
 
 		// f(lr)=0, f(0)=1
 		float hf = (-1 / light_radius) * (dist - light_radius);
