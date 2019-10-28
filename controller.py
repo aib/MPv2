@@ -82,7 +82,10 @@ class Controller:
 			return
 
 		for cname, cval in valmap.items():
-			self.controls[cname].set(cval, fire_onchange=False)
+			if cname in self.controls:
+				self.controls[cname].set(cval, fire_onchange=False)
+			else:
+				self._logger.warning("Saved control \"%s\" not found", cname)
 
 	def save_controls(self):
 		if self.save_file is None: return
