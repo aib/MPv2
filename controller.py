@@ -38,6 +38,7 @@ def _get_note_mapping():
 	return {
 		(9, 36): 'reset_balls',
 		(9, 37): 'reset_faces',
+		(9, 38): 'toggle_hud',
 	}
 
 class Controller:
@@ -110,6 +111,9 @@ class Controller:
 		elif event == 'chan_next':
 			if arg > 0:
 				self.controls['channel'].set((self.controls['channel'].get() + 1) % params.CHANNELS.COUNT)
+
+		elif event == 'toggle_hud':
+			self.scene.hud.enabled = not self.scene.hud.enabled
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
