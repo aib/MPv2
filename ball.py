@@ -46,12 +46,23 @@ class Balls:
 		self.ball_textures = ball_textures
 		self.balls = [Ball(self.scene, i) for i in range(params.BALLS.MAX)]
 
+		self._next_ball_index = 0
+
 		self.scene.controller.controls['ball_radius'].on_change(lambda _, radius: self.scene.defer(self.set_ball_radius, radius))
 		self.scene.controller.controls['ball_speed'].on_change(lambda _, speed: self.scene.defer(self.set_ball_speed, speed))
 		self.scene.controller.controls['ball_count'].on_change(lambda _, count: self.scene.defer(self.set_ball_count, count))
 
 	def enabled_balls(self):
 		return [b for b in self.balls if b.enabled]
+
+	def send_next_to(self, face):
+		ball = self.balls[self._next_ball_index]
+		self._next_ball_index = (self._next_ball_index + 1) % len(self.balls)
+
+		dir_ = face.midpoint
+		self._reset_ball(ball, dir=dir_)
+		ball.fade_rate_after_collision = 2.
+		ball.enabled = True
 
 	def set_ball_count(self, count):
 		for i in range(params.BALLS.MAX):
