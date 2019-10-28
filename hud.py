@@ -61,7 +61,24 @@ class Hud:
 		self.dim_color = pygame.Color(0, 128, 128)
 		self.bg_color = pygame.Color(0, 64, 64)
 		self.font_color = self.bright_color
-		self.elements = []
+
+		self.elements = [
+			Channel(self, self._get_rect(.02, -.048, .2, .022)),
+			NoteLength(self, self._get_rect(.28, -.07, .2, .05)),
+		]
+
+		def _add_text_with_slider(x, y, line, text, sval_getter):
+			self.elements.append(Text  (self, (x*self.rect[2],     y*self.rect[3]+line*22+2, 130, 18), text))
+			self.elements.append(Slider(self, (x*self.rect[2]+130, y*self.rect[3]+line*22,   200, 20), sval_getter))
+
+		_add_text_with_slider(.02, .84, 0, "Sphere Count:",  lambda: self.scene.controller.controls['ball_count'].get_fraction())
+		_add_text_with_slider(.02, .84, 1, "Sphere Speed:",  lambda: self.scene.controller.controls['ball_speed'].get_fraction())
+		_add_text_with_slider(.02, .84, 2, "Sphere Radius:", lambda: self.scene.controller.controls['ball_radius'].get_fraction())
+
+	def _get_rect(self, x, y, w, h):
+		if x < 0: x = 1 + x
+		if y < 0: y = 1 + y
+		return (x * self.rect[2], y * self.rect[3], w * self.rect[2], h * self.rect[3])
 
 	def _get_shape(self, scene_size, rect):
 		xmin = rect[0] / scene_size[0]
