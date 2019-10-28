@@ -71,6 +71,9 @@ class MidiHandler:
 	def change_control(self, channel, control, value):
 		self.midi_out.send_message([0xb0 + channel, control, value])
 
+	def change_program(self, channel, program):
+		self.midi_out.send_message([0xc0 + channel, program])
+
 	def all_notes_off(self):
 		for c in range(16):
 			self.midi_out.send_message([0xb0 + c, 0x7b, 00])
