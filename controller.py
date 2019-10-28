@@ -29,6 +29,8 @@ def _get_cc_mapping():
 		23: 'ball_radius',
 		24: 'shape',
 		25: 'note_length',
+		27: 'reverb',
+		28: 'chorus',
 		102: 'chan_next',
 		103: 'chan_prev',
 	}
@@ -122,6 +124,12 @@ class Controller:
 
 		elif event == 'volume':
 			self.midi.change_control(self.current_channel['number'], 7, arg)
+
+		elif event == 'reverb':
+			self.midi.change_control(self.current_channel['number'], 91, arg)
+
+		elif event == 'chorus':
+			self.midi.change_control(self.current_channel['number'], 93, arg)
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
