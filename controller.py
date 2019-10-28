@@ -5,6 +5,7 @@ import threading
 import time
 import queue
 
+import chordus
 import midi
 import params
 import scheduler
@@ -50,6 +51,7 @@ class Controller:
 
 		self._logger = logging.getLogger(__name__)
 		self.note_player = NotePlayer(self)
+		self.chordus = chordus.Chordus(self.note_player)
 		self.controls = { c.name: c for c in _get_controls() }
 		self.cc_mapping = _get_cc_mapping()
 		self.note_mapping = _get_note_mapping()
@@ -152,7 +154,7 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		self.note_player.note_down(channel, note, velocity)
+		self.chordus.note_down(channel, note, velocity)
 
 	def note_up(self, channel, note, velocity):
 		self._logger.debug("Note %d (%-3s)  UP  on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
@@ -160,7 +162,7 @@ class Controller:
 		if channel in IGNORE_PLAY_CHANNELS:
 			return
 
-		self.note_player.note_up(channel, note, velocity)
+		self.chordus.note_up(channel, note, velocity)
 
 	def note_play(self, channel, note, duration, svel, evel):
 		self._logger.debug("Note %d (%-3s) PLAY on channel %d with duration %.2f (velocity %d ~ %d)", note, midi.get_note_name(note), channel, duration, svel, evel)
