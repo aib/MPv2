@@ -34,6 +34,7 @@ def _get_cc_mapping():
 		28: 'chorus',
 		102: 'chan_next',
 		103: 'chan_prev',
+		117: 'chordus',
 	}
 
 def _get_note_mapping():
@@ -132,6 +133,12 @@ class Controller:
 
 		elif event == 'chorus':
 			self.midi.change_control(self.current_channel['number'], 93, arg)
+
+		elif event == 'chordus':
+			if arg > 0:
+				self.chordus.start_recording()
+			else:
+				self.chordus.stop_recording()
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
