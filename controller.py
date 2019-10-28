@@ -23,6 +23,7 @@ def _get_controls():
 
 def _get_cc_mapping():
 	return {
+		7: 'volume',
 		21: 'ball_count',
 		22: 'ball_speed',
 		23: 'ball_radius',
@@ -114,6 +115,9 @@ class Controller:
 
 		elif event == 'toggle_hud':
 			self.scene.hud.enabled = not self.scene.hud.enabled
+
+		elif event == 'volume':
+			self.midi.change_control(self.current_channel['number'], 7, arg)
 
 		else:
 			self._logger.warning("Unrecognized event \"%s\" (arg: %s)", event, arg)
