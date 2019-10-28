@@ -1,10 +1,11 @@
 class Chordus:
-	def __init__(self, midi):
+	def __init__(self, midi, allow_duplicates=False):
 		self.midi = midi
+		self.allow_duplicates = allow_duplicates
 
 		self.recording = False
 		self.record_center = None
-		self.deltas = set()
+		self.reset()
 
 	def note_down(self, channel, note, velocity):
 		self.midi.note_down(channel, note, velocity)
@@ -14,8 +15,8 @@ class Chordus:
 				self.record_center = note
 			else:
 				delta = note - self.record_center
-				if delta != 0:
-					self.deltas.add(delta)
+				if self.allow_duplicates or (delta != 0 and delta not in self.deltas):
+					self.deltas.append(delta)
 
 		else:
 			for delta in self.deltas:
@@ -35,7 +36,7 @@ class Chordus:
 					self.midi.note_up(channel, note + delta, velocity)
 
 	def reset(self):
-		self.deltas = set()
+		self.deltas = []
 
 	def start_recording(self):
 		self.reset()
