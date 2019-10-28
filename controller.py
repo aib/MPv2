@@ -13,7 +13,6 @@ IGNORE_PLAY_CHANNELS = [9]
 
 def _get_controls():
 	return [
-		Control('volume',      params.VOLUME,       Control.irange),
 		Control('ball_speed',  params.BALL_SPEED,   Control.fexprange()),
 		Control('ball_radius', params.BALL_RADIUS,  Control.frange),
 		Control('ball_count',  params.BALLS,        Control.irange),
@@ -24,7 +23,6 @@ def _get_controls():
 
 def _get_cc_mapping():
 	return {
-		7: 'volume',
 		21: 'ball_count',
 		22: 'ball_speed',
 		23: 'ball_radius',
@@ -53,7 +51,6 @@ class Controller:
 		self.cc_mapping = _get_cc_mapping()
 		self.note_mapping = _get_note_mapping()
 
-		self.controls['volume'].on_change(lambda _, vol: self.midi.change_control(0, 7, vol))
 		self.controls['note_length'].on_change(self._on_note_length_change)
 		self.controls['channel'].on_change(self._on_channel_change)
 

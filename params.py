@@ -55,5 +55,3 @@ CHANNELS = Enum([
 	{ 'name': "Channel 7", 'number': 7 },
 	{ 'name': "Channel 8", 'number': 8 },
 ], default=0)
-
-VOLUME = Range(0, 127, 64)
