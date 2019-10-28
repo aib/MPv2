@@ -62,6 +62,10 @@ class Controller:
 		self.current_channel = params.CHANNELS[cn]
 
 	def initialize_controls(self):
+		for channel in params.CHANNELS:
+			if channel['program'] is not None:
+				self.midi.change_program(channel['number'], channel['program'])
+
 		self.load_controls()
 
 		for control in self.controls.values():
