@@ -27,13 +27,15 @@ BALL_FS = """
 #version 130
 
 uniform sampler2D t_ball;
+uniform float u_opacity;
 
 in vec2 vf_texUV;
 
 out vec4 fragColor;
 
 void main() {
-	fragColor = texture2D(t_ball, vf_texUV);
+	vec4 color = texture2D(t_ball, vf_texUV);
+	fragColor = vec4(color.rgb, color.a * u_opacity);
 }
 """
 
@@ -106,6 +108,7 @@ class Ball:
 		self.index = index
 
 		self.enabled = False
+		self.opacity = 1.
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self.vao = gfx.VAO()
@@ -157,6 +160,7 @@ class Ball:
 			self.program.set_uniform('u_model', model)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
+			self.program.set_uniform('u_opacity', self.opacity)
 
 	def render(self):
 		with self.program:
