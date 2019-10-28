@@ -37,6 +37,7 @@ class Hud:
 		self.scene = scene
 		self.rect = rect
 
+		self.enabled = True
 		surface_size = (2048, 2048)
 
 		self.program = gfx.Program(HUD_VS, HUD_FS)
@@ -102,6 +103,7 @@ class Hud:
 
 	def render(self):
 		self.surface.fill(pygame.Color(0, 0, 0, 0))
+		if not self.enabled: return
 
 		for e in self.elements:
 			e.render()
