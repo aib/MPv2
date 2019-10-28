@@ -13,6 +13,7 @@ from OpenGL import GL
 import ball
 import camera
 import controller
+import hud
 import mp
 import params
 import shape
@@ -50,6 +51,8 @@ class Scene:
 
 		self.shapes = [shape(self) for shape in params.SHAPES]
 		self.balls = ball.Balls(self, list(map(self.load_texture, glob.glob('texture/ball*.png'))))
+
+		self.hud = hud.Hud(self, (0, 0, size[0], size[1]))
 
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
 
@@ -97,6 +100,8 @@ class Scene:
 		self.balls.update(dt)
 		self.active_shape.update(dt)
 
+		self.hud.update(dt)
+
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
@@ -114,6 +119,8 @@ class Scene:
 
 		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
 			drawable.render()
+
+		self.hud.render()
 
 	def shutdown(self):
 		self.controller.shutdown()
