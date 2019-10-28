@@ -160,3 +160,6 @@ class Ball:
 	def render(self):
 		with self.program:
 			self.vao.draw_triangles()
+
+	def __repr__(self):
+		return "<Ball %d>" % (self.index,)
