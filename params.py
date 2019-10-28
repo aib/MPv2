@@ -46,12 +46,12 @@ NOTE_LENGTHS = Enum([
 ], default=3)
 
 CHANNELS = Enum([
-	{ 'name': "Channel 1", 'number': 1, 'program': None },
-	{ 'name': "Channel 2", 'number': 2, 'program': None },
-	{ 'name': "Channel 3", 'number': 3, 'program': None },
-	{ 'name': "Channel 4", 'number': 4, 'program': None },
-	{ 'name': "Channel 5", 'number': 5, 'program': None },
-	{ 'name': "Channel 6", 'number': 6, 'program': None },
-	{ 'name': "Channel 7", 'number': 7, 'program': None },
-	{ 'name': "Channel 8", 'number': 8, 'program': None },
+	{ 'name': "Cello", 'number': 1, 'program': 42 },
+	{ 'name': "Steel String Guitar", 'number': 2, 'program': 25 },
+	{ 'name': "Marimba", 'number': 3, 'program': 12 },
+	{ 'name': "Melodic Tom", 'number': 4, 'program': 117 },
+	{ 'name': "Steel Drums", 'number': 5, 'program': 114 },
+	{ 'name': "Koto", 'number': 6, 'program': 107 },
+	{ 'name': "Harp", 'number': 7, 'program': 46 },
+	{ 'name': "Synth Bass", 'number': 8, 'program': 38 },
 ], default=0)
