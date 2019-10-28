@@ -81,10 +81,11 @@ class Balls:
 			if b.get_distance_to(mp.array([0, 0, 0])) > self.scene.active_shape.radius:
 				self._reset_ball(b)
 
-	def _reset_ball(self, ball):
+	def _reset_ball(self, ball, dir=None):
+		if dir is None: dir = mp.normalize(np.random.standard_normal(3))
 		ball.init(
 			pos=[0, 0, 0],
-			dir=mp.normalize(np.random.standard_normal(3)),
+			dir=dir,
 			speed=self._ball_speed,
 			radius=self._ball_radius,
 			texture=np.random.choice(self.ball_textures)
