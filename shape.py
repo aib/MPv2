@@ -40,6 +40,7 @@ SHAPE_FS = """
 #define MAX_BALLS 16
 
 uniform vec4 u_balls[MAX_BALLS];
+uniform vec3 u_wireColor;
 uniform vec3 u_faceColor;
 uniform float u_faceHighlight;
 
@@ -82,7 +83,7 @@ void main() {
 	float faceAlpha = mix(.1, .8, u_faceHighlight);
 
 	vec4 faceColor = vec4(mix(u_faceColor, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
-	vec4 wireColor = vec4(u_faceColor, 1);
+	vec4 wireColor = vec4(u_wireColor, 1);
 	fragColor = mix(faceColor, wireColor, edge);
 }
 """
@@ -112,6 +113,7 @@ class Shape:
 	def update(self, dt):
 		with self.program:
 			balls = [[b.pos[0], b.pos[1], b.pos[2], b.radius * b.opacity if b.enabled else 0.] for b in self.scene.balls.balls]
+			self.program.set_uniform('u_wireColor', mp.array([0, 1, 0]))
 			self.program.set_uniform('u_faceColor', mp.array([0, 1, 0]))
 			self.program.set_uniform('u_balls', balls)
 			self.program.set_uniform('u_view', self.scene.view)
