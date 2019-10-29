@@ -217,6 +217,8 @@ class NotePlayer:
 		self.controller.midi.send_note_down(channel, note, velocity)
 		faces = self.controller.scene.get_next_faces_and_rotate()
 		for f in faces:
+			f.set_wire_color(self.controller.scene.color_palette.get_wire_color_for_note(note))
+			f.set_face_colors(*self.controller.scene.color_palette.get_face_colors_for_note(note))
 			f.highlight(math.inf)
 		return { 'faces': faces, 'svel': velocity }
 

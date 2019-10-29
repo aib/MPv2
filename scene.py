@@ -12,6 +12,7 @@ from OpenGL import GL
 
 import ball
 import camera
+import colorpalette
 import controller
 import hud
 import mp
@@ -32,6 +33,7 @@ class Scene:
 		self._next_free_texture = 1
 		self.controller = controller.Controller(self, midi, 'controls.json')
 		self.midi.set_controller(self.controller)
+		self.color_palette = colorpalette.ColorPalette()
 
 		self.camera = camera.SphericalCamera(
 			self,
@@ -75,6 +77,14 @@ class Scene:
 	def reset_faces(self):
 		random.shuffle(self.face_queue)
 		random.shuffle(self.face_mapping)
+		for face in self.get_all_faces():
+			if self.face_mapping[face.index] is None:
+				face.set_wire_color(self.color_palette.get_default_wire_color())
+				face.set_face_colors(*self.color_palette.get_default_face_colors())
+			else:
+				note = self.face_mapping[face.index][1]
+				face.set_wire_color(self.color_palette.get_wire_color_for_note(note))
+				face.set_face_colors(*self.color_palette.get_face_colors_for_note(note))
 
 	def update(self):
 		now = time.monotonic()
