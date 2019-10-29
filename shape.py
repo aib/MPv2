@@ -41,7 +41,8 @@ SHAPE_FS = """
 
 uniform vec4 u_balls[MAX_BALLS];
 uniform vec4 u_wireColor;
-uniform vec4 u_faceColor;
+uniform vec4 u_faceColorNormal;
+uniform vec4 u_faceColorHighlighted;
 uniform float u_faceHighlight;
 
 in vec3 vf_position;
@@ -80,9 +81,10 @@ void main() {
 
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
 
-	float faceAlpha = mix(.1, u_faceColor.a, u_faceHighlight);
+	float faceAlpha = mix(u_faceColorNormal.a, u_faceColorHighlighted.a, u_faceHighlight);
+	vec3 mixedColor = mix(u_faceColorNormal.rgb, u_faceColorHighlighted.rgb, u_faceHighlight);
 
-	vec4 faceColor = vec4(mix(u_faceColor.rgb, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
+	vec4 faceColor = vec4(mix(mixedColor, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
 	fragColor = mix(faceColor, u_wireColor, edge);
 }
 """
@@ -128,7 +130,8 @@ class Face:
 		self.midpoint = sum(vertices) / len(vertices)
 		self.normal = mp.triangle_normal(vertices[0:3])
 		self.wire_color = mp.array([1, 1, 1, 1])
-		self.face_color = mp.array([1, 1, 1, 1])
+		self.face_color_normal = mp.array([1, 1, 1, .1])
+		self.face_color_highlighted = mp.array([1, 1, 1, 1])
 		self.highlight_time = 0.
 
 		for i in range(1, len(vertices)-1):
@@ -139,8 +142,9 @@ class Face:
 	def set_wire_color(self, color):
 		self.wire_color = color
 
-	def set_face_color(self, color):
-		self.face_color = color
+	def set_face_colors(self, normal_color, highlighted_color):
+		self.face_color_normal = normal_color
+		self.face_color_highlighted = highlighted_color
 
 	def highlight(self, highlight_time, force=False):
 		highlight_time = float(highlight_time) + HIGHLIGHT_FALLOFF_TIME
@@ -155,7 +159,8 @@ class Face:
 	def render(self):
 		with self.shape.program:
 			self.shape.program.set_uniform('u_wireColor', self.wire_color)
-			self.shape.program.set_uniform('u_faceColor', self.face_color)
+			self.shape.program.set_uniform('u_faceColorNormal', self.face_color_normal)
+			self.shape.program.set_uniform('u_faceColorHighlighted', self.face_color_highlighted)
 			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time + HIGHLIGHT_FALLOFF_TIME, 0., 1.))
 			for t in self.triangles:
 				t.render()
