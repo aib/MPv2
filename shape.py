@@ -79,12 +79,11 @@ void main() {
 	float edge_distance_delta = fwidth(edge_distance);
 	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 2, edge_distance);
 
+	vec4 faceColor = mix(u_faceColorNormal, u_faceColorHighlighted, u_faceHighlight);
+
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
+	faceColor = mix(faceColor, ball_highlight, ball_highlight.a);
 
-	float faceAlpha = mix(u_faceColorNormal.a, u_faceColorHighlighted.a, u_faceHighlight);
-	vec3 mixedColor = mix(u_faceColorNormal.rgb, u_faceColorHighlighted.rgb, u_faceHighlight);
-
-	vec4 faceColor = vec4(mix(mixedColor, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
 	fragColor = mix(faceColor, u_wireColor, edge);
 }
 """
