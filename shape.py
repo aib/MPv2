@@ -40,8 +40,8 @@ SHAPE_FS = """
 #define MAX_BALLS 16
 
 uniform vec4 u_balls[MAX_BALLS];
-uniform vec3 u_wireColor;
-uniform vec3 u_faceColor;
+uniform vec4 u_wireColor;
+uniform vec4 u_faceColor;
 uniform float u_faceHighlight;
 
 in vec3 vf_position;
@@ -80,11 +80,10 @@ void main() {
 
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
 
-	float faceAlpha = mix(.1, .8, u_faceHighlight);
+	float faceAlpha = mix(.1, u_faceColor.a, u_faceHighlight);
 
-	vec4 faceColor = vec4(mix(u_faceColor, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
-	vec4 wireColor = vec4(u_wireColor, 1);
-	fragColor = mix(faceColor, wireColor, edge);
+	vec4 faceColor = vec4(mix(u_faceColor.rgb, ball_highlight.rgb, ball_highlight.a), max(faceAlpha, ball_highlight.a));
+	fragColor = mix(faceColor, u_wireColor, edge);
 }
 """
 
@@ -113,8 +112,8 @@ class Shape:
 	def update(self, dt):
 		with self.program:
 			balls = [[b.pos[0], b.pos[1], b.pos[2], b.radius * b.opacity if b.enabled else 0.] for b in self.scene.balls.balls]
-			self.program.set_uniform('u_wireColor', mp.array([0, 1, 0]))
-			self.program.set_uniform('u_faceColor', mp.array([0, 1, 0]))
+			self.program.set_uniform('u_wireColor', mp.array([1, 1, 1, 1]))
+			self.program.set_uniform('u_faceColor', mp.array([1, 1, 1, 1]))
 			self.program.set_uniform('u_balls', balls)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
