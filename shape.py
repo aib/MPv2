@@ -112,8 +112,6 @@ class Shape:
 	def update(self, dt):
 		with self.program:
 			balls = [[b.pos[0], b.pos[1], b.pos[2], b.radius * b.opacity if b.enabled else 0.] for b in self.scene.balls.balls]
-			self.program.set_uniform('u_wireColor', mp.array([1, 1, 1, 1]))
-			self.program.set_uniform('u_faceColor', mp.array([1, 1, 1, 1]))
 			self.program.set_uniform('u_balls', balls)
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
@@ -129,12 +127,20 @@ class Face:
 		self.triangles = []
 		self.midpoint = sum(vertices) / len(vertices)
 		self.normal = mp.triangle_normal(vertices[0:3])
+		self.wire_color = mp.array([1, 1, 1, 1])
+		self.face_color = mp.array([1, 1, 1, 1])
 		self.highlight_time = 0.
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
 			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], normals[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
+
+	def set_wire_color(self, color):
+		self.wire_color = color
+
+	def set_face_color(self, color):
+		self.face_color = color
 
 	def highlight(self, highlight_time, force=False):
 		highlight_time = float(highlight_time) + HIGHLIGHT_FALLOFF_TIME
@@ -148,6 +154,8 @@ class Face:
 
 	def render(self):
 		with self.shape.program:
+			self.shape.program.set_uniform('u_wireColor', self.wire_color)
+			self.shape.program.set_uniform('u_faceColor', self.face_color)
 			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time + HIGHLIGHT_FALLOFF_TIME, 0., 1.))
 			for t in self.triangles:
 				t.render()
