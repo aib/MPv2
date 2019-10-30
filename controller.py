@@ -226,7 +226,7 @@ class NotePlayer:
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 		self.controller.midi.send_note_up(channel, note, velocity)
 		for f in down_data['faces']:
-			self.controller.scene.face_mapping[f.index] = (channel, note, duration, down_data['svel'], velocity)
+			self.controller.scene.set_face_mapping(f, (channel, note, duration, down_data['svel'], velocity))
 			f.highlight(0., force=True)
 
 class Control:

@@ -78,13 +78,19 @@ class Scene:
 		random.shuffle(self.face_queue)
 		random.shuffle(self.face_mapping)
 		for face in self.active_shape.faces:
-			if self.face_mapping[face.index] is None:
+			if self.get_face_mapping(face) is None:
 				face.set_wire_color(self.color_palette.get_default_wire_color())
 				face.set_face_colors(*self.color_palette.get_default_face_colors())
 			else:
-				note = self.face_mapping[face.index][1]
+				note = self.get_face_mapping(face)[1]
 				face.set_wire_color(self.color_palette.get_wire_color_for_note(note))
 				face.set_face_colors(*self.color_palette.get_face_colors_for_note(note))
+
+	def get_face_mapping(self, face):
+		return self.face_mapping[face.index]
+
+	def set_face_mapping(self, face, mapping):
+		self.face_mapping[face.index] = mapping
 
 	def update(self):
 		now = time.monotonic()
@@ -151,7 +157,7 @@ class Scene:
 		pass
 
 	def ball_face_collision(self, ball, face, pos):
-		mapping = self.face_mapping[face.index]
+		mapping = self.get_face_mapping(face)
 		if mapping is not None:
 			self.midi.play_note(*mapping)
 			face.highlight(0)
