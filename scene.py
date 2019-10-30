@@ -56,6 +56,7 @@ class Scene:
 
 		self.hud = hud.Hud(self, (0, 0, size[0], size[1]))
 
+		self._symmetry_map = []
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
 
 		self.controller.initialize_controls()
@@ -65,10 +66,18 @@ class Scene:
 
 	def set_shape(self, i, symmetry=None):
 		self.active_shape = self.shapes[i]
+
 		if symmetry is None:
 			symmetry = len(self.active_shape.faces)
-		self.face_queue = [[self.active_shape.faces[fi] for fi in sym] for sym in self.active_shape.symmetries[symmetry]]
-		self.face_mapping = [None for face in self.active_shape.faces]
+
+		sym_map = self.active_shape.symmetries[symmetry]
+		self._symmetry_id_count = len(sym_map)
+		self._symmetry_ids = { face_index: i for i, faces in enumerate(sym_map) for face_index in faces }
+
+		if len(self._symmetry_map) < self._symmetry_id_count:
+			self._symmetry_map.extend([None] * (self._symmetry_id_count - len(self._symmetry_map)))
+
+		self.face_queue = [[self.active_shape.faces[fi] for fi in sym] for sym in sym_map]
 		self._reset_faces()
 
 	def get_next_faces_and_rotate(self):
@@ -77,11 +86,13 @@ class Scene:
 		return faces
 
 	def shuffle_faces(self):
-		random.shuffle(self.face_queue)
-		random.shuffle(self.face_mapping)
+		active_map, inactive_map = self._symmetry_map[0:self._symmetry_id_count], self._symmetry_map[self._symmetry_id_count:]
+		random.shuffle(active_map)
+		self._symmetry_map = active_map + inactive_map
 		self._reset_faces()
 
 	def _reset_faces(self):
+		random.shuffle(self.face_queue)
 		for face in self.active_shape.faces:
 			if self.get_face_mapping(face) is None:
 				face.set_wire_color(self.color_palette.get_default_wire_color())
@@ -92,10 +103,10 @@ class Scene:
 				face.set_face_colors(*self.color_palette.get_face_colors_for_note(note))
 
 	def get_face_mapping(self, face):
-		return self.face_mapping[face.index]
+		return self._symmetry_map[self._symmetry_ids[face.index]]
 
 	def set_face_mapping(self, face, mapping):
-		self.face_mapping[face.index] = mapping
+		self._symmetry_map[self._symmetry_ids[face.index]] = mapping
 
 	def update(self):
 		now = time.monotonic()
