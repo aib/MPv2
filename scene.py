@@ -70,7 +70,11 @@ class Scene:
 		if symmetry is None:
 			symmetry = len(self.active_shape.faces)
 
-		sym_map = self.active_shape.symmetries[symmetry]
+		self.active_symmetry = symmetry
+
+		self._logger.debug("Changing shape to %s (%d)", self.active_shape.name, self.active_symmetry)
+
+		sym_map = self.active_shape.symmetries[self.active_symmetry]
 		self._symmetry_id_count = len(sym_map)
 		self._symmetry_ids = { face_index: i for i, faces in enumerate(sym_map) for face_index in faces }
 
