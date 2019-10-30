@@ -77,7 +77,7 @@ class Scene:
 	def reset_faces(self):
 		random.shuffle(self.face_queue)
 		random.shuffle(self.face_mapping)
-		for face in self.get_all_faces():
+		for face in self.active_shape.faces:
 			if self.face_mapping[face.index] is None:
 				face.set_wire_color(self.color_palette.get_default_wire_color())
 				face.set_face_colors(*self.color_palette.get_default_face_colors())
@@ -135,9 +135,6 @@ class Scene:
 	def shutdown(self):
 		self.controller.shutdown()
 
-	def get_all_faces(self):
-		return self.active_shape.faces
-
 	def key_down(self, key):
 		self.keys[key] = True
 
@@ -172,7 +169,7 @@ class Scene:
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
 		intersections = []
-		for f in self.get_all_faces():
+		for f in self.active_shape.faces:
 			for t in f.triangles:
 				if blacklist is not None and t in blacklist:
 					continue
