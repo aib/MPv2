@@ -63,9 +63,11 @@ class Scene:
 		now = time.monotonic()
 		self.last_update_time = now
 
-	def set_shape(self, i):
+	def set_shape(self, i, symmetry=None):
 		self.active_shape = self.shapes[i]
-		self.face_queue = [(face,) for face in self.active_shape.faces]
+		if symmetry is None:
+			symmetry = len(self.active_shape.faces)
+		self.face_queue = [[self.active_shape.faces[fi] for fi in sym] for sym in self.active_shape.symmetries[symmetry]]
 		self.face_mapping = [None for face in self.active_shape.faces]
 		self._reset_faces()
 
