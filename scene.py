@@ -67,7 +67,7 @@ class Scene:
 		self.active_shape = self.shapes[i]
 		self.face_queue = [(face,) for face in self.active_shape.faces]
 		self.face_mapping = [None for face in self.active_shape.faces]
-		self.shuffle_faces()
+		self._reset_faces()
 
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
@@ -77,6 +77,9 @@ class Scene:
 	def shuffle_faces(self):
 		random.shuffle(self.face_queue)
 		random.shuffle(self.face_mapping)
+		self._reset_faces()
+
+	def _reset_faces(self):
 		for face in self.active_shape.faces:
 			if self.get_face_mapping(face) is None:
 				face.set_wire_color(self.color_palette.get_default_wire_color())
