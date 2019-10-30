@@ -10,8 +10,6 @@ def _autoloading_shape(filename, name=None, symmetries={}):
 		return s
 	return _shape_constructor
 
-Tetrahedron = _autoloading_shape('obj/tetrahedron.obj', "Tetrahedron")
-
 _hexahedron_symmetries = {
 	3: [(0, 4), (1, 5), (2, 3)],
 }
