@@ -40,7 +40,7 @@ def _get_cc_mapping():
 def _get_note_mapping():
 	return {
 		(9, 36): 'reset_balls',
-		(9, 37): 'reset_faces',
+		(9, 37): 'shuffle_faces',
 		(9, 38): 'toggle_hud',
 	}
 
@@ -111,8 +111,8 @@ class Controller:
 		if event == 'reset_balls':
 			self.scene.defer(self.scene.balls.reset_balls)
 
-		elif event == 'reset_faces':
-			self.scene.defer(self.scene.reset_faces)
+		elif event == 'shuffle_faces':
+			self.scene.defer(self.scene.shuffle_faces)
 
 		elif event == 'chan_prev':
 			if arg > 0:

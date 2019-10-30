@@ -67,14 +67,14 @@ class Scene:
 		self.active_shape = self.shapes[i]
 		self.face_queue = [(face,) for face in self.active_shape.faces]
 		self.face_mapping = [None for face in self.active_shape.faces]
-		self.reset_faces()
+		self.shuffle_faces()
 
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
 		self.face_queue.append(faces)
 		return faces
 
-	def reset_faces(self):
+	def shuffle_faces(self):
 		random.shuffle(self.face_queue)
 		random.shuffle(self.face_mapping)
 		for face in self.active_shape.faces:
