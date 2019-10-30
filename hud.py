@@ -175,16 +175,18 @@ class Slider(HudElement):
 			self.draw_rect(sx, lw, self.slider_width, h - 2*lw, self.hud.bright_color)
 
 class Text(HudElement):
-	def __init__(self, hud, rect, text):
+	def __init__(self, hud, rect, text, halign='left', valign='top'):
 		super().__init__(hud, rect)
 		self.text = text
+		self.halign = halign
+		self.valign = valign
 
 	def render(self):
-		self.draw_text(self.text)
+		self.draw_text(self.text, halign=self.halign, valign=self.valign)
 
 class DynamicText(Text):
-	def __init__(self, hud, rect, text_getter):
-		super().__init__(hud, rect, '')
+	def __init__(self, hud, rect, text_getter, halign='center', valign='center'):
+		super().__init__(hud, rect, '', halign, valign)
 		self.text_getter = text_getter
 
 	def update(self, dt):
