@@ -66,6 +66,7 @@ class Hud:
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
 			NoteLength(self, self._get_rect(.28, -.07, .2, .05)),
+			DynamicText(self, self._get_rect(.4, -.15, .2, .02), lambda: "%s (%d)" % (self.scene.active_shape.name, self.scene.active_symmetry)),
 		]
 
 		def _add_text_with_slider(x, y, line, text, sval_getter):
