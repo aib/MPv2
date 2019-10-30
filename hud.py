@@ -173,6 +173,14 @@ class Text(HudElement):
 	def render(self):
 		self.draw_text(self.text)
 
+class DynamicText(Text):
+	def __init__(self, hud, rect, text_getter):
+		super().__init__(hud, rect, '')
+		self.text_getter = text_getter
+
+	def update(self, dt):
+		self.text = self.text_getter()
+
 class Channel(HudElement):
 	def render(self):
 		self.draw_text(self.hud.scene.controller.current_channel['name'])
