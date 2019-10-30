@@ -89,8 +89,9 @@ void main() {
 """
 
 class Shape:
-	def __init__(self, scene, radius):
+	def __init__(self, scene, name, radius):
 		self.scene = scene
+		self.name = name
 		self.radius = radius
 
 		self.faces = []
