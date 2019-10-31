@@ -31,6 +31,15 @@ def read_obj(f):
 
 	return (vs, vts, vns, fvs, fvts, fvns)
 
+def read_obj_map(f):
+	vs, vts, vns, fvs, fvts, fvns = read_obj(f)
+
+	v = list(map(lambda vi: list(map(lambda i: vs[i],  vi)), fvs ))
+	t = list(map(lambda vi: list(map(lambda i: vts[i], vi)), fvts))
+	n = list(map(lambda vi: list(map(lambda i: vns[i], vi)), fvns))
+
+	return v, t, n
+
 def read_obj_np(f):
 	vs, vts, vns, fvs, fvts, fvns = read_obj(f)
 
