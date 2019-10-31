@@ -35,12 +35,12 @@ class Scene:
 		self.midi.set_controller(self.controller)
 		self.color_palette = colorpalette.RedBlue()
 
-		self.camera = camera.SphericalCamera(
-			self,
-			pos=[math.radians(41), math.radians(90 - 15), 10],
-			speed=[math.tau/2, math.tau/2, 2],
+		self.camera = camera.WanderingSphericalCamera(
 			target=[0, 0, 0],
-			up=[0, 1, 0]
+			up=[0, 1, 0],
+			theta_eq=lambda elapsed: (elapsed * math.tau / 499) % math.tau,
+			phi_eq=lambda elapsed: math.tau/4 - math.sin(elapsed / 131) * (math.tau/16),
+			r_eq=lambda elapsed: 9
 		)
 
 		GL.glClearColor(.1, 0, .1, 1)
