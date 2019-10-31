@@ -35,6 +35,7 @@ def _get_cc_mapping():
 		102: 'chan_next',
 		103: 'chan_prev',
 		117: 'chordus',
+		113: 'next_symmetry',
 	}
 
 def _get_note_mapping():
@@ -133,6 +134,10 @@ class Controller:
 
 		elif event == 'chorus':
 			self.midi.change_control(self.current_channel['number'], 93, arg)
+
+		elif event == 'next_symmetry':
+			if arg > 0:
+				self.scene.defer(self.scene.set_next_symmetry)
 
 		elif event == 'chordus':
 			if arg > 0:
