@@ -57,19 +57,20 @@ class Scene:
 		self.hud = hud.Hud(self, (0, 0, size[0], size[1]))
 
 		self._symmetry_map = []
-		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self.set_shape, index))
+		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self._set_shape, index))
 
 		self.controller.initialize_controls()
 
 		now = time.monotonic()
 		self.last_update_time = now
 
-	def set_shape(self, i, symmetry=None):
-		self.active_shape = self.shapes[i]
+	def _set_shape(self, index):
+		shape = self.shapes[index]
+		default_symmetry = next(iter(shape.symmetries.keys()))
+		self._set_shape_and_symmetry(shape, default_symmetry)
 
-		if symmetry is None:
-			symmetry = len(self.active_shape.faces)
-
+	def _set_shape_and_symmetry(self, shape, symmetry):
+		self.active_shape = shape
 		self.active_symmetry = symmetry
 
 		self._logger.debug("Changing shape to %s (%d)", self.active_shape.name, self.active_symmetry)
