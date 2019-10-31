@@ -85,6 +85,12 @@ class Scene:
 		self.face_queue = [[self.active_shape.faces[fi] for fi in sym] for sym in sym_map]
 		self._reset_faces()
 
+	def set_next_symmetry(self):
+		symmetries = list(self.active_shape.symmetries.keys())
+		cur_sym_index = symmetries.index(self.active_symmetry)
+		next_symmetry = symmetries[(cur_sym_index + 1) % len(symmetries)]
+		self._set_shape_and_symmetry(self.active_shape, next_symmetry)
+
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
 		self.face_queue.append(faces)
