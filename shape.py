@@ -100,7 +100,7 @@ class Shape:
 
 	def load_file(self, filename):
 		with open(filename, 'r') as f:
-			vertices, texcoords, normals = objreader.read_obj_np(f)
+			vertices, texcoords, normals = objreader.read_obj_map(f, vec_cls=mp.array)
 
 		bsrad = max(map(lambda fvs: max(map(mp.norm, fvs)), vertices))
 
