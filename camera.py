@@ -49,7 +49,7 @@ class SphericalCamera(Camera):
 	def _get_temp_up(self):
 		return self.up
 
-class WonderingSphericalCamera(Camera):
+class WanderingSphericalCamera(Camera):
 	def __init__(self, target, up, theta_eq, phi_eq, r_eq):
 		self.target = mp.array(target)
 		self.up = mp.array(up)
