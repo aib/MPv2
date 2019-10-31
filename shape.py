@@ -136,7 +136,8 @@ class Face:
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
-			triangle = Triangle(self, vertices[[i0, i1, i2]], texcoords[[i0, i1, i2]], normals[[i0, i1, i2]], [True, i2==len(vertices)-1, i==1])
+			_triplet = lambda arr: [arr[i0], arr[i1], arr[i2]]
+			triangle = Triangle(self, _triplet(vertices), _triplet(texcoords), _triplet(normals), [True, i2==len(vertices)-1, i==1])
 			self.triangles.append(triangle)
 
 	def set_wire_color(self, color):
