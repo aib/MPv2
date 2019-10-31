@@ -1,10 +1,10 @@
 import params
 import shape
 
-def _autoloading_shape(filename, name=None, symmetries={}):
+def _autoloading_shape(filename, name=None, symmetries={}, default_symmetry=True):
 	def _shape_constructor(scene):
 		s = shape.Shape(scene, name, params.SHAPE_SCALE)
-		s.load_file(filename)
+		s.load_file(filename, default_symmetry=default_symmetry)
 		for k, v in symmetries.items():
 			s.symmetries[k] = v
 		return s
