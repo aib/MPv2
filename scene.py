@@ -42,6 +42,7 @@ class Scene:
 			phi_eq=lambda elapsed: math.tau/4 - math.sin(elapsed / 131) * (math.tau/16),
 			r_eq=lambda elapsed: 9
 		)
+		self.fov_y = math.tau / 8
 
 		GL.glClearColor(.1, 0, .1, 1)
 		GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
@@ -140,7 +141,7 @@ class Scene:
 		self.camera.update(dt)
 
 		self.view = self.camera.get_view_matrix()
-		self.projection = mp.perspectiveM(math.tau/8, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
+		self.projection = mp.perspectiveM(self.fov_y, self.size[0] / self.size[1], params.DEPTH.MIN, params.DEPTH.MAX)
 
 		self.skybox.update(dt)
 
