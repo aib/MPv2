@@ -114,7 +114,11 @@ class Scene:
 				face.set_face_colors(*self.color_palette.get_face_colors_for_note(note))
 
 	def get_face_mapping(self, face):
-		return self._symmetry_map[self._symmetry_ids[face.index]]
+		if face.index in self._symmetry_ids:
+			symmetry_id = self._symmetry_ids[face.index]
+			return self._symmetry_map[symmetry_id]
+
+		return None
 
 	def set_face_mapping(self, face, mapping):
 		self._symmetry_map[self._symmetry_ids[face.index]] = mapping
