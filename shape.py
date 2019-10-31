@@ -102,7 +102,7 @@ class Shape:
 		with open(filename, 'r') as f:
 			vertices, texcoords, normals = objreader.read_obj_np(f)
 
-		bsrad = np.amax(np.linalg.norm(vertices, axis=2))
+		bsrad = max(map(lambda fvs: max(map(mp.norm, fvs)), vertices))
 
 		for i, vf in enumerate(vertices):
 			tf, nf = texcoords[i], normals[i]
