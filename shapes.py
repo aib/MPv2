@@ -31,3 +31,8 @@ _icosahedron_symmetries = {
 	5: [(0, 7, 8, 19), (1, 9, 14, 15), (2, 10, 11, 16), (3, 12, 13, 17), (4, 5, 6, 18)],
 }
 Icosahedron = _autoloading_shape('obj/icosahedron.obj', "Icosahedron", _icosahedron_symmetries)
+
+_hexagon_prism_symmetries = {
+	6: [(0,), (1,), (2,), (3,), (4,), (5,)],
+}
+HexagonPrism = _autoloading_shape('obj/hexagon_prism.obj', "Hexagon Prism", _hexagon_prism_symmetries, default_symmetry=False)

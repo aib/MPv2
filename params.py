@@ -29,9 +29,10 @@ BALL_RADIUS = Range(.05, 1., default=.2)
 SHAPES = Enum([
 	shapes.Hexahedron,
 	shapes.Octohedron,
+	shapes.HexagonPrism,
 	shapes.Dodecahedron,
 	shapes.Icosahedron,
-], default=3)
+], default=4)
 
 CUSTOM_NOTE_LENGTH = object()
 NOTE_LENGTHS = Enum([
