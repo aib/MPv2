@@ -98,7 +98,7 @@ class Shape:
 		self.symmetries = {}
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
 
-	def load_file(self, filename):
+	def load_file(self, filename, default_symmetry=True):
 		with open(filename, 'r') as f:
 			vertices, texcoords, normals = objreader.read_obj_map(f, vec_cls=mp.array)
 
@@ -109,7 +109,8 @@ class Shape:
 			face = Face(self, i, vf / bsrad * self.radius, tf, nf)
 			self.faces.append(face)
 
-		self.symmetries[len(self.faces)] = [(f.index,) for f in self.faces]
+		if default_symmetry:
+			self.symmetries[len(self.faces)] = [(f.index,) for f in self.faces]
 
 	def update(self, dt):
 		with self.program:
