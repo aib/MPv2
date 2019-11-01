@@ -104,6 +104,9 @@ class Scene:
 
 	def _reset_faces(self):
 		random.shuffle(self.face_queue)
+		self._update_face_colors()
+
+	def _update_face_colors(self):
 		for face in self.active_shape.faces:
 			if self.get_face_mapping(face) is None:
 				face.set_wire_color(self.color_palette.get_default_wire_color())
