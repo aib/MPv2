@@ -6,8 +6,7 @@ class Texture:
 	@classmethod
 	def create_with_image(cls, number, image_file, **kwargs):
 		tex = cls(number, **kwargs)
-		with tex:
-			tex.load_image(image_file)
+		tex.load_image(image_file)
 		return tex
 
 	def __init__(self, number, texture_type):

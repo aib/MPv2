@@ -200,8 +200,7 @@ class Scene:
 
 	def load_texture(self, filename, cls=texture.Texture2D, **kwargs):
 		tex = self.create_texture(cls, **kwargs)
-		with tex:
-			tex.load_image(filename)
+		tex.load_image(filename)
 		return tex
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
