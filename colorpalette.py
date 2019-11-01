@@ -1,3 +1,5 @@
+import mp
+
 class ColorPalette:
 	def get_default_wire_color(self):
 		return (1., 1., 1., 1.)
@@ -19,6 +21,9 @@ def rgb_alphas(r, g, b, an, ah):
 
 def tri(period, x):
 	return abs((2/period) * ((x + period/2) % period) - 1)
+
+def tri_wave(period, y0, y1, x):
+	return mp.mix(y0, y1, tri(period, x))
 
 class RedBlue(ColorPalette):
 	def get_default_wire_color(self):
