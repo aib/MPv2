@@ -1,8 +1,6 @@
 import numpy as np
 from OpenGL import GL
 
-import mp
-
 class ShaderError(Exception):
 	def __init__(self, message, infoLog):
 		super().__init__("%s: %s" % (message, infoLog))
@@ -136,16 +134,17 @@ class VBO:
 			vbo.set_data(data, hint)
 		return vbo
 
-	def __init__(self, buffer_type=GL.GL_ARRAY_BUFFER):
+	def __init__(self, buffer_type=GL.GL_ARRAY_BUFFER, dtype=np.float32):
 		self.id = GL.glGenBuffers(1)
 		self.type = buffer_type
+		self.dtype = dtype
 		self.data = None
 
 	def activate(self):
 		GL.glBindBuffer(self.type, self.id)
 
 	def set_data(self, data, hint=GL.GL_STATIC_DRAW):
-		self.data = mp.asarray(data)
+		self.data = np.asarray(data, dtype=self.dtype)
 		GL.glBufferData(self.type, self.data, hint)
 
 	def set_attrib_pointer(self, index):
