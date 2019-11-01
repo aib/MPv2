@@ -93,10 +93,8 @@ def scaleM(s):
 
 # https://en.wikipedia.org/wiki/Euler%E2%80%93Rodrigues_formula
 def rotateM(axis, theta):
-	axis = asarray(axis)
-	axis = axis / np.sqrt(dot(axis, axis))
-	a = np.cos(theta / 2)
-	b, c, d = -axis * np.sin(theta / 2)
+	a = math.cos(theta / 2)
+	b, c, d = normalize(axis) * -math.sin(theta / 2)
 	aa, bb, cc, dd = a * a, b * b, c * c, d * d
 	bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
 	return array([
