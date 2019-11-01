@@ -164,7 +164,7 @@ class Face:
 			self.shape.program.set_uniform('u_wireColor', self.wire_color)
 			self.shape.program.set_uniform('u_faceColorNormal', self.face_color_normal)
 			self.shape.program.set_uniform('u_faceColorHighlighted', self.face_color_highlighted)
-			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time + HIGHLIGHT_FALLOFF_TIME, 0., 1.))
+			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time / HIGHLIGHT_FALLOFF_TIME, 0., 1.))
 			for t in self.triangles:
 				t.render()
 
