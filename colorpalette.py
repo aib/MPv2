@@ -1,3 +1,5 @@
+import colorsys
+
 import mp
 
 class ColorPalette:
@@ -34,3 +36,20 @@ class RedBlue(ColorPalette):
 
 	def get_face_colors_for_note(self, note):
 		return rgb_alphas(tri(12, note) * .4, 0., 1., 0., .8)
+
+class Shifting(ColorPalette):
+	def __init__(self):
+		self.elapsed = 0
+		self.update(0)
+
+	def update(self, dt):
+		self.elapsed += dt
+		self.hue = tri_wave(20, .5, .833, self.elapsed)
+
+	def get_default_wire_color(self):
+		rgb = colorsys.hsv_to_rgb(self.hue, 1., 1.)
+		return (rgb[0], rgb[1], rgb[2], 1.)
+
+	def get_default_face_colors(self):
+		rgb = colorsys.hsv_to_rgb(self.hue, 1., .5)
+		return rgb_alphas(rgb[0], rgb[1], rgb[2], 0., 1.)
