@@ -19,36 +19,39 @@ class UniformNotFound(Exception):
 	def __init__(self, uniform_name):
 		super().__init__("Uniform \"%s\" not found" % (uniform_name,))
 
-def set_uniform_generic(program_id, name, utype, *uparams, silent=False):
+def get_uniform_location(program_id, name, silent=False):
 	location = GL.glGetUniformLocation(program_id, name)
 	if location == -1:
 		if not silent:
 			raise UniformNotFound(name)
-	utype(location, *uparams)
+	return location
 
 def set_uniform(program_id, name, value, silent=False):
+	set_uniform_by_location(get_uniform_location(program_id, name, silent=silent), value)
+
+def set_uniform_by_location(location, value):
 	value = np.asarray(value)
 	if value.shape == ():
 		if value.dtype.kind == 'f':
-			set_uniform_generic(program_id, name, GL.glUniform1f, value, silent=silent)
+			GL.glUniform1f(location, value)
 		elif value.dtype.kind == 'i':
-			set_uniform_generic(program_id, name, GL.glUniform1i, value, silent=silent)
+			GL.glUniform1i(location, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (3,):
 		if value.dtype.kind == 'f':
-			set_uniform_generic(program_id, name, GL.glUniform3fv, 1, value, silent=silent)
+			GL.glUniform3fv(location, 1, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (4,):
 		if value.dtype.kind == 'f':
-			set_uniform_generic(program_id, name, GL.glUniform4fv, 1, value, silent=silent)
+			GL.glUniform4fv(location, 1, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
 	elif value.shape == (4, 4):
-		set_uniform_generic(program_id, name, GL.glUniformMatrix4fv, 1, GL.GL_TRUE, value, silent=silent)
+		GL.glUniformMatrix4fv(location, 1, GL.GL_TRUE, value)
 	elif len(value.shape) == 2 and value.shape[1] == 4:
-		set_uniform_generic(program_id, name, GL.glUniform4fv, value.shape[0], value, silent=silent)
+		GL.glUniform4fv(location, value.shape[0], value)
 	else:
 		raise NotImplementedError("I don't know how to process the shape %s" % (value.shape,))
 
@@ -56,9 +59,6 @@ class Program:
 	def __init__(self, vert_shader, frag_shader):
 		self.id = GL.glCreateProgram()
 		self._compile_program(vert_shader, frag_shader)
-
-	def set_uniform_generic(self, name, utype, *uparams, silent=False):
-		set_uniform_generic(self.id, name, utype, *uparams, silent=silent)
 
 	def set_uniform(self, name, value, silent=False):
 		set_uniform(self.id, name, value, silent=silent)
