@@ -4,6 +4,8 @@ import gfx
 import mp
 import params
 
+GRAPHICS_SCALE = 1.
+
 BALL_VS = """
 #version 130
 
@@ -179,7 +181,7 @@ class Ball:
 			if self.opacity < 0:
 				self.enabled = False
 
-		model = mp.translateM(self.pos) @ mp.scaleM(self.radius)
+		model = mp.translateM(self.pos) @ mp.scaleM(self.radius * GRAPHICS_SCALE)
 		with self.program:
 			self.program.set_uniform('u_model', model)
 			self.program.set_uniform('u_view', self.scene.view)
