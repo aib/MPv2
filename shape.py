@@ -106,7 +106,8 @@ class Shape:
 
 		for i, vf in enumerate(vertices):
 			tf, nf = texcoords[i], normals[i]
-			face = Face(self, i, vf / bsrad * self.radius, tf, nf)
+			vf_scaled = list(map(lambda v: v / bsrad * self.radius, vf))
+			face = Face(self, i, vf_scaled, tf, nf)
 			self.faces.append(face)
 
 		if default_symmetry:
