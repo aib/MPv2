@@ -66,8 +66,8 @@ class Hud:
 
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
-			NoteLength(self, self._get_rect(.28, -.07, .2, .05)),
-			DynamicText(self, self._get_rect(.4, -.15, .2, .02), lambda: "%s (%d)" % (self.scene.active_shape.name, self.scene.active_symmetry)),
+			NoteLength(self, self._get_rect(.25, -.07, .2, .05)),
+			DynamicText(self, self._get_rect(.4, -.09, .2, .02), lambda: "%s (%d)" % (self.scene.active_shape.name, self.scene.active_symmetry)),
 			FaceMapping(self, self._get_rect(.5, -.035, .49, .015)),
 		]
 
