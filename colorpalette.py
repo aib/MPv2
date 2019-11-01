@@ -17,8 +17,8 @@ class ColorPalette:
 def rgb_alphas(r, g, b, an, ah):
 	return ((r, g, b, an), (r, g, b, ah))
 
-def tri(note):
-	return abs(((note + 6) % 12) - 6) / 6.
+def tri(period, x):
+	return abs((2/period) * ((x + period/2) % period) - 1)
 
 class RedBlue(ColorPalette):
 	def get_default_wire_color(self):
@@ -28,4 +28,4 @@ class RedBlue(ColorPalette):
 		return self.get_face_colors_for_note(0)
 
 	def get_face_colors_for_note(self, note):
-		return rgb_alphas(tri(note) * .4, 0., 1., 0., .8)
+		return rgb_alphas(tri(12, note) * .4, 0., 1., 0., .8)
