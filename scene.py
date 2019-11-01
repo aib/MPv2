@@ -147,6 +147,8 @@ class Scene:
 
 		self.skybox.update(dt)
 
+		self._update_face_colors()
+
 		self.balls.update(dt)
 		self.active_shape.update(dt)
 
