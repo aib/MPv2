@@ -23,14 +23,15 @@ def main():
 	logging.basicConfig(level=loglevel)
 
 	pygame.init()
-	pygame.display.set_caption(TITLE)
-	pygame.display.set_mode(SIZE, pygame.DOUBLEBUF | pygame.OPENGL)
-	window_size = SIZE
+	width, height = SIZE
 
-	fbo = create_multisampled_fbo(SIZE[0], SIZE[1], 0)
+	pygame.display.set_caption(TITLE)
+	pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.OPENGL)
+
+	fbo = create_multisampled_fbo(width, height, 0)
 
 	midi_handler = midi.MidiHandler(inport_name, outport_name)
-	main_scene = scene.Scene(SIZE, midi_handler)
+	main_scene = scene.Scene((width, height), midi_handler)
 	clock = pygame.time.Clock()
 
 	running = True
@@ -49,14 +50,14 @@ def main():
 				main_scene.key_up(pygame.key.name(ev.key))
 
 			elif ev.type == pygame.MOUSEBUTTONDOWN:
-				main_scene.mouse_down(ev.button, (ev.pos[0] / window_size[0], ev.pos[1] / window_size[1]))
+				main_scene.mouse_down(ev.button, (ev.pos[0] / width, ev.pos[1] / height))
 
 			elif ev.type == pygame.MOUSEBUTTONUP:
-				main_scene.mouse_up(ev.button, (ev.pos[0] / window_size[0], ev.pos[1] / window_size[1]))
+				main_scene.mouse_up(ev.button, (ev.pos[0] / width, ev.pos[1] / height))
 
 		main_scene.update()
 		main_scene.render()
-		blit_multisampled_fbo(SIZE[0], SIZE[1], fbo)
+		blit_multisampled_fbo(width, height, fbo)
 		pygame.display.flip()
 		pygame.display.set_caption("%s - %.2f FPS" % (TITLE, clock.get_fps()))
 		clock.tick(120)
