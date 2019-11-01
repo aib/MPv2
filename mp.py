@@ -13,6 +13,9 @@ def asarray(v):
 def clamp(x, a, b):
 	return max(a, min(b, x))
 
+def mix(a, b, x):
+	return a*(1-x) + b*x
+
 def norm(v):
 	return math.sqrt(dot(v, v))
 
