@@ -8,7 +8,6 @@ import scene
 import midi
 
 TITLE = "MPv2"
-SIZE = (int(1920*.8), int(1080*.8))
 
 def main():
 	if '-v' in sys.argv:
@@ -17,16 +16,29 @@ def main():
 	else:
 		loglevel = logging.INFO
 
+	if '-w' in sys.argv:
+		sys.argv.remove('-w')
+		fullscreen = False
+	else:
+		fullscreen = True
+
 	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
 	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
 
 	logging.basicConfig(level=loglevel)
 
 	pygame.init()
-	width, height = SIZE
+
+	vi = pygame.display.Info()
+	if fullscreen:
+		width = vi.current_w
+		height = vi.current_h
+	else:
+		width = round(vi.current_w * .8)
+		height = round(vi.current_h * .8)
 
 	pygame.display.set_caption(TITLE)
-	pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.OPENGL)
+	pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.OPENGL | (pygame.FULLSCREEN if fullscreen else 0))
 
 	fbo = create_multisampled_fbo(width, height, 0)
 
