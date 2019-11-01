@@ -26,7 +26,7 @@ def cross(v0, v1):
 	return array([v0[1]*v1[2] - v0[2]*v1[1], v0[2]*v1[0] - v0[0]*v1[2], v0[0]*v1[1] - v0[1]*v1[0]])
 
 def angle_between(v0, v1):
-	return np.arccos(dot(v0, v1) / (norm(v0) * norm(v1)))
+	return math.acos(dot(v0, v1) / (norm(v0) * norm(v1)))
 
 def project(target, source):
 	return dot(source, normalize(target))
@@ -49,7 +49,7 @@ def intersect_plane_sphere(tri, spos, svel, srad=0):
 	velproj = project(tn, svel)
 
 	if velproj == 0: # moving parallel
-		return (np.inf * -distproj, None)
+		return (math.inf * -distproj, None)
 
 	intersection_time = distproj / -velproj
 	intersection_point = sclosest + svel * intersection_time
@@ -104,7 +104,7 @@ def rotateM(axis, theta):
 	])
 
 def perspectiveM(fovy, aspect, zNear, zFar):
-	f = 1 / np.tan(fovy / 2)
+	f = 1 / math.tan(fovy / 2)
 	M = array([
 		[f/aspect, 0,                0,                                   0               ],
 		[    0,    f,                0,                                   0               ],
@@ -128,9 +128,9 @@ def lookatM(eye, center, up):
 
 def spherical_to_cartesian(p):
 	return array([
-		p[2] * np.sin(p[1]) * np.cos(p[0]),
-		p[2] * np.cos(p[1]),
-		p[2] * np.sin(p[1]) * np.sin(p[0]),
+		p[2] * math.sin(p[1]) * math.cos(p[0]),
+		p[2] * math.cos(p[1]),
+		p[2] * math.sin(p[1]) * math.sin(p[0]),
 	])
 
 def unproject(winpos, modelview, projection):
