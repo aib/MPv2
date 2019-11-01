@@ -75,7 +75,6 @@ def identityM():
 	])
 
 def translateM(v):
-	v = asarray(v)
 	return array([
 		[1, 0, 0, v[0]],
 		[0, 1, 0, v[1]],

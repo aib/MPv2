@@ -133,8 +133,8 @@ class Ball:
 		self.init([0, 0, 0], [0, 0, 0], 0, 0, None)
 
 	def init(self, pos, dir, speed, radius, texture):
-		self.pos = mp.asarray(pos)
-		self.dir = mp.asarray(dir)
+		self.pos = mp.array(pos)
+		self.dir = mp.array(dir)
 		self.speed = speed
 		self.radius = radius
 		self.texture = texture
