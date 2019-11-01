@@ -58,10 +58,14 @@ def set_uniform_by_location(location, value):
 class Program:
 	def __init__(self, vert_shader, frag_shader):
 		self.id = GL.glCreateProgram()
+		self._uniform_locations = {}
 		self._compile_program(vert_shader, frag_shader)
 
 	def set_uniform(self, name, value, silent=False):
-		set_uniform(self.id, name, value, silent=silent)
+		if name not in self._uniform_locations:
+			self._uniform_locations[name] = get_uniform_location(self.id, name, silent=silent)
+
+		set_uniform_by_location(self._uniform_locations[name], value)
 
 	def activate(self):
 		GL.glUseProgram(self.id)
