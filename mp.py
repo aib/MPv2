@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 DTYPE = np.float32
@@ -12,16 +14,16 @@ def clamp(x, a, b):
 	return max(a, min(b, x))
 
 def norm(v):
-	return np.linalg.norm(v)
+	return math.sqrt(dot(v, v))
 
 def normalize(v):
 	return v / norm(v)
 
 def dot(v0, v1):
-	return np.dot(v0, v1)
+	return v0[0]*v1[0] + v0[1]*v1[1] + v0[2]*v1[2]
 
 def cross(v0, v1):
-	return np.cross(v0, v1)
+	return array([v0[1]*v1[2] - v0[2]*v1[1], v0[2]*v1[0] - v0[0]*v1[2], v0[0]*v1[1] - v0[1]*v1[0]])
 
 def angle_between(v0, v1):
 	return np.arccos(dot(v0, v1) / (norm(v0) * norm(v1)))
