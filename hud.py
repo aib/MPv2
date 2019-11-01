@@ -3,6 +3,7 @@ import pygame
 import pygame.freetype
 
 import gfx
+import midi
 
 HUD_VS = """
 #version 130
@@ -67,6 +68,7 @@ class Hud:
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
 			NoteLength(self, self._get_rect(.28, -.07, .2, .05)),
 			DynamicText(self, self._get_rect(.4, -.15, .2, .02), lambda: "%s (%d)" % (self.scene.active_shape.name, self.scene.active_symmetry)),
+			FaceMapping(self, self._get_rect(.5, -.035, .49, .015)),
 		]
 
 		def _add_text_with_slider(x, y, line, text, sval_getter):
@@ -208,3 +210,18 @@ class NoteLength(HudElement):
 			color = self.hud.bright_color if i == self.length_index else self.hud.bg_color
 			self.draw_text(symbol, color=color, font=self.hud.music_font, x=xoff, valign='bottom')
 			xoff += self.rect[2] / len(self.SYMBOLS)
+
+class FaceMapping(HudElement):
+	def __init__(self, hud, rect):
+		super().__init__(hud, rect)
+		self.max_notes = self.hud.scene.max_symmetries
+
+	def update(self, dt):
+		mappings = [self.hud.scene.get_face_mapping(face[0]) for face in reversed(self.hud.scene.face_queue)]
+		self.names = ["%s·%s" % (mapping[0], midi.get_note_name(mapping[1]).replace('♯', '#')) if mapping is not None else "·" for mapping in mappings]
+
+	def render(self):
+		xoff = 0
+		for name in self.names:
+			self.draw_text(name, x=xoff, valign='center')
+			xoff += self.rect[2] / self.max_notes
