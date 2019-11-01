@@ -55,9 +55,11 @@ class Scene:
 		self.shapes = [shape(self) for shape in params.SHAPES]
 		self.balls = ball.Balls(self, list(map(self.load_texture, glob.glob('texture/ball*.png'))))
 
+		self.max_symmetries = max([max(shape.symmetries.keys()) for shape in self.shapes])
+		self._symmetry_map = [None] * self.max_symmetries
+
 		self.hud = hud.Hud(self, (0, 0, size[0], size[1]))
 
-		self._symmetry_map = []
 		self.controller.controls['shape'].on_change(lambda _, index: self.defer(self._set_shape, index))
 
 		self.controller.initialize_controls()
@@ -79,9 +81,6 @@ class Scene:
 		sym_map = self.active_shape.symmetries[self.active_symmetry]
 		self._symmetry_id_count = len(sym_map)
 		self._symmetry_ids = { face_index: i for i, faces in enumerate(sym_map) for face_index in faces }
-
-		if len(self._symmetry_map) < self._symmetry_id_count:
-			self._symmetry_map.extend([None] * (self._symmetry_id_count - len(self._symmetry_map)))
 
 		self.face_queue = [[self.active_shape.faces[fi] for fi in sym] for sym in sym_map]
 		self._reset_faces()
