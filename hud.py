@@ -1,9 +1,11 @@
+import math
 import numpy as np
 import pygame
 import pygame.freetype
 
 import gfx
 import midi
+import mp
 
 HUD_VS = """
 #version 130
@@ -44,6 +46,7 @@ class Hud:
 		self.program = gfx.Program(HUD_VS, HUD_FS)
 		self.surface = pygame.Surface(surface_size, flags=pygame.SRCALPHA, depth=32)
 		self.hudtex = self.scene.create_texture()
+		self.hudtex.load_array(np.zeros((surface_size[1], surface_size[0], 4), dtype=np.uint8), bgr=True)
 
 		self.vao = gfx.VAO()
 		vert, texc = self._get_shape(self.scene.size, self.rect)
@@ -79,6 +82,8 @@ class Hud:
 		_add_text_with_slider(.02, .84, 1, "Sphere Speed:",  lambda: self.scene.controller.controls['ball_speed'].get_fraction())
 		_add_text_with_slider(.02, .84, 2, "Sphere Radius:", lambda: self.scene.controller.controls['ball_radius'].get_fraction())
 
+		self.active_rect = self._find_bounding_int_rect([e.rect for e in self.elements])
+
 	def _get_rect(self, x, y, w, h):
 		if x < 0: x = 1 + x
 		if y < 0: y = 1 + y
@@ -100,6 +105,17 @@ class Hud:
 			[[0, th], [tw,  0], [tw, th]]
 		])
 
+	def _find_bounding_int_rect(self, rects):
+		xmin, ymin, xmax, ymax = None, None, None, None
+		for rect in rects:
+			xmin = mp.augmin(xmin, rect[0])
+			ymin = mp.augmin(ymin, rect[1])
+			xmax = mp.augmax(xmax, rect[0]+rect[2])
+			ymax = mp.augmax(ymax, rect[1]+rect[3])
+		xmin, ymin = math.floor(xmin), math.floor(ymin)
+		xmax, ymax = math.ceil(xmax), math.ceil(ymax)
+		return (xmin, ymin, xmax-xmin, ymax-ymin)
+
 	def update(self, dt):
 		for e in self.elements:
 			e.update(dt)
@@ -112,7 +128,7 @@ class Hud:
 			e.render()
 
 		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_height(), self.surface.get_width(), 4)
-		self.hudtex.load_array(arr, bgr=True)
+		self.hudtex.load_subarray(arr, self.active_rect[0], self.active_rect[1], self.active_rect[2], self.active_rect[3], bgr=True)
 
 		with self.program:
 			self.vao.draw_triangles()
