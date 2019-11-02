@@ -51,10 +51,8 @@ class SkyBox:
 
 		self.program = gfx.Program(SKYBOX_VS, SKYBOX_FS)
 		self.vao = gfx.VAO()
-		self.vertices_vbo = gfx.VBO.create_with_data(self.vertices)
-
 		with self.vao:
-			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
+			self.vao.create_vbo_attrib(0, self.vertices)
 
 		if self.texture is not None:
 			with self.program:

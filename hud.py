@@ -50,12 +50,9 @@ class Hud:
 
 		self.vao = gfx.VAO()
 		vert, texc = self._get_shape(self.scene.size, self.rect)
-		self.vertices_vbo = gfx.VBO.create_with_data(vert)
-		self.texcoords_vbo = gfx.VBO.create_with_data(texc)
-
 		with self.vao:
-			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
-			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
+			self.vao.create_vbo_attrib(0, vert)
+			self.vao.create_vbo_attrib(1, texc)
 
 		with self.program:
 			self.program.set_uniform('t_hud', self.hudtex.number)

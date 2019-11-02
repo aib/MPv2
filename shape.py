@@ -185,18 +185,12 @@ class Triangle:
 		self.normal = mp.triangle_normal(self.vertices)
 
 		self.vao = gfx.VAO()
-		self.vertices_vbo = gfx.VBO.create_with_data(self.vertices)
-		self.bary_vbo = gfx.VBO.create_with_data([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-		self.tex_vbo = gfx.VBO.create_with_data(self.texcoords)
-		self.normals_vbo = gfx.VBO.create_with_data(self.normals)
-		self.wires_vbo = gfx.VBO.create_with_data([self.wires, self.wires, self.wires])
-
 		with self.vao:
-			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
-			self.vao.set_vbo_as_attrib(1, self.bary_vbo)
-			self.vao.set_vbo_as_attrib(2, self.tex_vbo)
-			self.vao.set_vbo_as_attrib(3, self.normals_vbo)
-			self.vao.set_vbo_as_attrib(4, self.wires_vbo)
+			self.vao.create_vbo_attrib(0, self.vertices)
+			self.vao.create_vbo_attrib(1, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+			self.vao.create_vbo_attrib(2, self.texcoords)
+			self.vao.create_vbo_attrib(3, self.normals)
+			self.vao.create_vbo_attrib(4, [self.wires, self.wires, self.wires])
 
 	def render(self):
 		self.vao.draw_triangles()

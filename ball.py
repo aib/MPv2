@@ -125,12 +125,9 @@ class Ball:
 		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self.vao = gfx.VAO()
-		self.vertices_vbo = gfx.VBO.create_with_data(self.VERTICES)
-		self.texcoords_vbo = gfx.VBO.create_with_data(self.TEXCOORDS)
-
 		with self.vao:
-			self.vao.set_vbo_as_attrib(0, self.vertices_vbo)
-			self.vao.set_vbo_as_attrib(1, self.texcoords_vbo)
+			self.vao.create_vbo_attrib(0, self.VERTICES)
+			self.vao.create_vbo_attrib(1, self.TEXCOORDS)
 
 		self.init([0, 0, 0], [0, 0, 0], 0, 0, None)
 
