@@ -53,3 +53,18 @@ class Shifting(ColorPalette):
 	def get_default_face_colors(self):
 		rgb = colorsys.hsv_to_rgb(self.hue, 1., .5)
 		return rgb_alphas(rgb[0], rgb[1], rgb[2], 0., 1.)
+
+class HueRotation(ColorPalette):
+	def __init__(self):
+		self.elapsed = 0
+
+	def update(self, dt):
+		self.elapsed += dt
+
+	def get_default_wire_color(self):
+		rgb = colorsys.hsv_to_rgb((self.elapsed / 31) % 1., 1., 1.)
+		return (rgb[0], rgb[1], rgb[2], 1.)
+
+	def get_default_face_colors(self):
+		rgb = colorsys.hsv_to_rgb((self.elapsed / 29) % 1., 1., .5)
+		return rgb_alphas(rgb[0], rgb[1], rgb[2], 0., 1.)
