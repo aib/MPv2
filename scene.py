@@ -219,15 +219,15 @@ class Scene:
 				if blacklist is not None and t in blacklist:
 					continue
 
-				behind = mp.dot(t.normal, forward) > 0
+				velproj = mp.dot(t.normal, forward)
+				if velproj == 0:
+					continue
+
+				behind = velproj > 0
 				closest = start - (-t.normal if behind else t.normal) * ray_radius
 
 				distproj = mp.dot(t.normal, closest - t.vertices[0])
 				if distproj == 0:
-					continue
-
-				velproj = mp.dot(t.normal, forward)
-				if velproj == 0:
 					continue
 
 				intersection_time = distproj / -velproj
