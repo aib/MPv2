@@ -33,7 +33,7 @@ class Scene:
 		self._next_free_texture = 1
 		self.controller = controller.Controller(self, midi, 'controls.json')
 		self.midi.set_controller(self.controller)
-		self.color_palette = colorpalette.RedBlue()
+		self.color_palette = colorpalette.Shifting()
 
 		self.camera = camera.WanderingSphericalCamera(
 			target=[0, 0, 0],
