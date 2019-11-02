@@ -44,7 +44,7 @@ class Shifting(ColorPalette):
 
 	def update(self, dt):
 		self.elapsed += dt
-		self.hue = tri_wave(20, .5, .833, self.elapsed)
+		self.hue = tri_wave(199, .5, .833, self.elapsed)
 
 	def get_default_wire_color(self):
 		rgb = colorsys.hsv_to_rgb(self.hue, 1., 1.)
