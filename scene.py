@@ -49,6 +49,9 @@ class Scene:
 		GL.glEnable(GL.GL_BLEND)
 		GL.glEnable(GL.GL_TEXTURE_CUBE_MAP_SEAMLESS)
 
+		GL.glEnable(GL.GL_LINE_SMOOTH)
+		GL.glLineWidth(shape.WIREFRAME_LINE_WIDTH)
+
 		skybox_texture = None
 		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 

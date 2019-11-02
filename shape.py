@@ -5,6 +5,7 @@ import mp
 import objreader
 
 HIGHLIGHT_FALLOFF_TIME = .5
+WIREFRAME_LINE_WIDTH = 2.
 
 SHAPE_VS = """
 #version 130
