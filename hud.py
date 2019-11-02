@@ -111,7 +111,7 @@ class Hud:
 		for e in self.elements:
 			e.render()
 
-		arr = np.flip(np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_width(), self.surface.get_height(), 4), axis=0)
+		arr = np.flip(np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_height(), self.surface.get_width(), 4), axis=0)
 		self.hudtex.load_array(arr, bgr=True)
 
 		with self.program:
