@@ -88,6 +88,18 @@ void main() {
 }
 """
 
+WIRE_FS = """
+#version 130
+
+uniform vec4 u_wireColor;
+
+out vec4 fragColor;
+
+void main() {
+	fragColor = u_wireColor;
+}
+"""
+
 class Shape:
 	def __init__(self, scene, name, radius):
 		self.scene = scene
@@ -97,6 +109,7 @@ class Shape:
 		self.faces = []
 		self.symmetries = {}
 		self.program = gfx.Program(SHAPE_VS, SHAPE_FS)
+		self.wire_program = gfx.Program(SHAPE_VS, WIRE_FS)
 
 	def load_file(self, filename, default_symmetry=True):
 		with open(filename, 'r') as f:
@@ -120,6 +133,10 @@ class Shape:
 			self.program.set_uniform('u_view', self.scene.view)
 			self.program.set_uniform('u_projection', self.scene.projection)
 
+		with self.wire_program:
+			self.wire_program.set_uniform('u_view', self.scene.view)
+			self.wire_program.set_uniform('u_projection', self.scene.projection)
+
 		for f in self.faces:
 			f.update(dt)
 
@@ -135,6 +152,10 @@ class Face:
 		self.face_color_normal = mp.array([1, 1, 1, .1])
 		self.face_color_highlighted = mp.array([1, 1, 1, 1])
 		self.highlight_time = 0.
+
+		self.wire_vao = gfx.VAO()
+		with self.wire_vao:
+			self.wire_vao.create_vbo_attrib(0, vertices)
 
 		for i in range(1, len(vertices)-1):
 			i0, i1, i2 = 0, i, i+1
@@ -167,6 +188,10 @@ class Face:
 			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time / HIGHLIGHT_FALLOFF_TIME, 0., 1.))
 			for t in self.triangles:
 				t.render()
+
+		with self.shape.wire_program:
+			self.shape.wire_program.set_uniform('u_wireColor', self.wire_color)
+			self.wire_vao.draw_line_loop()
 
 	def __repr__(self):
 		return "<Face %d>" % (self.index,)
