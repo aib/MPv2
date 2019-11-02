@@ -123,6 +123,9 @@ class VAO:
 	def draw_triangles(self, vbo_index=0):
 		self.draw(GL.GL_TRIANGLES, vbo_index=vbo_index)
 
+	def draw_line_loop(self, vbo_index=0):
+		self.draw(GL.GL_LINE_LOOP, vbo_index=vbo_index)
+
 	def draw(self, mode, vbo_index=0):
 		with self:
 			GL.glDrawArrays(mode, 0, np.prod(self.attribs[vbo_index].data.shape[:-1]))
