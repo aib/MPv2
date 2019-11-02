@@ -62,10 +62,8 @@ class Texture2D(Texture):
 	def load_array(self, arr, bgr=False):
 		informat, intype = self._get_format_and_type(arr, bgr=bgr)
 
-		arr = np.flip(arr, axis=0)
-
 		with self:
-			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, arr)
+			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, np.flip(arr, axis=0))
 			GL.glGenerateMipmap(self.type)
 
 class CubeMap(Texture):
