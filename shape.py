@@ -20,18 +20,12 @@ in vec3 normal;
 in vec3 wires;
 
 out vec3 vf_position;
-out vec3 vf_bary;
 out vec2 vf_texUV;
-out vec3 vf_normal;
-out vec3 vf_wires;
 
 void main() {
 	gl_Position = u_projection * u_view * vec4(position, 1);
 	vf_position = position;
-	vf_bary = bary;
 	vf_texUV = texUV;
-	vf_normal = normal;
-	vf_wires = wires;
 }
 """
 
@@ -41,16 +35,12 @@ SHAPE_FS = """
 #define MAX_BALLS 16
 
 uniform vec4 u_balls[MAX_BALLS];
-uniform vec4 u_wireColor;
 uniform vec4 u_faceColorNormal;
 uniform vec4 u_faceColorHighlighted;
 uniform float u_faceHighlight;
 
 in vec3 vf_position;
-in vec3 vf_bary;
 in vec2 vf_texUV;
-in vec3 vf_normal;
-in vec3 vf_wires;
 
 out vec4 fragColor;
 
@@ -75,17 +65,10 @@ float ball_highlight_factor() {
 }
 
 void main() {
-	vec3 wire_bary = (1 - vf_wires) + vf_bary;
-	float edge_distance = min(wire_bary.x, min(wire_bary.y, wire_bary.z));
-	float edge_distance_delta = fwidth(edge_distance);
-	float edge = 1 - smoothstep(edge_distance_delta * .5, edge_distance_delta * 2, edge_distance);
-
 	vec4 faceColor = mix(u_faceColorNormal, u_faceColorHighlighted, u_faceHighlight);
-
 	vec4 ball_highlight = vec4(1, 1, 1, ball_highlight_factor());
-	faceColor = mix(faceColor, ball_highlight, ball_highlight.a);
 
-	fragColor = mix(faceColor, u_wireColor, edge);
+	fragColor = mix(faceColor, ball_highlight, ball_highlight.a);
 }
 """
 
@@ -183,7 +166,6 @@ class Face:
 
 	def render(self):
 		with self.shape.program:
-			self.shape.program.set_uniform('u_wireColor', self.wire_color)
 			self.shape.program.set_uniform('u_faceColorNormal', self.face_color_normal)
 			self.shape.program.set_uniform('u_faceColorHighlighted', self.face_color_highlighted)
 			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time / HIGHLIGHT_FALLOFF_TIME, 0., 1.))
@@ -213,10 +195,7 @@ class Triangle:
 		self.vao = gfx.VAO()
 		with self.vao:
 			self.vao.create_vbo_attrib(0, self.vertices)
-			self.vao.create_vbo_attrib(1, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-			self.vao.create_vbo_attrib(2, self.texcoords)
-			self.vao.create_vbo_attrib(3, self.normals)
-			self.vao.create_vbo_attrib(4, [self.wires, self.wires, self.wires])
+			self.vao.create_vbo_attrib(1, self.texcoords)
 
 	def render(self):
 		self.vao.draw_triangles()
