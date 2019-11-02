@@ -222,11 +222,11 @@ class Scene:
 				behind = mp.dot(t.normal, forward) > 0
 				closest = start - (-t.normal if behind else t.normal) * ray_radius
 
-				distproj = mp.project(t.normal, closest - t.vertices[0])
+				distproj = mp.dot(t.normal, closest - t.vertices[0])
 				if distproj == 0:
 					continue
 
-				velproj = mp.project(t.normal, forward)
+				velproj = mp.dot(t.normal, forward)
 				if velproj == 0:
 					continue
 
