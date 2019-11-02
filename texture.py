@@ -66,6 +66,19 @@ class Texture2D(Texture):
 			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, np.flip(arr, axis=0))
 			GL.glGenerateMipmap(self.type)
 
+	def load_subarray(self, arr, xoff=0, yoff=0, width=None, height=None, bgr=False):
+		if width is None: width = arr.shape[1] - xoff
+		if height is None: height = arr.shape[0] - yoff
+
+		informat, intype = self._get_format_and_type(arr, bgr=bgr)
+
+		texyoff = arr.shape[0] - height - yoff
+		arr = arr[yoff:yoff+height, xoff:xoff+width, :]
+
+		with self:
+			GL.glTexSubImage2D(self.type, 0, xoff, texyoff, width, height, informat, intype, np.flip(arr, axis=0))
+			GL.glGenerateMipmap(self.type)
+
 class CubeMap(Texture):
 	def __init__(self, number, inverted=True):
 		super().__init__(number, GL.GL_TEXTURE_CUBE_MAP)
