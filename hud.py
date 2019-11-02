@@ -15,7 +15,7 @@ out vec2 vf_texUV;
 
 void main() {
 	gl_Position = vec4(2*position.x - 1, -(2*position.y - 1), 0, 1);
-	vf_texUV = texUV;
+	vf_texUV = vec2(texUV.x, 1 - texUV.y);
 }
 """
 
@@ -111,7 +111,7 @@ class Hud:
 		for e in self.elements:
 			e.render()
 
-		arr = np.flip(np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_height(), self.surface.get_width(), 4), axis=0)
+		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_height(), self.surface.get_width(), 4)
 		self.hudtex.load_array(arr, bgr=True)
 
 		with self.program:
