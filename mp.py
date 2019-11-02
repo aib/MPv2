@@ -10,6 +10,16 @@ def array(v):
 def asarray(v):
 	return np.asarray(v, dtype=DTYPE)
 
+def augmin(a, b):
+	if a is None: return b
+	if b is None: return a
+	return min(a, b)
+
+def augmax(a, b):
+	if a is None: return b
+	if b is None: return a
+	return max(a, b)
+
 def clamp(x, a, b):
 	return max(a, min(b, x))
 
