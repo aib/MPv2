@@ -116,6 +116,10 @@ class VAO:
 
 		self.attribs[index] = vbo
 
+	def create_vbo_attrib(self, index, data, **vbo_kwargs):
+		vbo = VBO.create_with_data(data, **vbo_kwargs)
+		self.set_vbo_as_attrib(index, vbo)
+
 	def draw_triangles(self, vbo_index=0):
 		self.draw(GL.GL_TRIANGLES, vbo_index=vbo_index)
 
