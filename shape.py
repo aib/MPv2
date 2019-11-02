@@ -163,12 +163,13 @@ class Face:
 
 	def update(self, dt):
 		self.highlight_time -= dt
+		self.face_highlight = mp.clamp(self.highlight_time / HIGHLIGHT_FALLOFF_TIME, 0., 1.)
 
 	def render(self):
 		with self.shape.program:
 			self.shape.program.set_uniform('u_faceColorNormal', self.face_color_normal)
 			self.shape.program.set_uniform('u_faceColorHighlighted', self.face_color_highlighted)
-			self.shape.program.set_uniform('u_faceHighlight', mp.clamp(self.highlight_time / HIGHLIGHT_FALLOFF_TIME, 0., 1.))
+			self.shape.program.set_uniform('u_faceHighlight', self.face_highlight)
 			for t in self.triangles:
 				t.render()
 
