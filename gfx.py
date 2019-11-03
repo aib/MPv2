@@ -76,6 +76,9 @@ class Program:
 	def activate(self):
 		GL.glUseProgram(self.id)
 
+	def deactivate(self):
+		GL.glUseProgram(0)
+
 	def _compile_program(self, vert_shader, frag_shader):
 		vs = self._compile_shader(vert_shader, GL.GL_VERTEX_SHADER, "vertex")
 		fs = self._compile_shader(frag_shader, GL.GL_FRAGMENT_SHADER, "fragment")
@@ -105,7 +108,7 @@ class Program:
 		self.activate()
 
 	def __exit__(self, exc_type, exc_value, traceback):
-		pass
+		self.deactivate()
 
 class VAO:
 	def __init__(self):
@@ -114,6 +117,9 @@ class VAO:
 
 	def activate(self):
 		GL.glBindVertexArray(self.id)
+
+	def deactivate(self):
+		GL.glBindVertexArray(0)
 
 	def set_vbo_as_attrib(self, index, vbo):
 		if index not in self.attribs:
@@ -142,7 +148,7 @@ class VAO:
 		self.activate()
 
 	def __exit__(self, exc_type, exc_value, traceback):
-		pass
+		self.deactivate()
 
 class VBO:
 	@classmethod
@@ -161,6 +167,9 @@ class VBO:
 	def activate(self):
 		GL.glBindBuffer(self.type, self.id)
 
+	def deactivate(self):
+		GL.glBindBuffer(self.type, 0)
+
 	def set_data(self, data, hint=GL.GL_STATIC_DRAW):
 		self.data = np.asarray(data, dtype=self.dtype)
 		GL.glBufferData(self.type, self.data, hint)
@@ -172,4 +181,4 @@ class VBO:
 		self.activate()
 
 	def __exit__(self, exc_type, exc_value, traceback):
-		pass
+		self.deactivate()
