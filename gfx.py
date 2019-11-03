@@ -1,3 +1,11 @@
+import math
+try:
+	math.prod
+except AttributeError:
+	import functools as ft
+	import operator as op
+	math.prod = lambda xs: ft.reduce(op.mul, xs, 1)
+
 import numpy as np
 from OpenGL import GL
 
@@ -128,7 +136,7 @@ class VAO:
 
 	def draw(self, mode, vbo_index=0):
 		with self:
-			GL.glDrawArrays(mode, 0, np.prod(self.attribs[vbo_index].data.shape[:-1]))
+			GL.glDrawArrays(mode, 0, math.prod(self.attribs[vbo_index].data.shape[:-1]))
 
 	def __enter__(self):
 		self.activate()
