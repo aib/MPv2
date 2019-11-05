@@ -52,7 +52,11 @@ class Scene:
 		GL.glEnable(GL.GL_LINE_SMOOTH)
 		GL.glLineWidth(shape.WIREFRAME_LINE_WIDTH)
 
-		skybox_texture = None
+		try:
+			skybox_texture = self.load_texture('texture/skybox.png', cls=texture.CubeMap)
+		except FileNotFoundError:
+			skybox_texture = None
+
 		self.skybox = skybox.SkyBox(self, params.DEPTH.MAX / 4, skybox_texture)
 
 		self.shapes = [shape(self) for shape in params.SHAPES]
