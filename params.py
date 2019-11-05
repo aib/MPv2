@@ -22,8 +22,8 @@ DEPTH = Range(.1, 1000.)
 
 SHAPE_SCALE = 3.
 
-BALLS = Range(0, 16, default=1)
-BALL_SPEED = Range(0., 20., default=1.)
+BALLS = Range(0, 12, default=1)
+BALL_SPEED = Range(0., 30., default=1.)
 BALL_RADIUS = Range(.05, 1., default=.2)
 
 SHAPES = Enum([
