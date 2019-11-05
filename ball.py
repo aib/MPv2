@@ -4,7 +4,7 @@ import gfx
 import mp
 import params
 
-GRAPHICS_SCALE = 1.
+GRAPHICS_SCALE = 2.
 
 BALL_VS = """
 #version 130
