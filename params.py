@@ -24,7 +24,7 @@ SHAPE_SCALE = 3.
 
 BALLS = Range(0, 12, default=1)
 BALL_SPEED = Range(0., 30., default=1.)
-BALL_RADIUS = Range(.05, 1., default=.2)
+BALL_RADIUS = Range(.05, .75, default=.2)
 
 SHAPES = Enum([
 	shapes.Hexahedron,
