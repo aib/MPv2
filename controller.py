@@ -209,9 +209,9 @@ class NotePlayer:
 		now = time.monotonic()
 		down_channel = self.controller.current_channel['number']
 		down_data = self._note_play_down(down_channel, note, velocity)
-		custom_length = (self.controller.note_length != params.CUSTOM_NOTE_LENGTH)
+		custom_length = (self.controller.note_length == params.CUSTOM_NOTE_LENGTH)
 		self._notes_down.append(((channel, note), now, down_channel, down_data, custom_length))
-		if custom_length:
+		if not custom_length:
 			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0), { 'scheduled': True })
 
 	def note_up(self, channel, note, velocity, scheduled=False):
@@ -220,7 +220,7 @@ class NotePlayer:
 		for i, nd in enumerate(self._notes_down):
 			if nd[0] == (channel, note):
 				down_time, down_channel, down_data, custom_length = nd[1:]
-				if custom_length and not scheduled:
+				if not custom_length and not scheduled:
 					continue
 
 				self._notes_down.pop(i)
