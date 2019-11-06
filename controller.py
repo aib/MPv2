@@ -36,6 +36,8 @@ def _get_cc_mapping():
 		103: 'chan_prev',
 		112: 'prev_symmetry',
 		113: 'next_symmetry',
+		114: 'disable_assignment',
+		115: 'enable_assignment',
 		116: 'shuffle',
 		117: 'chordus',
 	}
@@ -59,6 +61,8 @@ class Controller:
 		self.controls = { c.name: c for c in _get_controls() }
 		self.cc_mapping = _get_cc_mapping()
 		self.note_mapping = _get_note_mapping()
+
+		self.assignment_enabled = True
 
 		self.controls['note_length'].on_change(self._on_note_length_change)
 		self.controls['channel'].on_change(self._on_channel_change)
@@ -144,6 +148,14 @@ class Controller:
 		elif event == 'next_symmetry':
 			if arg > 0:
 				self.scene.defer(self.scene.set_next_symmetry, -1)
+
+		elif event == 'disable_assignment':
+			if arg > 0:
+				self.assignment_enabled = False
+
+		elif event == 'enable_assignment':
+			if arg > 0:
+				self.assignment_enabled = True
 
 		elif event == 'shuffle':
 			if arg > 0:
@@ -241,7 +253,8 @@ class NotePlayer:
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 		self.controller.midi.send_note_up(channel, note, velocity)
 		for f in down_data['faces']:
-			self.controller.scene.set_face_mapping(f, (channel, note, duration, down_data['svel'], velocity))
+			if self.controller.assignment_enabled:
+				self.controller.scene.set_face_mapping(f, (channel, note, duration, down_data['svel'], velocity))
 			f.highlight(0., force=True)
 
 class Control:
