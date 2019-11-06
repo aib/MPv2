@@ -63,20 +63,23 @@ class MidiHandler:
 		self.scheduled_notes[(channel, note)] = ev
 
 	def send_note_down(self, channel, note, svel):
-		self.midi_out.send_message([0x90 + channel, note, svel])
+		self.send_message([0x90 + channel, note, svel])
 
 	def send_note_up(self, channel, note, evel):
-		self.midi_out.send_message([0x80 + channel, note, evel])
+		self.send_message([0x80 + channel, note, evel])
 
 	def change_control(self, channel, control, value):
-		self.midi_out.send_message([0xb0 + channel, control, value])
+		self.send_message([0xb0 + channel, control, value])
 
 	def change_program(self, channel, program):
-		self.midi_out.send_message([0xc0 + channel, program])
+		self.send_message([0xc0 + channel, program])
 
 	def all_notes_off(self):
 		for c in range(16):
-			self.midi_out.send_message([0xb0 + c, 0x7b, 00])
+			self.send_message([0xb0 + c, 0x7b, 00])
+
+	def send_message(self, msg):
+		self.midi_out.send_message(msg)
 
 	def _midi_in_cb(self, message, user_data):
 		now = time.monotonic()
