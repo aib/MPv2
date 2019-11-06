@@ -34,9 +34,10 @@ def _get_cc_mapping():
 		28: 'chorus',
 		102: 'chan_next',
 		103: 'chan_prev',
-		117: 'chordus',
 		112: 'prev_symmetry',
 		113: 'next_symmetry',
+		116: 'shuffle',
+		117: 'chordus',
 	}
 
 def _get_note_mapping():
@@ -143,6 +144,10 @@ class Controller:
 		elif event == 'next_symmetry':
 			if arg > 0:
 				self.scene.defer(self.scene.set_next_symmetry, -1)
+
+		elif event == 'shuffle':
+			if arg > 0:
+				self.scene.defer(self.scene.shuffle_faces)
 
 		elif event == 'chordus':
 			if arg > 0:
