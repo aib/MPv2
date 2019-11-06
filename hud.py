@@ -68,6 +68,7 @@ class Hud:
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
 			NoteLength(self, self._get_rect(.25, -.07, .2, .05)),
+			AssignmentStatus(self, self._get_rect(.45, -.05, .045, .035)),
 			DynamicText(self, self._get_rect(.4, -.09, .2, .02), lambda: "%s (%d)" % (self.scene.active_shape.name, self.scene.active_symmetry)),
 			FaceMapping(self, self._get_rect(.5, -.035, .49, .015)),
 		]
@@ -223,6 +224,15 @@ class NoteLength(HudElement):
 			color = self.hud.bright_color if i == self.length_index else self.hud.bg_color
 			self.draw_text(symbol, color=color, font=self.hud.music_font, x=xoff, valign='bottom')
 			xoff += self.rect[2] / len(self.SYMBOLS)
+
+class AssignmentStatus(HudElement):
+	def update(self, dt):
+		self.assignment_enabled = self.hud.scene.controller.assignment_enabled
+
+	def render(self):
+		self.draw_text('■', color=self.hud.bright_color if not self.assignment_enabled else self.hud.bg_color, font=self.hud.symbols_font, valign='center')
+		xoff = self.rect[2] / 2
+		self.draw_text('▶', color=self.hud.bright_color if self.assignment_enabled else self.hud.bg_color, font=self.hud.symbols_font, x=xoff, valign='center')
 
 class FaceMapping(HudElement):
 	def __init__(self, hud, rect):
