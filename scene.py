@@ -23,15 +23,15 @@ import skybox
 import texture
 
 class Scene:
-	def __init__(self, size, midi):
+	def __init__(self, size, midi_handler):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
-		self.midi = midi
+		self.midi = midi_handler
 
 		self._logger = logging.getLogger(__name__)
 		self._deferred_calls = queue.Queue()
 		self._next_free_texture = 1
-		self.controller = controller.Controller(self, midi, 'controls.json')
+		self.controller = controller.Controller(self, self.midi, 'controls.json')
 		self.midi.set_controller(self.controller)
 		self.color_palette = colorpalette.Shifting()
 
