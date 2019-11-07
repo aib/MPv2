@@ -152,8 +152,13 @@ class VAO:
 
 class VBO:
 	@classmethod
-	def create_with_data(cls, data, buffer_type=GL.GL_ARRAY_BUFFER, hint=GL.GL_STATIC_DRAW):
-		vbo = cls(buffer_type, hint)
+	def create_with_data(cls, data, buffer_type=GL.GL_ARRAY_BUFFER, hint=GL.GL_STATIC_DRAW, dtype=None):
+		if dtype is None:
+			if hasattr(data, 'dtype'):
+				dtype = data.dtype
+			else:
+				dtype = np.float32
+		vbo = cls(buffer_type=buffer_type, hint=hint, dtype=dtype)
 		with vbo:
 			vbo.set_data(data)
 		return vbo
