@@ -46,12 +46,20 @@ NOTE_LENGTHS = Enum([
 ], default=3)
 
 CHANNELS = Enum([
-	{ 'name': "Cello", 'number': 1, 'program': 42 },
-	{ 'name': "Steel String Guitar", 'number': 2, 'program': 25 },
-	{ 'name': "Marimba", 'number': 3, 'program': 12 },
-	{ 'name': "Melodic Tom", 'number': 4, 'program': 117 },
-	{ 'name': "Steel Drums", 'number': 5, 'program': 114 },
-	{ 'name': "Koto", 'number': 6, 'program': 107 },
-	{ 'name': "Harp", 'number': 7, 'program': 46 },
-	{ 'name': "Synth Bass", 'number': 8, 'program': 38 },
+	{ 'name': "Channel 1", 'number': 0, 'program': None },
+	{ 'name': "Channel 2", 'number': 1, 'program': None },
+	{ 'name': "Channel 3", 'number': 2, 'program': None },
+	{ 'name': "Channel 4", 'number': 3, 'program': None },
+	{ 'name': "Channel 5", 'number': 4, 'program': None },
+	{ 'name': "Channel 6", 'number': 5, 'program': None },
+	{ 'name': "Channel 7", 'number': 6, 'program': None },
+	{ 'name': "Channel 8", 'number': 7, 'program': None },
+	{ 'name': "Channel 9", 'number': 8, 'program': None },
+	{ 'name': "Channel 10", 'number': 9, 'program': None },
+	{ 'name': "Channel 11", 'number': 10, 'program': None },
+	{ 'name': "Channel 12", 'number': 11, 'program': None },
+	{ 'name': "Channel 13", 'number': 12, 'program': None },
+	{ 'name': "Channel 14", 'number': 13, 'program': None },
+	{ 'name': "Channel 15", 'number': 14, 'program': None },
+	{ 'name': "Channel 16", 'number': 15, 'program': None },
 ], default=0)
