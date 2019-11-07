@@ -169,6 +169,7 @@ class VBO:
 		self.hint = hint
 		self.dtype = dtype
 		self.data = None
+		self.data_size = None
 
 	def activate(self):
 		GL.glBindBuffer(self.type, self.id)
@@ -178,6 +179,7 @@ class VBO:
 
 	def set_data(self, data):
 		self.data = np.asarray(data, dtype=self.dtype)
+		self.data_size = self.data.itemsize * self.data.size
 		GL.glBufferData(self.type, self.data, self.hint)
 
 	def set_attrib_pointer(self, index):
