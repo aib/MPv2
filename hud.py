@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from OpenGL import GL
 import pygame
 import pygame.freetype
 
@@ -44,9 +45,16 @@ class Hud:
 		self.size = (2048, 2048)
 
 		self.program = gfx.Program(HUD_VS, HUD_FS)
-		self.surface = pygame.Surface(self.size, flags=pygame.SRCALPHA, depth=32)
+		self.surface = None
 		self.hudtex = self.scene.create_texture()
-		self.hudtex.load_array(np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8), bgr=True)
+
+		empty_texture = np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8)
+		self.hudtex_pbos = [gfx.VBO.create_with_data(empty_texture, GL.GL_PIXEL_UNPACK_BUFFER, GL.GL_STREAM_DRAW) for _ in range(6)]
+		self._cur_hudtex_pbo = 0
+
+		for pbo in self.hudtex_pbos[:-2]: # match write_pbo = pbos[cur-N]'s -N below
+			with pbo:
+				pbo.mmap(GL.GL_WRITE_ONLY)
 
 		self.vao = gfx.VAO()
 		vert, texc = self._get_shape(self.scene.size, self.rect)
@@ -100,8 +108,8 @@ class Hud:
 			[[xmin, ymin], [xmax, ymin], [xmin, ymax]],
 			[[xmin, ymax], [xmax, ymin], [xmax, ymax]]
 		], [
-			[[0,  0], [tw,  0], [ 0, th]],
-			[[0, th], [tw,  0], [tw, th]]
+			[[0, 1- 0], [tw, 1- 0], [ 0, 1-th]],
+			[[0, 1-th], [tw, 1- 0], [tw, 1-th]]
 		])
 
 	def _find_bounding_int_rect(self, rects):
@@ -122,13 +130,24 @@ class Hud:
 	def render(self):
 		if not self.enabled: return
 
+		write_pbo = self.hudtex_pbos[(self._cur_hudtex_pbo - 2) % len(self.hudtex_pbos)]
+		read_pbo = self.hudtex_pbos[self._cur_hudtex_pbo]
+		self._cur_hudtex_pbo = (self._cur_hudtex_pbo + 1) % len(self.hudtex_pbos)
+
+		with write_pbo:
+			buf = write_pbo.mmap(GL.GL_WRITE_ONLY)
+			self.surface = pygame.image.frombuffer(buf, self.size, 'RGBA')
+
 		self.surface.fill(pygame.Color(0, 0, 0, 0))
 
 		for e in self.elements:
 			e.render()
 
-		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.size[1], self.size[0], 4)
-		self.hudtex.load_subarray(arr, self.active_rect[0], self.active_rect[1], self.active_rect[2], self.active_rect[3], bgr=True)
+		with read_pbo:
+			read_pbo.munmap()
+			with self.hudtex:
+				GL.glTexImage2D(self.hudtex.type, 0, GL.GL_RGBA, 2048, 2048, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, None)
+				GL.glGenerateMipmap(self.hudtex.type)
 
 		with self.program:
 			self.vao.draw_triangles()
