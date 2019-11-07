@@ -1,3 +1,5 @@
+import ctypes
+
 import math
 try:
 	math.prod
@@ -184,6 +186,15 @@ class VBO:
 
 	def set_attrib_pointer(self, index):
 		GL.glVertexAttribPointer(index, self.data.shape[-1], GL.GL_FLOAT, False, self.data.shape[-1]*self.data.itemsize, None)
+
+	def mmap(self, access):
+		mapped_ptr = GL.glMapBuffer(self.type, access)
+		mapped_type = ctypes.c_byte * self.data_size
+		mapped_obj = mapped_type.from_address(mapped_ptr)
+		return mapped_obj
+
+	def munmap(self):
+		GL.glUnmapBuffer(self.type)
 
 	def __enter__(self):
 		self.activate()
