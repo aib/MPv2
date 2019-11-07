@@ -50,10 +50,11 @@ def _get_note_mapping():
 	}
 
 class Controller:
-	def __init__(self, scene, midi, save_file=None):
+	def __init__(self, scene, midi, save_file=None, channels_file=None):
 		self.scene = scene
 		self.midi = midi
 		self.save_file = save_file
+		self.channels_file = channels_file
 
 		self._logger = logging.getLogger(__name__)
 		self.note_player = NotePlayer(self)
@@ -74,6 +75,15 @@ class Controller:
 		self.current_channel = params.CHANNELS[cn]
 
 	def initialize_controls(self):
+		try:
+			with open(self.channels_file, 'r') as f:
+				for channel in params.CHANNELS:
+					name = f.readline()
+					if len(name) <= 0: break
+					channel['name'] = name.strip()
+		except FileNotFoundError:
+			pass
+
 		for channel in params.CHANNELS:
 			if channel['program'] is not None:
 				self.midi.change_program(channel['number'], channel['program'])
