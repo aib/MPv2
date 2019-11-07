@@ -120,8 +120,9 @@ class Hud:
 			e.update(dt)
 
 	def render(self):
-		self.surface.fill(pygame.Color(0, 0, 0, 0))
 		if not self.enabled: return
+
+		self.surface.fill(pygame.Color(0, 0, 0, 0))
 
 		for e in self.elements:
 			e.render()
