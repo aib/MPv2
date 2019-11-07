@@ -153,14 +153,15 @@ class VAO:
 class VBO:
 	@classmethod
 	def create_with_data(cls, data, buffer_type=GL.GL_ARRAY_BUFFER, hint=GL.GL_STATIC_DRAW):
-		vbo = cls(buffer_type)
+		vbo = cls(buffer_type, hint)
 		with vbo:
-			vbo.set_data(data, hint)
+			vbo.set_data(data)
 		return vbo
 
-	def __init__(self, buffer_type=GL.GL_ARRAY_BUFFER, dtype=np.float32):
+	def __init__(self, buffer_type=GL.GL_ARRAY_BUFFER, hint=GL.GL_STATIC_DRAW, dtype=np.float32):
 		self.id = GL.glGenBuffers(1)
 		self.type = buffer_type
+		self.hint = hint
 		self.dtype = dtype
 		self.data = None
 
@@ -170,9 +171,9 @@ class VBO:
 	def deactivate(self):
 		GL.glBindBuffer(self.type, 0)
 
-	def set_data(self, data, hint=GL.GL_STATIC_DRAW):
+	def set_data(self, data):
 		self.data = np.asarray(data, dtype=self.dtype)
-		GL.glBufferData(self.type, self.data, hint)
+		GL.glBufferData(self.type, self.data, self.hint)
 
 	def set_attrib_pointer(self, index):
 		GL.glVertexAttribPointer(index, self.data.shape[-1], GL.GL_FLOAT, False, self.data.shape[-1]*self.data.itemsize, None)
