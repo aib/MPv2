@@ -41,12 +41,12 @@ class Hud:
 		self.rect = rect
 
 		self.enabled = True
-		surface_size = (2048, 2048)
+		self.size = (2048, 2048)
 
 		self.program = gfx.Program(HUD_VS, HUD_FS)
-		self.surface = pygame.Surface(surface_size, flags=pygame.SRCALPHA, depth=32)
+		self.surface = pygame.Surface(self.size, flags=pygame.SRCALPHA, depth=32)
 		self.hudtex = self.scene.create_texture()
-		self.hudtex.load_array(np.zeros((surface_size[1], surface_size[0], 4), dtype=np.uint8), bgr=True)
+		self.hudtex.load_array(np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8), bgr=True)
 
 		self.vao = gfx.VAO()
 		vert, texc = self._get_shape(self.scene.size, self.rect)
@@ -93,8 +93,8 @@ class Hud:
 		ymin = rect[1] / scene_size[1]
 		xmax = (rect[0] + rect[2]) / scene_size[0]
 		ymax = (rect[1] + rect[3]) / scene_size[1]
-		tw = rect[2] / self.surface.get_width()
-		th = rect[3] / self.surface.get_height()
+		tw = rect[2] / self.size[0]
+		th = rect[3] / self.size[1]
 
 		return ([
 			[[xmin, ymin], [xmax, ymin], [xmin, ymax]],
@@ -126,7 +126,7 @@ class Hud:
 		for e in self.elements:
 			e.render()
 
-		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.surface.get_height(), self.surface.get_width(), 4)
+		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.size[1], self.size[0], 4)
 		self.hudtex.load_subarray(arr, self.active_rect[0], self.active_rect[1], self.active_rect[2], self.active_rect[3], bgr=True)
 
 		with self.program:
