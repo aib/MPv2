@@ -22,8 +22,10 @@ import shapes
 import skybox
 import texture
 
+CAMERA_DISTANCE = 9.
+
 class Scene:
-	def __init__(self, size, midi_handler):
+	def __init__(self, size, midi_handler, debug_camera=False):
 		self.size = size
 		self.keys = collections.defaultdict(lambda: False)
 		self.midi = midi_handler
@@ -35,13 +37,22 @@ class Scene:
 		self.midi.set_controller(self.controller)
 		self.color_palette = colorpalette.Shifting()
 
-		self.camera = camera.WanderingSphericalCamera(
-			target=[0, 0, 0],
-			up=[0, 1, 0],
-			theta_eq=lambda elapsed: (elapsed * math.tau / 499) % math.tau,
-			phi_eq=lambda elapsed: math.tau/4 - math.sin(elapsed / 131) * (math.tau/16),
-			r_eq=lambda elapsed: 9
-		)
+		if debug_camera:
+			self.camera = camera.SphericalCamera(
+				self,
+				target=[0, 0, 0],
+				up=[0, 1, 0],
+				pos=[0, math.tau/4, CAMERA_DISTANCE],
+				speed=[math.tau/16, math.tau/16, 2.],
+			)
+		else:
+			self.camera = camera.WanderingSphericalCamera(
+				target=[0, 0, 0],
+				up=[0, 1, 0],
+				theta_eq=lambda elapsed: (elapsed * math.tau / 499) % math.tau,
+				phi_eq=lambda elapsed: math.tau/4 - math.sin(elapsed / 131) * (math.tau/16),
+				r_eq=lambda elapsed: CAMERA_DISTANCE
+			)
 		self.fov_y = math.tau / 8
 
 		GL.glClearColor(.1, 0, .1, 1)
