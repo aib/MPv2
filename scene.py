@@ -103,6 +103,9 @@ class Scene:
 		self.face_queue.append(faces)
 		return faces
 
+	def get_random_faces(self):
+		return random.choice(self.face_queue)
+
 	def shuffle_faces(self):
 		active_map, inactive_map = self._symmetry_map[0:self._symmetry_id_count], self._symmetry_map[self._symmetry_id_count:]
 		random.shuffle(active_map)
