@@ -223,6 +223,9 @@ class Controller:
 		self._logger.debug("CC %d = %d on channel %d", control, value, channel)
 		self._handle_mapping(self.cc_mapping.get(control, None), value)
 
+	def get_feedback_enabled(self):
+		return (not self.assignment_enabled) or self.controls['assignment_feedback'].get()
+
 class NotePlayer:
 	def __init__(self, controller):
 		self.controller = controller
@@ -262,10 +265,10 @@ class NotePlayer:
 
 		if assignment_enabled:
 			faces = self.controller.scene.get_next_faces_and_rotate()
-			if self.controller.controls['assignment_feedback'].get():
-				self.controller.midi.send_note_down(channel, note, velocity)
 		else:
 			faces = self.controller.scene.get_next_faces()
+
+		if self.controller.get_feedback_enabled():
 			self.controller.midi.send_note_down(channel, note, velocity)
 
 		for f in faces:
@@ -277,10 +280,7 @@ class NotePlayer:
 	def _note_play_up(self, channel, note, velocity, duration, down_data, assignment_enabled):
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 
-		if assignment_enabled:
-			if self.controller.controls['assignment_feedback'].get():
-				self.controller.midi.send_note_up(channel, note, velocity)
-		else:
+		if self.controller.get_feedback_enabled():
 			self.controller.midi.send_note_up(channel, note, velocity)
 
 		for f in down_data['faces']:
