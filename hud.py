@@ -206,6 +206,9 @@ class Text(HudElement):
 		self.halign = halign
 		self.valign = valign
 
+	def get_rect(self):
+		return self.get_text(self.text, halign=self.halign, valign=self.valign)[1]
+
 	def render(self):
 		self.draw_text(self.text, halign=self.halign, valign=self.valign)
 
