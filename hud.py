@@ -73,13 +73,40 @@ class Hud:
 			FaceMapping(self, self._get_rect(.5, -.035, .49, .015)),
 		]
 
-		def _add_text_with_slider(x, y, line, text, sval_getter):
-			self.elements.append(Text  (self, (x*self.rect[2],     y*self.rect[3]+line*22+2, 130, 18), text))
-			self.elements.append(Slider(self, (x*self.rect[2]+130, y*self.rect[3]+line*22,   200, 20), sval_getter))
+		def _fit_sliders_with_labels(fit_rect, label_valgetters):
+			elements = 3
+			vspacing = 2
+			height = (fit_rect[3] - ((elements-1) * vspacing)) // elements
 
-		_add_text_with_slider(.02, .84, 0, "Sphere Count:",  lambda: self.scene.controller.controls['ball_count'].get_fraction())
-		_add_text_with_slider(.02, .84, 1, "Sphere Speed:",  lambda: self.scene.controller.controls['ball_speed'].get_fraction())
-		_add_text_with_slider(.02, .84, 2, "Sphere Radius:", lambda: self.scene.controller.controls['ball_radius'].get_fraction())
+			texts = []
+			y = fit_rect[1]
+			for label_valgetter in label_valgetters:
+				r = (fit_rect[0], y+2, fit_rect[2] / 2, height-2)
+				texts.append(Text(self, r, label_valgetter[0]))
+				y += height + vspacing
+
+			max_width = max([t.get_rect()[2] for t in texts])
+
+			slider_x = max_width + 6
+
+			sliders = []
+			y = fit_rect[1]
+			for label_valgetter in label_valgetters:
+				r = (fit_rect[0] + slider_x, y, fit_rect[2] - slider_x, height)
+				sliders.append(Slider(self, r, label_valgetter[1]))
+				texts.append(Text(self, r, label_valgetter[0]))
+				y += height + vspacing
+
+			for t in texts:
+				self.elements.append(t)
+			for s in sliders:
+				self.elements.append(s)
+
+		_fit_sliders_with_labels(self._get_rect(.02, .84, .22, .075), [
+			("Sphere Count:",  lambda: self.scene.controller.controls['ball_count'].get_fraction()),
+			("Sphere Speed:",  lambda: self.scene.controller.controls['ball_speed'].get_fraction()),
+			("Sphere Radius:", lambda: self.scene.controller.controls['ball_radius'].get_fraction()),
+		])
 
 		self.active_rect = self._find_bounding_int_rect([e.rect for e in self.elements])
 
