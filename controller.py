@@ -230,9 +230,10 @@ class NotePlayer:
 	def note_down(self, channel, note, velocity):
 		now = time.monotonic()
 		down_channel = self.controller.current_channel['number']
-		down_data = self._note_play_down(down_channel, note, velocity)
 		custom_length = (self.controller.note_length == params.CUSTOM_NOTE_LENGTH)
-		self._notes_down.append(((channel, note), now, down_channel, down_data, custom_length))
+		assignment_enabled = self.controller.assignment_enabled
+		down_data = self._note_play_down(down_channel, note, velocity, assignment_enabled)
+		self._notes_down.append(((channel, note), now, down_channel, down_data, custom_length, assignment_enabled))
 		if not custom_length:
 			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0), { 'scheduled': True })
 
@@ -241,15 +242,15 @@ class NotePlayer:
 
 		for i, nd in enumerate(self._notes_down):
 			if nd[0] == (channel, note):
-				down_time, down_channel, down_data, custom_length = nd[1:]
+				down_time, down_channel, down_data, custom_length, assignment_enabled = nd[1:]
 				if not custom_length and not scheduled:
 					continue
 
 				self._notes_down.pop(i)
-				self._note_play_up(down_channel, note, velocity, now - down_time, down_data)
+				self._note_play_up(down_channel, note, velocity, now - down_time, down_data, assignment_enabled)
 				break
 
-	def _note_play_down(self, channel, note, velocity):
+	def _note_play_down(self, channel, note, velocity, assignment_enabled):
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 		self.controller.midi.send_note_down(channel, note, velocity)
 		faces = self.controller.scene.get_next_faces_and_rotate()
@@ -259,7 +260,7 @@ class NotePlayer:
 			f.highlight(math.inf)
 		return { 'faces': faces, 'svel': velocity }
 
-	def _note_play_up(self, channel, note, velocity, duration, down_data):
+	def _note_play_up(self, channel, note, velocity, duration, down_data, assignment_enabled):
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 		self.controller.midi.send_note_up(channel, note, velocity)
 		for f in down_data['faces']:
