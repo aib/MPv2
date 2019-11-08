@@ -1,5 +1,9 @@
 import shapes
 
+class Bool:
+	def __init__(self, default=None):
+		self.DEFAULT = default
+
 class Range:
 	def __init__(self, min_, max_, default=None):
 		self.MIN = min_
