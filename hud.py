@@ -228,10 +228,11 @@ class NoteLength(HudElement):
 
 class AssignmentStatus(HudElement):
 	def update(self, dt):
+		self.feedback_enabled = self.hud.scene.controller.get_feedback_enabled()
 		self.assignment_enabled = self.hud.scene.controller.assignment_enabled
 
 	def render(self):
-		self.draw_text('■', color=self.hud.bright_color if not self.assignment_enabled else self.hud.bg_color, font=self.hud.symbols_font, valign='center')
+		self.draw_text('◀', color=self.hud.bright_color if self.feedback_enabled else self.hud.bg_color, font=self.hud.symbols_font, valign='center')
 		xoff = self.rect[2] / 2
 		self.draw_text('▶', color=self.hud.bright_color if self.assignment_enabled else self.hud.bg_color, font=self.hud.symbols_font, x=xoff, valign='center')
 
