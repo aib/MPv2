@@ -254,9 +254,11 @@ class NotePlayer:
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
 		if not assignment_enabled:
+			faces = self.controller.scene.get_next_faces()
 			self.controller.midi.send_note_down(channel, note, velocity)
+		else:
+			faces = self.controller.scene.get_next_faces_and_rotate()
 
-		faces = self.controller.scene.get_next_faces_and_rotate()
 		for f in faces:
 			f.set_wire_color(self.controller.scene.color_palette.get_wire_color_for_note(note))
 			f.set_face_colors(*self.controller.scene.color_palette.get_face_colors_for_note(note))
