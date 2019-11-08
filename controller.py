@@ -48,6 +48,7 @@ def _get_note_mapping():
 		(9, 36): 'reset_balls',
 		(9, 37): 'shuffle_faces',
 		(9, 38): 'toggle_hud',
+		(9, 39): 'toggle_assignment_feedback',
 	}
 
 class Controller:
@@ -142,6 +143,9 @@ class Controller:
 
 		elif event == 'toggle_hud':
 			self.scene.hud.enabled = not self.scene.hud.enabled
+
+		elif event == 'toggle_assignment_feedback':
+			self.controls['assignment_feedback'].set(not self.controls['assignment_feedback'].get())
 
 		elif event == 'volume':
 			self.midi.change_control(self.current_channel['number'], 7, arg)
