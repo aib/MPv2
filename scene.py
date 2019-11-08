@@ -101,10 +101,13 @@ class Scene:
 	def get_next_faces_and_rotate(self):
 		faces = self.face_queue.pop(0)
 		self.face_queue.append(faces)
+		self._next_faces_index = 0
 		return faces
 
-	def get_random_faces(self):
-		return random.choice(self.face_queue)
+	def get_next_faces(self):
+		faces = self.face_queue[self._next_faces_index]
+		self._next_faces_index = (self._next_faces_index + 1) % len(self.face_queue)
+		return faces
 
 	def shuffle_faces(self):
 		active_map, inactive_map = self._symmetry_map[0:self._symmetry_id_count], self._symmetry_map[self._symmetry_id_count:]
@@ -114,6 +117,7 @@ class Scene:
 
 	def _reset_faces(self):
 		random.shuffle(self.face_queue)
+		self._next_faces_index = 0
 		self._update_face_colors()
 
 	def _update_face_colors(self):
