@@ -67,3 +67,5 @@ CHANNELS = Enum([
 	{ 'name': "Channel 15", 'number': 14, 'program': None },
 	{ 'name': "Channel 16", 'number': 15, 'program': None },
 ], default=0)
+
+ASSIGNMENT_FEEDBACK = Bool(default=False)

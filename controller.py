@@ -19,7 +19,8 @@ def _get_controls():
 		Control('ball_count',  params.BALLS,        Control.irange),
 		Control('shape',       params.SHAPES,       Control.enumindex),
 		Control('note_length', params.NOTE_LENGTHS, Control.enumindex),
-		Control('channel',     params.CHANNELS,     Control.enumindex)
+		Control('channel',     params.CHANNELS,     Control.enumindex),
+		Control('assignment_feedback', params.ASSIGNMENT_FEEDBACK, Control.bool),
 	]
 
 def _get_cc_mapping():
@@ -255,11 +256,13 @@ class NotePlayer:
 	def _note_play_down(self, channel, note, velocity, assignment_enabled):
 		self._logger.debug("NotePlayer %d (%-3s) DOWN on channel %d with velocity %d", note, midi.get_note_name(note), channel, velocity)
 
-		if not assignment_enabled:
+		if assignment_enabled:
+			faces = self.controller.scene.get_next_faces_and_rotate()
+			if self.controller.controls['assignment_feedback'].get():
+				self.controller.midi.send_note_down(channel, note, velocity)
+		else:
 			faces = self.controller.scene.get_next_faces()
 			self.controller.midi.send_note_down(channel, note, velocity)
-		else:
-			faces = self.controller.scene.get_next_faces_and_rotate()
 
 		for f in faces:
 			f.set_wire_color(self.controller.scene.color_palette.get_wire_color_for_note(note))
@@ -270,7 +273,10 @@ class NotePlayer:
 	def _note_play_up(self, channel, note, velocity, duration, down_data, assignment_enabled):
 		self._logger.debug("NotePlayer %d (%-3s)  UP  on channel %d after %.3f with velocity %d (down data: %s)", note, midi.get_note_name(note), channel, duration, velocity, down_data)
 
-		if not assignment_enabled:
+		if assignment_enabled:
+			if self.controller.controls['assignment_feedback'].get():
+				self.controller.midi.send_note_up(channel, note, velocity)
+		else:
 			self.controller.midi.send_note_up(channel, note, velocity)
 
 		for f in down_data['faces']:
@@ -335,3 +341,7 @@ class Control:
 	@staticmethod
 	def enumindex(enum_, val):
 		return Control.irange(enum_, val)
+
+	@staticmethod
+	def bool(bool_, val):
+		return False if val < .5 else True
