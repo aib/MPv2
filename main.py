@@ -22,6 +22,12 @@ def main():
 	else:
 		fullscreen = True
 
+	if '-c' in sys.argv:
+		sys.argv.remove('-c')
+		debug_camera = True
+	else:
+		debug_camera = False
+
 	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
 	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
 
@@ -43,7 +49,7 @@ def main():
 	fbo = create_multisampled_fbo(width, height, 0)
 
 	midi_handler = midi.MidiHandler(inport_name, outport_name)
-	main_scene = scene.Scene((width, height), midi_handler)
+	main_scene = scene.Scene((width, height), midi_handler, debug_camera=debug_camera)
 	clock = pygame.time.Clock()
 
 	running = True
