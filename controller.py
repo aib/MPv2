@@ -232,8 +232,10 @@ class NotePlayer:
 		down_channel = self.controller.current_channel['number']
 		custom_length = (self.controller.note_length == params.CUSTOM_NOTE_LENGTH)
 		assignment_enabled = self.controller.assignment_enabled
+
 		down_data = self._note_play_down(down_channel, note, velocity, assignment_enabled)
 		self._notes_down.append(((channel, note), now, down_channel, down_data, custom_length, assignment_enabled))
+
 		if not custom_length:
 			self._note_up_scheduler.enter(self.controller.note_length, self.note_up, (channel, note, 0), { 'scheduled': True })
 
