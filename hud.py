@@ -281,7 +281,7 @@ class FaceMapping(HudElement):
 
 	def update(self, dt):
 		mappings = [self.hud.scene.get_face_mapping(face[0]) for face in reversed(self.hud.scene.face_queue)]
-		self.names = ["%s·%s" % (mapping[0], midi.get_note_name(mapping[1]).replace('♯', '#')) if mapping is not None else "·" for mapping in mappings]
+		self.names = ["%d·%s" % (mapping[0] + 1, midi.get_note_name(mapping[1]).replace('♯', '#')) if mapping is not None else "·" for mapping in mappings]
 
 	def render(self):
 		xoff = 0
