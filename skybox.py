@@ -60,9 +60,9 @@ class SkyBox:
 
 	def update(self, dt):
 		with self.program:
-			self.program.set_uniform('u_view', self.scene.view, silent=True)
-			self.program.set_uniform('u_projection', self.scene.projection, silent=True)
-			self.program.set_uniform('u_camPos', self.scene.camera.get_pos(), silent=True)
+			self.program.set_uniform('u_view', self.scene.view)
+			self.program.set_uniform('u_projection', self.scene.projection)
+			self.program.set_uniform('u_camPos', self.scene.camera.get_pos())
 
 	def render(self):
 		with self.program:
