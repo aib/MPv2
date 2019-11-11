@@ -60,9 +60,9 @@ class Hud:
 		self.font = pygame.freetype.Font('font/Roboto-Regular.ttf')
 		self.music_font = pygame.freetype.Font('font/NotoMusic-Regular.ttf')
 		self.symbols_font = pygame.freetype.Font('font/NotoSansSymbols2-Regular.ttf')
-		self.bright_color = (0, 192, 192)
-		self.dim_color = (0, 128, 128)
-		self.bg_color = (0, 64, 64)
+		self.bright_color = (0, 192, 192, 255)
+		self.dim_color = (0, 128, 128, 255)
+		self.bg_color = (0, 64, 64, 255)
 		self.font_color = self.bright_color
 
 		self.elements = [
