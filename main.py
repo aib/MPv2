@@ -30,6 +30,12 @@ def main():
 	else:
 		debug_camera = False
 
+	if '-s' in sys.argv:
+		sys.argv.remove('-s')
+		vsync = True
+	else:
+		vsync = False
+
 	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
 	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
 
@@ -53,6 +59,11 @@ def main():
 	context = sdl2.SDL_GL_CreateContext(window)
 
 	fbo = create_multisampled_fbo(width, height, 0)
+
+	if vsync:
+		if sdl2.SDL_GL_SetSwapInterval(-1) == -1:
+			logger.warning("Adaptive vsync not available")
+			sdl2.SDL_GL_SetSwapInterval(1)
 
 	midi_handler = midi.MidiHandler(inport_name, outport_name)
 	main_scene = scene.Scene((width, height), midi_handler, debug_camera=debug_camera)
