@@ -1,3 +1,4 @@
+import argparse
 import logging
 import time
 import sys
@@ -12,34 +13,20 @@ TITLE = "MPv2"
 FPS_PRINT_TIME = 10
 
 def main():
-	if '-v' in sys.argv:
-		sys.argv.remove('-v')
-		loglevel = logging.DEBUG
+	args = argparse.ArgumentParser(description="Run " + TITLE)
+	args.add_argument('-i', '--midi-input',   help="connect to specified MIDI input port")
+	args.add_argument('-o', '--midi-output',  help="connect to specified MIDI output port")
+	args.add_argument('-c', '--debug-camera', action='store_true', help="use a controllable camera")
+	args.add_argument('-s', '--vsync',        action='store_true', help="use vsync")
+	args.add_argument('-v', '--verbose',      action='store_true', help="increase verbosity")
+	args.add_argument('-w', '--windowed',     action='store_true', help="run in a window")
+	opts = args.parse_args(sys.argv[1:])
+
+	if opts.verbose:
+		logging.basicConfig(level=logging.DEBUG)
 	else:
-		loglevel = logging.INFO
+		logging.basicConfig(level=logging.INFO)
 
-	if '-w' in sys.argv:
-		sys.argv.remove('-w')
-		fullscreen = False
-	else:
-		fullscreen = True
-
-	if '-c' in sys.argv:
-		sys.argv.remove('-c')
-		debug_camera = True
-	else:
-		debug_camera = False
-
-	if '-s' in sys.argv:
-		sys.argv.remove('-s')
-		vsync = True
-	else:
-		vsync = False
-
-	outport_name = sys.argv[1] if len(sys.argv) > 1 else None
-	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
-
-	logging.basicConfig(level=loglevel)
 	logger = logging.getLogger(__name__)
 
 	logger.info("Initializing")
@@ -47,26 +34,26 @@ def main():
 
 	dm = sdl2.SDL_DisplayMode()
 	sdl2.SDL_GetDesktopDisplayMode(0, dm)
-	if fullscreen:
+	if not opts.windowed:
 		width = dm.w
 		height = dm.h
 	else:
 		width = round(dm.w * .8)
 		height = round(dm.h * .8)
 
-	window_flags = sdl2.SDL_WINDOW_OPENGL | (sdl2.SDL_WINDOW_FULLSCREEN if fullscreen else 0)
+	window_flags = sdl2.SDL_WINDOW_OPENGL | (sdl2.SDL_WINDOW_FULLSCREEN if not opts.windowed else 0)
 	window = sdl2.SDL_CreateWindow(TITLE.encode('utf-8'), sdl2.SDL_WINDOWPOS_UNDEFINED, sdl2.SDL_WINDOWPOS_UNDEFINED, width, height, window_flags)
 	context = sdl2.SDL_GL_CreateContext(window)
 
 	fbo = create_multisampled_fbo(width, height, 0)
 
-	if vsync:
+	if opts.vsync:
 		if sdl2.SDL_GL_SetSwapInterval(-1) == -1:
 			logger.warning("Adaptive vsync not available")
 			sdl2.SDL_GL_SetSwapInterval(1)
 
-	midi_handler = midi.MidiHandler(inport_name, outport_name)
-	main_scene = scene.Scene((width, height), midi_handler, debug_camera=debug_camera)
+	midi_handler = midi.MidiHandler(opts.midi_input, opts.midi_output)
+	main_scene = scene.Scene((width, height), midi_handler, debug_camera=opts.debug_camera)
 
 	frames = 0
 	frame_count_time = time.monotonic()
