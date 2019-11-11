@@ -3,7 +3,7 @@ import time
 import sys
 
 from OpenGL import GL
-import pygame
+import sdl2
 
 import scene
 import midi
@@ -37,18 +37,20 @@ def main():
 	logger = logging.getLogger(__name__)
 
 	logger.info("Initializing")
-	pygame.init()
+	sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
 
-	vi = pygame.display.Info()
+	dm = sdl2.SDL_DisplayMode()
+	sdl2.SDL_GetDesktopDisplayMode(0, dm)
 	if fullscreen:
-		width = vi.current_w
-		height = vi.current_h
+		width = dm.w
+		height = dm.h
 	else:
-		width = round(vi.current_w * .8)
-		height = round(vi.current_h * .8)
+		width = round(dm.w * .8)
+		height = round(dm.h * .8)
 
-	pygame.display.set_caption(TITLE)
-	pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.OPENGL | (pygame.FULLSCREEN if fullscreen else 0))
+	window_flags = sdl2.SDL_WINDOW_OPENGL | (sdl2.SDL_WINDOW_FULLSCREEN if fullscreen else 0)
+	window = sdl2.SDL_CreateWindow(TITLE.encode('utf-8'), sdl2.SDL_WINDOWPOS_UNDEFINED, sdl2.SDL_WINDOWPOS_UNDEFINED, width, height, window_flags)
+	context = sdl2.SDL_GL_CreateContext(window)
 
 	fbo = create_multisampled_fbo(width, height, 0)
 
@@ -58,31 +60,35 @@ def main():
 	frames = 0
 	frame_count_time = time.monotonic()
 
+	ev = sdl2.SDL_Event()
 	running = True
 	while running:
-		for ev in pygame.event.get():
-			if ev.type == pygame.QUIT:
+		while True:
+			if (sdl2.SDL_PollEvent(ev) == 0):
+				break
+
+			if ev.type == sdl2.SDL_QUIT:
 				running = False
 
-			elif ev.type == pygame.KEYUP and ev.key == pygame.K_ESCAPE:
+			elif ev.type == sdl2.SDL_KEYUP and ev.key.keysym.sym == sdl2.SDLK_ESCAPE:
 				running = False
 
-			elif ev.type == pygame.KEYDOWN:
-				main_scene.key_down(pygame.key.name(ev.key))
+			elif ev.type == sdl2.SDL_KEYDOWN:
+				main_scene.key_down(sdl2.SDL_GetKeyName(ev.key.keysym.sym).decode('ascii').lower())
 
-			elif ev.type == pygame.KEYUP:
-				main_scene.key_up(pygame.key.name(ev.key))
+			elif ev.type == sdl2.SDL_KEYUP:
+				main_scene.key_up(sdl2.SDL_GetKeyName(ev.key.keysym.sym).decode('ascii').lower())
 
-			elif ev.type == pygame.MOUSEBUTTONDOWN:
-				main_scene.mouse_down(ev.button, (ev.pos[0] / width, ev.pos[1] / height))
+			elif ev.type == sdl2.SDL_MOUSEBUTTONDOWN:
+				main_scene.mouse_down(ev.button.button, (ev.button.x / width, ev.button.y / height))
 
-			elif ev.type == pygame.MOUSEBUTTONUP:
-				main_scene.mouse_up(ev.button, (ev.pos[0] / width, ev.pos[1] / height))
+			elif ev.type == sdl2.SDL_MOUSEBUTTONUP:
+				main_scene.mouse_up(ev.button.button, (ev.button.x / width, ev.button.y / height))
 
 		main_scene.update()
 		main_scene.render()
 		blit_multisampled_fbo(width, height, fbo)
-		pygame.display.flip()
+		sdl2.SDL_GL_SwapWindow(window)
 
 		frames += 1
 		now = time.monotonic()
@@ -93,6 +99,10 @@ def main():
 			logger.debug("%.3f FPS", fps)
 
 	main_scene.shutdown()
+
+	sdl2.SDL_GL_DeleteContext(context)
+	sdl2.SDL_DestroyWindow(window)
+	sdl2.SDL_Quit()
 
 def create_multisampled_fbo(width, height, msaa):
 	if msaa == 0: return 0
