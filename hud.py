@@ -44,7 +44,8 @@ class Hud:
 		self.size = (2048, 2048)
 
 		self.program = gfx.Program(HUD_VS, HUD_FS)
-		self.surface = pygame.Surface(self.size, flags=pygame.SRCALPHA, depth=32)
+		self.surface_buffer = bytearray(self.size[0] * self.size[1] * 4)
+		self.surface = pygame.image.frombuffer(self.surface_buffer, self.size, 'RGBA')
 		self.hudtex = self.scene.create_texture()
 		self.hudtex.load_array(np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8), bgr=True)
 
@@ -154,8 +155,8 @@ class Hud:
 		for e in self.elements:
 			e.render()
 
-		arr = np.frombuffer(self.surface.get_view().raw, dtype=np.uint8).reshape(self.size[1], self.size[0], 4)
-		self.hudtex.load_subarray(arr, self.active_rect[0], self.active_rect[1], self.active_rect[2], self.active_rect[3], bgr=True)
+		arr = np.frombuffer(self.surface_buffer, dtype=np.uint8).reshape(self.size[1], self.size[0], 4)
+		self.hudtex.load_subarray(arr, self.active_rect[0], self.active_rect[1], self.active_rect[2], self.active_rect[3])
 
 		with self.program:
 			self.vao.draw_triangles()
