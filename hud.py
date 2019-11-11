@@ -42,7 +42,7 @@ class Hud:
 		self.rect = rect
 
 		self.enabled = True
-		self.size = (2048, 2048)
+		self.size = (rect[2], rect[3])
 
 		self.program = gfx.Program(HUD_VS, HUD_FS)
 		self.surface_buffer = bytearray(self.size[0] * self.size[1] * 4)
