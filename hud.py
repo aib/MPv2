@@ -169,7 +169,7 @@ class HudElement:
 		pass
 
 	def render(self):
-		self.hud.surface.fill(pygame.Color(255, 0, 255), self.rect)
+		self.draw_rect(0, 0, self.rect[2], self.rect[3], (255, 0, 255, 255))
 
 	def draw_rect(self, x, y, w, h, color=None):
 		if color is None: color = self.hud.bg_color
