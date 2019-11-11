@@ -47,7 +47,7 @@ class Hud:
 		self.surface_buffer = bytearray(self.size[0] * self.size[1] * 4)
 		self.surface = pygame.image.frombuffer(self.surface_buffer, self.size, 'RGBA')
 		self.hudtex = self.scene.create_texture()
-		self.hudtex.load_array(np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8), bgr=True)
+		self.hudtex.load_array(np.zeros((self.size[1], self.size[0], 4), dtype=np.uint8))
 
 		self.vao = gfx.VAO()
 		vert, texc = self._get_shape(self.scene.size, self.rect)
