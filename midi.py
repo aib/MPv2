@@ -32,6 +32,7 @@ class MidiHandler:
 
 		if not self.midi_in.is_port_open():
 			self._logger.warning("Could not open MIDI IN port \"%s\"", inport)
+			self.midi_in.open_virtual_port()
 
 		if outport is None:
 			self.midi_out.open_virtual_port()
@@ -43,6 +44,7 @@ class MidiHandler:
 
 		if not self.midi_out.is_port_open():
 			self._logger.warning("Could not open MIDI OUT port \"%s\"", outport)
+			self.midi_out.open_virtual_port()
 
 		threading.Thread(target=self.note_scheduler.run, name="MidiHandler note scheduler", daemon=True).start()
 		self.midi_in.set_callback(self._midi_in_cb)
