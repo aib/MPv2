@@ -57,6 +57,7 @@ class Hud:
 		with self.program:
 			self.program.set_uniform('t_hud', self.hudtex.number)
 
+		pygame.freetype.init()
 		self.font = pygame.freetype.Font('font/Roboto-Regular.ttf')
 		self.music_font = pygame.freetype.Font('font/NotoMusic-Regular.ttf')
 		self.symbols_font = pygame.freetype.Font('font/NotoSansSymbols2-Regular.ttf')
