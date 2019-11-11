@@ -3,3 +3,4 @@ Pillow
 pygame
 PyOpenGL
 python-rtmidi
+PySDL2
