@@ -94,7 +94,6 @@ class Hud:
 			for label_valgetter in label_valgetters:
 				r = (fit_rect[0] + slider_x, y, fit_rect[2] - slider_x, height)
 				sliders.append(Slider(self, r, label_valgetter[1]))
-				texts.append(Text(self, r, label_valgetter[0]))
 				y += height + vspacing
 
 			for t in texts:
