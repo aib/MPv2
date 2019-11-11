@@ -60,9 +60,9 @@ class Hud:
 		self.font = pygame.freetype.Font('font/Roboto-Regular.ttf')
 		self.music_font = pygame.freetype.Font('font/NotoMusic-Regular.ttf')
 		self.symbols_font = pygame.freetype.Font('font/NotoSansSymbols2-Regular.ttf')
-		self.bright_color = pygame.Color(0, 192, 192)
-		self.dim_color = pygame.Color(0, 128, 128)
-		self.bg_color = pygame.Color(0, 64, 64)
+		self.bright_color = (0, 192, 192)
+		self.dim_color = (0, 128, 128)
+		self.bg_color = (0, 64, 64)
 		self.font_color = self.bright_color
 
 		self.elements = [
@@ -173,13 +173,13 @@ class HudElement:
 
 	def draw_rect(self, x, y, w, h, color=None):
 		if color is None: color = self.hud.bg_color
-		self.hud.surface.fill(color, (self.rect[0] + x, self.rect[1] + y, w, h))
+		self.hud.surface.fill(pygame.Color(*color), (self.rect[0] + x, self.rect[1] + y, w, h))
 
 	def get_text(self, text, x=0, y=0, font=None, color=None, halign='left', valign='top'):
 		if font is None: font = self.hud.font
 		if color is None: color = self.hud.font_color
 
-		surf, rect = font.render(text, size=self.rect[3], fgcolor=color)
+		surf, rect = font.render(text, size=self.rect[3], fgcolor=pygame.Color(*color))
 
 		if halign == 'right':
 			posx = self.rect[0] + self.rect[2] - rect[2]
