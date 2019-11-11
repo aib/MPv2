@@ -38,30 +38,43 @@ def set_uniform(program_id, name, value, silent=False):
 	set_uniform_by_location(get_uniform_location(program_id, name, silent=silent), value)
 
 def set_uniform_by_location(location, value):
-	value = np.asarray(value)
-	if value.shape == ():
-		if value.dtype.kind == 'f':
+	if isinstance(value, tuple):
+		shape = (len(value),)
+		tkind = 'f'
+	elif isinstance(value, float):
+		shape = ()
+		tkind = 'f'
+	elif isinstance(value, int):
+		shape = ()
+		tkind = 'i'
+	else:
+		varray = np.asarray(value)
+		shape = varray.shape
+		tkind = varray.dtype.kind
+
+	if shape == ():
+		if tkind == 'f':
 			GL.glUniform1f(location, value)
-		elif value.dtype.kind == 'i':
+		elif tkind == 'i':
 			GL.glUniform1i(location, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
-	elif value.shape == (3,):
-		if value.dtype.kind == 'f':
+	elif shape == (3,):
+		if tkind == 'f':
 			GL.glUniform3fv(location, 1, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
-	elif value.shape == (4,):
-		if value.dtype.kind == 'f':
+	elif shape == (4,):
+		if tkind == 'f':
 			GL.glUniform4fv(location, 1, value)
 		else:
 			raise NotImplementedError("I don't know how to process the dtype %s" % (value.dtype,))
-	elif value.shape == (4, 4):
+	elif shape == (4, 4):
 		GL.glUniformMatrix4fv(location, 1, GL.GL_TRUE, value)
-	elif len(value.shape) == 2 and value.shape[1] == 4:
-		GL.glUniform4fv(location, value.shape[0], value)
+	elif len(shape) == 2 and shape[1] == 4:
+		GL.glUniform4fv(location, shape[0], value)
 	else:
-		raise NotImplementedError("I don't know how to process the shape %s" % (value.shape,))
+		raise NotImplementedError("I don't know how to process the shape %s" % (shape,))
 
 class Program:
 	def __init__(self, vert_shader, frag_shader):
