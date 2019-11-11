@@ -61,9 +61,11 @@ class Texture2D(Texture):
 
 	def load_array(self, arr, bgr=False):
 		informat, intype = self._get_format_and_type(arr, bgr=bgr)
+		self.load_array_raw(informat, intype, arr.shape[1], arr.shape[0], np.flip(arr, axis=0))
 
+	def load_array_raw(self, informat, intype, width, height, arr):
 		with self:
-			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, arr.shape[1], arr.shape[0], 0, informat, intype, np.flip(arr, axis=0))
+			GL.glTexImage2D(self.type, 0, GL.GL_RGBA, width, height, 0, informat, intype, arr)
 			GL.glGenerateMipmap(self.type)
 
 	def load_subarray(self, arr, xoff=0, yoff=0, width=None, height=None, bgr=False):
@@ -75,8 +77,11 @@ class Texture2D(Texture):
 		texyoff = arr.shape[0] - height - yoff
 		arr = arr[yoff:yoff+height, xoff:xoff+width, :]
 
+		self.load_subarray_raw(informat, intype, width, height, xoff, texyoff, np.flip(arr, axis=0))
+
+	def load_subarray_raw(self, informat, intype, width, height, xoff, yoff, arr):
 		with self:
-			GL.glTexSubImage2D(self.type, 0, xoff, texyoff, width, height, informat, intype, np.flip(arr, axis=0))
+			GL.glTexSubImage2D(self.type, 0, xoff, yoff, width, height, informat, intype, arr)
 			GL.glGenerateMipmap(self.type)
 
 class CubeMap(Texture):
