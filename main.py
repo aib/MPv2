@@ -1,4 +1,5 @@
 import logging
+import time
 import sys
 
 from OpenGL import GL
@@ -8,6 +9,7 @@ import scene
 import midi
 
 TITLE = "MPv2"
+FPS_PRINT_TIME = 10
 
 def main():
 	if '-v' in sys.argv:
@@ -32,7 +34,9 @@ def main():
 	inport_name  = sys.argv[2] if len(sys.argv) > 2 else None
 
 	logging.basicConfig(level=loglevel)
+	logger = logging.getLogger(__name__)
 
+	logger.info("Initializing")
 	pygame.init()
 
 	vi = pygame.display.Info()
@@ -50,7 +54,9 @@ def main():
 
 	midi_handler = midi.MidiHandler(inport_name, outport_name)
 	main_scene = scene.Scene((width, height), midi_handler, debug_camera=debug_camera)
-	clock = pygame.time.Clock()
+
+	frames = 0
+	frame_count_time = time.monotonic()
 
 	running = True
 	while running:
@@ -77,8 +83,14 @@ def main():
 		main_scene.render()
 		blit_multisampled_fbo(width, height, fbo)
 		pygame.display.flip()
-		pygame.display.set_caption("%s - %.2f FPS" % (TITLE, clock.get_fps()))
-		clock.tick(120)
+
+		frames += 1
+		now = time.monotonic()
+		if now - frame_count_time > FPS_PRINT_TIME:
+			fps = frames / (now - frame_count_time)
+			frames = 0
+			frame_count_time = now
+			logger.debug("%.3f FPS", fps)
 
 	main_scene.shutdown()
 
