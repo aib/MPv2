@@ -172,6 +172,7 @@ class Scene:
 
 		self.color_palette.update(dt)
 		self._update_face_colors()
+		self.hud.set_colors(self.color_palette.get_hud_colors())
 
 		self.balls.update(dt)
 		self.active_shape.update(dt)
