@@ -46,7 +46,9 @@ class Balls:
 		self.scene = scene
 
 		self.ball_textures = ball_textures
-		self.balls = [Ball(self.scene, i) for i in range(params.BALLS.MAX)]
+		self.balls = [Ball(self.scene, self, i) for i in range(params.BALLS.MAX)]
+
+		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self._next_ball_index = 0
 
@@ -116,13 +118,13 @@ class Ball:
 		[[0, 1], [1, 0], [1, 1]]
 	]
 
-	def __init__(self, scene, index):
+	def __init__(self, scene, manager, index):
 		self.scene = scene
+		self.manager = manager
 		self.index = index
 
 		self.enabled = False
 		self.fade_rate_after_collision = 0
-		self.program = gfx.Program(BALL_VS, BALL_FS)
 
 		self.vao = gfx.VAO()
 		with self.vao:
@@ -137,10 +139,6 @@ class Ball:
 		self.speed = speed
 		self.radius = radius
 		self.texture = texture
-
-		if self.texture is not None:
-			with self.program:
-				self.program.set_uniform('t_ball', self.texture.number)
 
 		self.opacity = 1.
 		self.fading = False
@@ -178,15 +176,14 @@ class Ball:
 			if self.opacity < 0:
 				self.enabled = False
 
-		model = mp.translateM(self.pos) @ mp.scaleM(self.radius * GRAPHICS_SCALE)
-		with self.program:
-			self.program.set_uniform('u_model', model)
-			self.program.set_uniform('u_view', self.scene.view)
-			self.program.set_uniform('u_projection', self.scene.projection)
-			self.program.set_uniform('u_opacity', self.opacity)
-
 	def render(self):
-		with self.program:
+		model = mp.translateM(self.pos) @ mp.scaleM(self.radius * GRAPHICS_SCALE)
+		with self.manager.program:
+			self.manager.program.set_uniform('t_ball', self.texture.number)
+			self.manager.program.set_uniform('u_model', model)
+			self.manager.program.set_uniform('u_view', self.scene.view)
+			self.manager.program.set_uniform('u_projection', self.scene.projection)
+			self.manager.program.set_uniform('u_opacity', self.opacity)
 			self.vao.draw_triangles()
 
 	def __repr__(self):
