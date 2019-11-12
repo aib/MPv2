@@ -21,8 +21,15 @@ class ColorPalette:
 	def update(self, dt):
 		pass
 
-def rgb_alphas(r, g, b, an, ah):
-	return ((r, g, b, an), (r, g, b, ah))
+def hsva(h, s, v, a):
+	rgb = colorsys.hsv_to_rgb(h, s, v)
+	return (rgb[0], rgb[1], rgb[2], a)
+
+def rgb_alphas(r, g, b, a1, a2):
+	return ((r, g, b, a1), (r, g, b, a2))
+
+def hsv_alphas(h, s, v, a1, a2):
+	return (hsva(h, s, v, a1), hsva(h, s, v, a2))
 
 def tri(period, x):
 	return abs((2/period) * ((x + period/2) % period) - 1)
@@ -50,12 +57,10 @@ class Shifting(ColorPalette):
 		self.hue = tri_wave(199, .5, .833, self.elapsed)
 
 	def get_default_wire_color(self):
-		rgb = colorsys.hsv_to_rgb(self.hue, 1., 1.)
-		return (rgb[0], rgb[1], rgb[2], 1.)
+		return hsva(self.hue, 1., 1., 1.)
 
 	def get_default_face_colors(self):
-		rgb = colorsys.hsv_to_rgb(self.hue, 1., .5)
-		return rgb_alphas(rgb[0], rgb[1], rgb[2], 0., 1.)
+		return hsv_alphas(self.hue, 1., .5, 0., 1.)
 
 class HueRotation(ColorPalette):
 	def __init__(self):
@@ -65,9 +70,7 @@ class HueRotation(ColorPalette):
 		self.elapsed += dt
 
 	def get_default_wire_color(self):
-		rgb = colorsys.hsv_to_rgb((self.elapsed / 31) % 1., 1., 1.)
-		return (rgb[0], rgb[1], rgb[2], 1.)
+		return hsva((self.elapsed / 31) % 1., 1., 1., 1.)
 
 	def get_default_face_colors(self):
-		rgb = colorsys.hsv_to_rgb((self.elapsed / 29) % 1., 1., .5)
-		return rgb_alphas(rgb[0], rgb[1], rgb[2], 0., 1.)
+		return hsv_alphas((self.elapsed / 29) % 1., 1., .5, 0., 1.)
