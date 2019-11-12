@@ -68,12 +68,18 @@ class Shifting(ColorPalette):
 class HueRotation(ColorPalette):
 	def __init__(self):
 		self.elapsed = 0
+		self.update(0)
 
 	def update(self, dt):
 		self.elapsed += dt
+		self.wire_hue = (self.elapsed / 31) % 1.
+		self.face_hue = (self.elapsed / 29) % 1.
 
 	def get_default_wire_color(self):
-		return hsva((self.elapsed / 31) % 1., 1., 1., 1.)
+		return hsva(self.wire_hue, 1., 1., 1.)
 
 	def get_default_face_colors(self):
-		return hsv_alphas((self.elapsed / 29) % 1., 1., .5, 0., 1.)
+		return hsv_alphas(self.face_hue, 1., .5, 0., 1.)
+
+	def get_hud_colors(self):
+		return (hsva(self.wire_hue, 1., .75, 1.), hsva(self.wire_hue, 1., .5, 1.), hsva(self.wire_hue, 1., .25, 1.))
