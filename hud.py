@@ -66,7 +66,6 @@ class Hud:
 		self.bright_color = (0, .75, .75, 1.)
 		self.dim_color = (0, .5, .5, 1.)
 		self.bg_color = (0, .25, .25, 1.)
-		self.font_color = self.bright_color
 
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
@@ -182,7 +181,7 @@ class HudElement:
 
 	def get_text(self, text, x=0, y=0, font=None, color=None, halign='left', valign='top'):
 		if font is None: font = self.hud.font
-		if color is None: color = self.hud.font_color
+		if color is None: color = self.hud.bright_color
 
 		surf, rect = font.render(text, size=self.rect[3], fgcolor=self._pygame_color(color))
 
