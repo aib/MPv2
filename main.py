@@ -20,6 +20,8 @@ def main():
 	args.add_argument('-s', '--vsync',        action='store_true', help="use vsync")
 	args.add_argument('-v', '--verbose',      action='store_true', help="increase verbosity")
 	args.add_argument('-w', '--windowed',     action='store_true', help="run in a window")
+	args.add_argument('-3', '--stereoscopy', choices=[scene.STEREOSCOPY_OFF, scene.STEREOSCOPY_ANAGLYPH], help="stereoscopy mode")
+	args.add_argument('-e', '--eye-separation', type=float, help="stereoscopic eye separation")
 	opts = args.parse_args(sys.argv[1:])
 
 	if opts.verbose:
@@ -54,6 +56,12 @@ def main():
 
 	midi_handler = midi.MidiHandler(opts.midi_input, opts.midi_output)
 	main_scene = scene.Scene((width, height), midi_handler, debug_camera=opts.debug_camera)
+
+	if opts.stereoscopy is not None:
+		main_scene.set_stereoscopy(opts.stereoscopy)
+
+	if opts.eye_separation is not None:
+		main_scene.stereoscopy_eye_separation = opts.eye_separation
 
 	frames = 0
 	frame_count_time = time.monotonic()
