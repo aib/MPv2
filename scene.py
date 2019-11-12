@@ -7,6 +7,7 @@ import queue
 import random
 import time
 
+import numpy as np
 from OpenGL import GL
 
 import ball
@@ -279,43 +280,38 @@ class Scene:
 		return tex
 
 	def pick_triangle(self, start, forward, ray_radius=0, maxtime=None, blacklist=None):
+		# Vectorized bit basically doing mp.intersect_plane_sphere on all triangles
+		triangles = [t for f in self.active_shape.faces for t in f.triangles]
+		normals = np.array([t.normal for t in triangles])
+		vert0 = np.array([t.vertices[0] for t in triangles])
+		velproj = np.dot(normals, forward)
+		negs = np.repeat(((velproj > 0).astype(np.float32) * 2 - 1), 3).reshape(normals.shape[0], 3)
+		closest = start + (normals * negs) * ray_radius
+		distproj = np.sum(normals * (closest - vert0), axis=1)
+		intersection_times = distproj / -velproj
+		intersection_points = closest + np.outer(intersection_times, forward)
+
 		intersections = []
-		for f in self.active_shape.faces:
-			for t in f.triangles:
-				if blacklist is not None and t in blacklist:
-					continue
+		for t, intersection_time, intersection_point in zip(triangles, intersection_times, intersection_points):
+			if blacklist is not None and t in blacklist:
+				continue
 
-				velproj = mp.dot(t.normal, forward)
-				if velproj == 0:
-					continue
+			if math.isinf(intersection_time) or math.isnan(intersection_time) or intersection_time < 0:
+				continue
 
-				behind = velproj > 0
-				closest = start - (-t.normal if behind else t.normal) * ray_radius
+			if maxtime is not None and intersection_time > maxtime:
+				continue
 
-				distproj = mp.dot(t.normal, closest - t.vertices[0])
-				if distproj == 0:
-					continue
+			if mp.dot(intersection_point - t.vertices[0], mp.cross(t.vertices[1] - t.vertices[0], t.normal)) > 0:
+				continue
 
-				intersection_time = distproj / -velproj
+			if mp.dot(intersection_point - t.vertices[1], mp.cross(t.vertices[2] - t.vertices[1], t.normal)) > 0:
+				continue
 
-				if intersection_time < 0:
-					continue
+			if mp.dot(intersection_point - t.vertices[2], mp.cross(t.vertices[0] - t.vertices[2], t.normal)) > 0:
+				continue
 
-				if maxtime is not None and intersection_time > maxtime:
-					continue
-
-				intersection_point = closest + forward * intersection_time
-
-				if mp.dot(intersection_point - t.vertices[0], mp.cross(t.vertices[1] - t.vertices[0], t.normal)) > 0:
-					continue
-
-				if mp.dot(intersection_point - t.vertices[1], mp.cross(t.vertices[2] - t.vertices[1], t.normal)) > 0:
-					continue
-
-				if mp.dot(intersection_point - t.vertices[2], mp.cross(t.vertices[0] - t.vertices[2], t.normal)) > 0:
-					continue
-
-				intersections.append((t, intersection_time, intersection_point))
+			intersections.append((t, intersection_time, intersection_point))
 
 		if len(intersections) == 0:
 			return (None, None, None)
