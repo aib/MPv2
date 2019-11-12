@@ -62,6 +62,9 @@ class Shifting(ColorPalette):
 	def get_default_face_colors(self):
 		return hsv_alphas(self.hue, 1., .5, 0., 1.)
 
+	def get_hud_colors(self):
+		return ((0., .75, .75, 1.), (0., .5, .5, 1.), (0., .25, .25, 1.))
+
 class HueRotation(ColorPalette):
 	def __init__(self):
 		self.elapsed = 0
