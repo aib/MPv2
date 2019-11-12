@@ -7,7 +7,6 @@ import queue
 import random
 import time
 
-import numpy as np
 from OpenGL import GL
 
 import ball
@@ -18,7 +17,6 @@ import hud
 import mp
 import params
 import shape
-import shapes
 import skybox
 import texture
 

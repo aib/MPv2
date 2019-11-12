@@ -3,7 +3,6 @@ import logging
 import math
 import threading
 import time
-import queue
 
 import chordus
 import midi
