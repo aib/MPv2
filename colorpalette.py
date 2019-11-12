@@ -83,3 +83,13 @@ class HueRotation(ColorPalette):
 
 	def get_hud_colors(self):
 		return (hsva(self.wire_hue, 1., .75, 1.), hsva(self.wire_hue, 1., .5, 1.), hsva(self.wire_hue, 1., .25, 1.))
+
+class Anaglyph(ColorPalette):
+	def get_default_wire_color(self):
+		return (1., 1., 1., 1.)
+
+	def get_default_face_colors(self):
+		return rgb_alphas(1., 1., 1., 0., .75)
+
+	def get_hud_colors(self):
+		return ((.75, .75, .75, 1.), (.5, .5, .5, 1.), (.25, .25, .25, 1.))
