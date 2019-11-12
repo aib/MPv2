@@ -63,9 +63,7 @@ class Hud:
 		self.font = pygame.freetype.Font('font/Roboto-Regular.ttf')
 		self.music_font = pygame.freetype.Font('font/NotoMusic-Regular.ttf')
 		self.symbols_font = pygame.freetype.Font('font/NotoSansSymbols2-Regular.ttf')
-		self.bright_color = (0, .75, .75, 1.)
-		self.dim_color = (0, .5, .5, 1.)
-		self.bg_color = (0, .25, .25, 1.)
+		self.set_colors(((0, .75, .75, 1.), (0, .5, .5, 1.), (0, .25, .25, 1.)))
 
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
@@ -110,6 +108,11 @@ class Hud:
 		])
 
 		self.active_rect = self._find_bounding_int_rect([e.rect for e in self.elements])
+
+	def set_colors(self, colors):
+		self.bright_color = colors[0]
+		self.dim_color = colors[1]
+		self.bg_color = colors[2]
 
 	def _get_rect(self, x, y, w, h):
 		if x < 0: x = 1 + x
