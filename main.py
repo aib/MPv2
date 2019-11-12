@@ -105,24 +105,24 @@ def main():
 def create_multisampled_fbo(width, height, msaa):
 	if msaa == 0: return 0
 
-	fbotex = GL.glGenTextures(1);
-	GL.glBindTexture(GL.GL_TEXTURE_2D_MULTISAMPLE, fbotex);
-	GL.glTexImage2DMultisample(GL.GL_TEXTURE_2D_MULTISAMPLE, msaa, GL.GL_RGBA8, width, height, False);
+	fbotex = GL.glGenTextures(1)
+	GL.glBindTexture(GL.GL_TEXTURE_2D_MULTISAMPLE, fbotex)
+	GL.glTexImage2DMultisample(GL.GL_TEXTURE_2D_MULTISAMPLE, msaa, GL.GL_RGBA8, width, height, False)
 
-	fbo = GL.glGenFramebuffers(1);
-	GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo);
-	GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D_MULTISAMPLE, fbotex, 0);
+	fbo = GL.glGenFramebuffers(1)
+	GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo)
+	GL.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D_MULTISAMPLE, fbotex, 0)
 
 	return fbo
 
 def blit_multisampled_fbo(width, height, fbo):
 	if fbo == 0: return
 
-	GL.glBindFramebuffer(GL.GL_DRAW_FRAMEBUFFER, 0);
-	GL.glBindFramebuffer(GL.GL_READ_FRAMEBUFFER, fbo);
-	GL.glDrawBuffer(GL.GL_BACK);
+	GL.glBindFramebuffer(GL.GL_DRAW_FRAMEBUFFER, 0)
+	GL.glBindFramebuffer(GL.GL_READ_FRAMEBUFFER, fbo)
+	GL.glDrawBuffer(GL.GL_BACK)
 	GL.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST)
-	GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo);
+	GL.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo)
 
 if __name__ == '__main__':
 	main()
