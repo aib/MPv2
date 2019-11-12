@@ -112,15 +112,18 @@ class Shape:
 		with self.program:
 			balls = [[b.pos[0], b.pos[1], b.pos[2], b.radius * b.opacity if b.enabled else 0.] for b in self.scene.balls.balls]
 			self.program.set_uniform('u_balls', balls)
-			self.program.set_uniform('u_view', self.scene.view)
-			self.program.set_uniform('u_projection', self.scene.projection)
-
-		with self.wire_program:
-			self.wire_program.set_uniform('u_view', self.scene.view)
-			self.wire_program.set_uniform('u_projection', self.scene.projection)
 
 		for f in self.faces:
 			f.update(dt)
+
+	def pre_render(self, projection, view):
+		with self.program:
+			self.program.set_uniform('u_view', view)
+			self.program.set_uniform('u_projection', projection)
+
+		with self.wire_program:
+			self.wire_program.set_uniform('u_view', view)
+			self.wire_program.set_uniform('u_projection', projection)
 
 class Face:
 	def __init__(self, shape, index, vertices, texcoords, normals):

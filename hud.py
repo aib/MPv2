@@ -148,6 +148,9 @@ class Hud:
 		for e in self.elements:
 			e.update(dt)
 
+	def pre_render(self, projection, view):
+		pass
+
 	def render(self):
 		if not self.enabled: return
 

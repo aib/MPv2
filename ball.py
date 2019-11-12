@@ -98,9 +98,10 @@ class Balls:
 			if b.get_distance_to(mp.array([0, 0, 0])) > self.scene.active_shape.radius:
 				self._reset_ball(b)
 
+	def pre_render(self, projection, view):
 		with self.program:
-			self.program.set_uniform('u_view', self.scene.view)
-			self.program.set_uniform('u_projection', self.scene.projection)
+			self.program.set_uniform('u_view', view)
+			self.program.set_uniform('u_projection', projection)
 
 	def _reset_ball(self, ball, dir=None):
 		if dir is None: dir = mp.normalize(np.random.standard_normal(3))

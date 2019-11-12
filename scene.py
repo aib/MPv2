@@ -181,6 +181,7 @@ class Scene:
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
+		self.skybox.pre_render(self.projection, self.view)
 		self.skybox.render()
 
 		drawables = it.chain(self.active_shape.faces, self.balls.enabled_balls())
@@ -193,9 +194,13 @@ class Scene:
 					return +2 * params.DEPTH.MAX
 			return drawable.get_distance_to(self.camera.get_pos())
 
+		self.balls.pre_render(self.projection, self.view)
+		self.active_shape.pre_render(self.projection, self.view)
+
 		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
 			drawable.render()
 
+		self.hud.pre_render(self.projection, self.view)
 		self.hud.render()
 
 	def shutdown(self):
