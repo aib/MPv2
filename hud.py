@@ -63,7 +63,7 @@ class Hud:
 		self.font = pygame.freetype.Font('font/Roboto-Regular.ttf')
 		self.music_font = pygame.freetype.Font('font/NotoMusic-Regular.ttf')
 		self.symbols_font = pygame.freetype.Font('font/NotoSansSymbols2-Regular.ttf')
-		self.set_colors(((0, .75, .75, 1.), (0, .5, .5, 1.), (0, .25, .25, 1.)))
+		self.set_colors(((1., 1., 1., 1.), (.5, .5, .5, 1.), (.25, .25, .25, 1.)))
 
 		self.elements = [
 			Channel(self, self._get_rect(.02, -.048, .2, .022)),
