@@ -185,7 +185,7 @@ class Scene:
 		self.skybox.pre_render(self.projection, self.view)
 		self.skybox.render()
 
-		drawables = it.chain(self.active_shape.faces, self.balls.enabled_balls())
+		drawables = list(it.chain(self.active_shape.faces, self.balls.enabled_balls()))
 
 		def _drawable_sort_key(drawable):
 			if isinstance(drawable, shape.Face):
