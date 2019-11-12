@@ -98,6 +98,10 @@ class Balls:
 			if b.get_distance_to(mp.array([0, 0, 0])) > self.scene.active_shape.radius:
 				self._reset_ball(b)
 
+		with self.program:
+			self.program.set_uniform('u_view', self.scene.view)
+			self.program.set_uniform('u_projection', self.scene.projection)
+
 	def _reset_ball(self, ball, dir=None):
 		if dir is None: dir = mp.normalize(np.random.standard_normal(3))
 		ball.init(
@@ -181,8 +185,6 @@ class Ball:
 		with self.manager.program:
 			self.manager.program.set_uniform('t_ball', self.texture.number)
 			self.manager.program.set_uniform('u_model', model)
-			self.manager.program.set_uniform('u_view', self.scene.view)
-			self.manager.program.set_uniform('u_projection', self.scene.projection)
 			self.manager.program.set_uniform('u_opacity', self.opacity)
 			self.vao.draw_triangles()
 
