@@ -22,6 +22,9 @@ import texture
 
 CAMERA_DISTANCE = 9.
 
+STEREOSCOPY_OFF = 'off'
+STEREOSCOPY_ANAGLYPH = 'anaglyph'
+
 class Scene:
 	def __init__(self, size, midi_handler, debug_camera=False):
 		self.size = size
@@ -33,7 +36,9 @@ class Scene:
 		self._next_free_texture = 1
 		self.controller = controller.Controller(self, self.midi, 'controls.json', 'channels.txt')
 		self.midi.set_controller(self.controller)
-		self.color_palette = colorpalette.Shifting()
+
+		self.set_stereoscopy(STEREOSCOPY_OFF)
+		self.stereoscopy_eye_separation = .5
 
 		if debug_camera:
 			self.camera = camera.SphericalCamera(
@@ -149,6 +154,16 @@ class Scene:
 	def set_face_mapping(self, face, mapping):
 		self._symmetry_map[self._symmetry_ids[face.index]] = mapping
 
+	def set_stereoscopy(self, mode):
+		if mode == STEREOSCOPY_OFF:
+			self.color_palette = colorpalette.Shifting()
+		elif mode == STEREOSCOPY_ANAGLYPH:
+			self.color_palette = colorpalette.Anaglyph()
+		else:
+			raise ValueError("Invalid stereoscopy mode \"%s\"" % (mode,))
+
+		self.stereoscopy = mode
+
 	def update(self):
 		now = time.monotonic()
 		dt = now - self.last_update_time
@@ -195,11 +210,36 @@ class Scene:
 					return +2 * params.DEPTH.MAX
 			return drawable.get_distance_to(self.camera.get_pos())
 
-		self.balls.pre_render(self.projection, self.view)
-		self.active_shape.pre_render(self.projection, self.view)
+		if self.stereoscopy == STEREOSCOPY_OFF:
+			self.balls.pre_render(self.projection, self.view)
+			self.active_shape.pre_render(self.projection, self.view)
 
-		for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
-			drawable.render()
+			GL.glColorMaski(0, 1, 1, 1, 1)
+
+			for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
+				drawable.render()
+
+		elif self.stereoscopy == STEREOSCOPY_ANAGLYPH:
+			lview = mp.translateM([-self.stereoscopy_eye_separation / 2, 0, 0]) @ self.view
+			self.balls.pre_render(self.projection, lview)
+			self.active_shape.pre_render(self.projection, lview)
+
+			GL.glColorMaski(0, 0, 1, 1, 1)
+
+			for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
+				drawable.render()
+
+			rview = mp.translateM([+self.stereoscopy_eye_separation / 2, 0, 0]) @ self.view
+
+			self.balls.pre_render(self.projection, rview)
+			self.active_shape.pre_render(self.projection, rview)
+
+			GL.glColorMaski(0, 1, 0, 0, 1)
+
+			for drawable in sorted(drawables, key=_drawable_sort_key, reverse=True):
+				drawable.render()
+
+			GL.glColorMaski(0, 1, 1, 1, 1)
 
 		self.hud.pre_render(self.projection, self.view)
 		self.hud.render()
