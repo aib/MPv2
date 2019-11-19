@@ -79,10 +79,10 @@ def main():
 			elif ev.type == sdl2.SDL_KEYUP and ev.key.keysym.sym == sdl2.SDLK_ESCAPE:
 				running = False
 
-			elif ev.type == sdl2.SDL_KEYDOWN:
+			elif ev.type == sdl2.SDL_KEYDOWN and ev.key.repeat == 0:
 				main_scene.key_down(sdl2.SDL_GetKeyName(ev.key.keysym.sym).decode('ascii').lower())
 
-			elif ev.type == sdl2.SDL_KEYUP:
+			elif ev.type == sdl2.SDL_KEYUP and ev.key.repeat == 0:
 				main_scene.key_up(sdl2.SDL_GetKeyName(ev.key.keysym.sym).decode('ascii').lower())
 
 			elif ev.type == sdl2.SDL_MOUSEBUTTONDOWN:
