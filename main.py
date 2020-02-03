@@ -53,6 +53,8 @@ def main():
 		if sdl2.SDL_GL_SetSwapInterval(-1) == -1:
 			logger.warning("Adaptive vsync not available")
 			sdl2.SDL_GL_SetSwapInterval(1)
+	else:
+		sdl2.SDL_GL_SetSwapInterval(0)
 
 	midi_handler = midi.MidiHandler(opts.midi_input, opts.midi_output)
 	main_scene = scene.Scene((width, height), midi_handler, debug_camera=opts.debug_camera)
