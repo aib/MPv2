@@ -249,6 +249,13 @@ class Scene:
 		self.controller.shutdown()
 
 	def key_down(self, key):
+		if key == 'h':
+			self.hud.enabled = not self.hud.enabled
+		if key == 'x':
+			if self.stereoscopy == STEREOSCOPY_OFF:
+				self.set_stereoscopy(STEREOSCOPY_ANAGLYPH)
+			elif self.stereoscopy == STEREOSCOPY_ANAGLYPH:
+				self.set_stereoscopy(STEREOSCOPY_OFF)
 		self.keys[key] = True
 
 	def key_up(self, key):
