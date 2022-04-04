@@ -195,6 +195,13 @@ class Scene:
 
 		self.hud.update(dt)
 
+		if self.keys['p']:
+			self.stereoscopy_eye_separation += .05 * dt
+			self._logger.debug("Eye separation set to %f", self.stereoscopy_eye_separation)
+		if self.keys['o']:
+			self.stereoscopy_eye_separation -= .05 * dt
+			self._logger.debug("Eye separation set to %f", self.stereoscopy_eye_separation)
+
 	def render(self):
 		GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
