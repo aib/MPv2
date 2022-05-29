@@ -47,7 +47,7 @@ NOTE_LENGTHS = Enum([
 	1.,
 	2.,
 	CUSTOM_NOTE_LENGTH
-], default=3)
+], default=6)
 
 CHANNELS = Enum([
 	{ 'name': "Channel 1", 'number': 0, 'program': None },
