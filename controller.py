@@ -9,7 +9,7 @@ import midi
 import params
 import scheduler
 
-IGNORE_PLAY_CHANNELS = []
+IGNORE_PLAY_CHANNELS = [9]
 
 def _get_controls():
 	return [
@@ -24,39 +24,22 @@ def _get_controls():
 
 def _get_cc_mapping():
 	return {
-		20: 'volume',
-
-		# "Mixer"
-		16: 'ball_count',
-		17: 'ball_speed',
-		18: 'ball_radius',
-		19: 'shape',
-
-		# "Inst"
-		60: 'ball_count',
-		61: 'ball_speed',
-		62: 'ball_radius',
-		63: 'shape',
-
-		# "Preset"
-		78: 'ball_count',
-		76: 'ball_speed',
-		77: 'ball_radius',
-		10: 'shape',
-
+#		7: 'volume',
+		21: 'ball_count',
+		22: 'ball_speed',
+		23: 'ball_radius',
+		24: 'shape',
 #		25: 'note_length',
 #		27: 'reverb',
 #		28: 'chorus',
-
-		102: 'shuffle',
+		102: 'chan_next',
 		103: 'chan_prev',
-		104: 'chan_next',
-#		105: 'disable_assignment',
-#		106: 'enable_assignment',
-		107: 'chordus',
-
 #		112: 'prev_symmetry',
 #		113: 'next_symmetry',
+#		114: 'disable_assignment',
+#		115: 'enable_assignment',
+		116: 'shuffle',
+		117: 'chordus',
 	}
 
 def _get_note_mapping():
